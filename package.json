@@ -1,0 +1,14 @@
+{
+  "name": "playofans",
+  "version": "1.0.0",
+  "description": "PlayOFans.com — Plataforma multi-tenant de juegos para modelos",
+  "private": true,
+  "engines": {
+    "node": "18.x"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "resend": "^4.1.2",
+    "qrcode": "^1.5.4"
+  }
+}

@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Allow: /precios
+Allow: /demo
+Allow: /guia
+Allow: /contacto
+
+Disallow: /superadmin
+Disallow: /registro
+Disallow: /afiliados
+Disallow: /api/
+Disallow: /.netlify/
+
+# Bloquear paneles admin de modelos
+Disallow: /*/admin
+
+Sitemap: https://playofans.com/sitemap.xml
