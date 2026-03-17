@@ -913,6 +913,8 @@ async function validarCodigo() {
     } else {
       girarBtn.disabled = true;
       girarBtn.textContent = TEXTS.btnSinTiradas;
+      // Código agotado: mostrar historial con mensaje
+      setText('mensaje', 'Ya usaste todas tus tiradas. Estos fueron tus premios:');
     }
 
     // Ocultar formulario, mostrar historial
@@ -938,10 +940,6 @@ async function girarRuleta() {
   girarBtn.disabled = true;
   girarBtn.textContent = TEXTS.btnGirando;
   setText('mensaje', TEXTS.msgGirando);
-
-  const svg = document.getElementById('wheel-svg');
-  svg.classList.remove('idling');
-  svg.style.animation = 'none';
 
   try {
     // 1. Llamar prepare-spin
@@ -1023,58 +1021,45 @@ function resetSpinButton() {
 // =============================================================================
 // ANIMACION RULETA
 // =============================================================================
-function animateWheel(targetIndex) {
-  return new Promise(resolve => {
+function getCurrentRotation(el) {
+  const st = window.getComputedStyle(el);
+  const tr = st.getPropertyValue('transform');
+  if (!tr || tr === 'none') return 0;
+  const values = tr.split('(')[1].split(')')[0].split(',');
+  const a = parseFloat(values[0]);
+  const b = parseFloat(values[1]);
+  return Math.round(Math.atan2(b, a) * (180 / Math.PI));
+}
+
+function animateWheel(wheelIndex) {
+  return new Promise((resolve) => {
     const svg = document.getElementById('wheel-svg');
-    const n = STATE.prizes.length;
-    const sliceAngle = 360 / n;
 
-    // La flecha esta arriba (top), apuntando hacia abajo.
-    // El SVG esta dibujado con offset -90deg (primer slice arriba).
-    // Para que el premio targetIndex quede arriba (bajo la flecha):
-    const targetAngle = 360 - (targetIndex * sliceAngle) - (sliceAngle / 2);
-    const totalAngle = 360 * 5 + targetAngle; // 5 vueltas completas + ángulo destino
+    // 1. Obtener rotación actual (incluso durante idling)
+    const currentAngle = getCurrentRotation(svg);
 
-    // Limpiar cualquier animación/transformación previa
+    // 2. Quitar idling y fijar posición actual
     svg.classList.remove('idling');
-    svg.style.animation = 'none';
     svg.style.transition = 'none';
-    svg.style.transform = 'rotate(0deg)';
-    void svg.offsetWidth; // force reflow
+    svg.style.transform = `rotate(${currentAngle}deg)`;
 
-    // Iniciar animación con transition
-    svg.style.transition = 'transform 5s cubic-bezier(.17,.67,.12,.99)';
-    svg.style.transform = `rotate(${totalAngle}deg)`;
+    // 3. Forzar reflow
+    svg.offsetWidth;
 
-    const onEnd = () => {
-      svg.removeEventListener('transitionend', onEnd);
-      // Fijar el ángulo final y restaurar idling
-      const finalAngle = targetAngle % 360;
-      svg.style.transition = 'none';
-      svg.style.transform = `rotate(${finalAngle}deg)`;
-      void svg.offsetWidth;
-      // Restaurar rotación lenta desde el ángulo actual
-      svg.style.removeProperty('transform');
-      svg.style.removeProperty('transition');
-      svg.style.removeProperty('animation');
-      svg.classList.add('idling');
-      resolve();
-    };
-    svg.addEventListener('transitionend', onEnd);
+    // 4. Calcular ángulo final
+    const anglePer = 360 / STATE.prizes.length;
+    const targetAngle = (360 * 6) + (wheelIndex * anglePer) + (anglePer / 2);
+    const finalAngle = currentAngle + targetAngle;
 
-    // Fallback por si transitionend no dispara
+    // 5. Aplicar transición
+    svg.style.transition = 'transform 5s cubic-bezier(.17,.67,.83,.67)';
+    svg.style.transform = `rotate(${finalAngle}deg)`;
+
+    // 6. Esperar fin de animación (NO usar transitionend)
     setTimeout(() => {
-      svg.removeEventListener('transitionend', onEnd);
       svg.style.transition = 'none';
-      const finalAngle = targetAngle % 360;
-      svg.style.transform = `rotate(${finalAngle}deg)`;
-      void svg.offsetWidth;
-      svg.style.removeProperty('transform');
-      svg.style.removeProperty('transition');
-      svg.style.removeProperty('animation');
-      svg.classList.add('idling');
       resolve();
-    }, 5500);
+    }, 5200);
   });
 }
 
@@ -1113,17 +1098,23 @@ function renderHistory() {
 
   if (STATE.history.length === 0) {
     vacio.style.display = 'block';
+    // Limpiar items previos pero mantener el div vacio
+    Array.from(lista.querySelectorAll('.premio-item')).forEach(el => el.remove());
     return;
   }
   vacio.style.display = 'none';
 
-  lista.innerHTML = STATE.history.map((p, i) => `
+  // Generar todos los items del historial
+  const itemsHtml = STATE.history.map((p, i) => `
     <div class="premio-item" style="animation:fadeInUp .5s ease ${i * .1}s both">
       <div class="premio-numero">${p.id}</div>
       <div class="premio-nombre">${escapeHtml(p.nombre)}</div>
       <div class="premio-fecha">🕐 ${p.fecha}</div>
     </div>
   `).join('');
+
+  // Reemplazar contenido manteniendo el div vacio
+  lista.innerHTML = `<div class="historial-vacio" id="historial-vacio" style="display:none"></div>` + itemsHtml;
 
   lista.scrollTop = 0;
 }
