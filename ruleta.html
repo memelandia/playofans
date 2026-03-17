@@ -740,8 +740,19 @@ async function init() {
     }
 
     // Recovery: comprobar token pendiente en localStorage
-    const savedToken = localStorage.getItem(`pof_token_${STATE.slug}`);
-    if (savedToken) STATE.pendingToken = savedToken;
+    const savedRaw = localStorage.getItem(`pof_token_${STATE.slug}`);
+    if (savedRaw) {
+      try {
+        const parsed = JSON.parse(savedRaw);
+        if (parsed.code === STATE.code) {
+          STATE.pendingToken = parsed.token;
+        } else {
+          localStorage.removeItem(`pof_token_${STATE.slug}`);
+        }
+      } catch (e) {
+        localStorage.removeItem(`pof_token_${STATE.slug}`);
+      }
+    }
 
   } catch (err) {
     showError(TEXTS.errorNoDisponible);
@@ -950,7 +961,7 @@ async function girarRuleta() {
     const { prize, wheelIndex, token, recovered } = data;
 
     // Guardar token en localStorage para recovery
-    localStorage.setItem(`pof_token_${STATE.slug}`, token);
+    localStorage.setItem(`pof_token_${STATE.slug}`, JSON.stringify({ token, code: STATE.code }));
     STATE.pendingToken = token;
 
     if (recovered) notif('Recuperando tirada anterior...', 'success');
