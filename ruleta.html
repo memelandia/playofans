@@ -941,6 +941,7 @@ async function girarRuleta() {
 
   const svg = document.getElementById('wheel-svg');
   svg.classList.remove('idling');
+  svg.style.animation = 'none';
 
   try {
     // 1. Llamar prepare-spin
@@ -1031,18 +1032,49 @@ function animateWheel(targetIndex) {
     // La flecha esta arriba (top), apuntando hacia abajo.
     // El SVG esta dibujado con offset -90deg (primer slice arriba).
     // Para que el premio targetIndex quede arriba (bajo la flecha):
-    // angulo = vueltas + (360 - targetIndex * sliceAngle - sliceAngle/2)
     const targetAngle = 360 - (targetIndex * sliceAngle) - (sliceAngle / 2);
-    const totalAngle = 360 * 6 + targetAngle;
+    const totalAngle = 360 * 5 + targetAngle; // 5 vueltas completas + ángulo destino
 
+    // Limpiar cualquier animación/transformación previa
+    svg.classList.remove('idling');
+    svg.style.animation = 'none';
     svg.style.transition = 'none';
     svg.style.transform = 'rotate(0deg)';
-    svg.offsetWidth; // force reflow
+    void svg.offsetWidth; // force reflow
 
+    // Iniciar animación con transition
     svg.style.transition = 'transform 5s cubic-bezier(.17,.67,.12,.99)';
     svg.style.transform = `rotate(${totalAngle}deg)`;
 
-    setTimeout(resolve, 5100);
+    const onEnd = () => {
+      svg.removeEventListener('transitionend', onEnd);
+      // Fijar el ángulo final y restaurar idling
+      const finalAngle = targetAngle % 360;
+      svg.style.transition = 'none';
+      svg.style.transform = `rotate(${finalAngle}deg)`;
+      void svg.offsetWidth;
+      // Restaurar rotación lenta desde el ángulo actual
+      svg.style.removeProperty('transform');
+      svg.style.removeProperty('transition');
+      svg.style.removeProperty('animation');
+      svg.classList.add('idling');
+      resolve();
+    };
+    svg.addEventListener('transitionend', onEnd);
+
+    // Fallback por si transitionend no dispara
+    setTimeout(() => {
+      svg.removeEventListener('transitionend', onEnd);
+      svg.style.transition = 'none';
+      const finalAngle = targetAngle % 360;
+      svg.style.transform = `rotate(${finalAngle}deg)`;
+      void svg.offsetWidth;
+      svg.style.removeProperty('transform');
+      svg.style.removeProperty('transition');
+      svg.style.removeProperty('animation');
+      svg.classList.add('idling');
+      resolve();
+    }, 5500);
   });
 }
 
