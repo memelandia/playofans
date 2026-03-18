@@ -726,21 +726,28 @@ function actualizarHistorialVisual() {
   const vacio = document.getElementById('historial-vacio');
 
   if (historial.length === 0) {
-    vacio.style.display = 'block';
-    Array.from(lista.querySelectorAll('.premio-item')).forEach(el => el.remove());
+    if (vacio) vacio.style.display = 'block';
+    lista.querySelectorAll('.premio-item').forEach(el => el.remove());
     return;
   }
-  vacio.style.display = 'none';
 
-  const itemsHtml = historial.map((p, i) => `
-    <div class="premio-item" style="animation:fadeInUp .5s ease ${i * .1}s both">
+  if (vacio) vacio.style.display = 'none';
+
+  // Construir solo los items sin recrear historial-vacio
+  lista.querySelectorAll('.premio-item').forEach(el => el.remove());
+
+  historial.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'premio-item';
+    div.style.animation = `fadeInUp .5s ease ${i * .1}s both`;
+    div.innerHTML = `
       <div class="premio-numero">${p.id}</div>
       <div class="premio-nombre">${escapeHtml(p.nombre)}</div>
       <div class="premio-fecha">🕐 ${p.fecha}</div>
-    </div>
-  `).join('');
+    `;
+    lista.appendChild(div);
+  });
 
-  lista.innerHTML = `<div class="historial-vacio" id="historial-vacio" style="display:none">Aun no has ganado premios.<br>¡Gira la ruleta para empezar!</div>` + itemsHtml;
   lista.scrollTop = 0;
 }
 
@@ -1249,7 +1256,7 @@ function cerrarPopup() {
         const opcionesCanvas = document.getElementById('opciones');
         opcionesCanvas.classList.add('is-idling');
         opcionesCanvas.style.transition = 'none';
-        opcionesCanvas.style.transform = '';
+        // NO resetear style.transform aquí
     }
 }
 
