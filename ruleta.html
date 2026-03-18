@@ -3,435 +3,899 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PlayOFans — Ruleta</title>
-<meta name="description" content="Gira la ruleta y gana premios exclusivos">
-<meta property="og:title" content="PlayOFans — Ruleta">
-<meta property="og:description" content="Gira la ruleta y gana premios exclusivos">
-<meta property="og:url" content="">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="PlayOFans">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<title>PlayOFans — Ruleta Interactiva</title>
+<meta name="description" content="¡Gira la ruleta mágica y gana premios exclusivos! Ingresa tu código para empezar.">
+
+<!-- METADATOS PARA REDES SOCIALES (OPEN GRAPH) -->
+<meta property="og:title" content="PlayOFans — Ruleta 🎰" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="" />
+<meta property="og:description" content="¡Gira la ruleta mágica y gana premios exclusivos! Ingresa tu código para empezar." />
+<meta property="og:site_name" content="PlayOFans" />
+
 <style>
-/* =============================================
-   CSS VARIABLES — se sobreescriben por tema
-   ============================================= */
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap');
+
+/* === VARIABLES DE COLOR (TEMA DARK ELEGANTE) === */
 :root {
-  --bg-fondo-a: #1a0a1e;
-  --bg-fondo-b: #2d1b3d;
-  --bg-fondo-c: #1e0a28;
-  --accent-principal: #ff0066;
-  --accent-secundario: #b300ff;
-  --texto-oscuro: #ffffff;
-  --texto-suave: #e0b3ff;
-  --glass-white: rgba(30, 10, 40, 0.85);
-  --glass-border: rgba(179, 0, 255, 0.3);
-  --accent-soft: rgba(255, 0, 102, 0.15);
-  --accent-border: rgba(255, 0, 102, 0.5);
-  --font: 'Poppins', sans-serif;
-  --font-display: 'Dancing Script', cursive;
+--bg-fondo-a: #1a0a1e;
+--bg-fondo-b: #2d1b3d;
+--bg-fondo-c: #1e0a28;
+--accent-principal: #ff0066;
+--accent-secundario: #b300ff;
+--texto-oscuro: #ffffff;
+--texto-suave: #e0b3ff;
+--glass-white: rgba(30, 10, 40, 0.85);
+--glass-border: rgba(179, 0, 255, 0.3);
+--accent-soft: rgba(255, 0, 102, 0.15);
+--accent-border: rgba(255, 0, 102, 0.5);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-  font-family: var(--font);
-  text-align: center;
-  min-height: 100vh;
-  color: var(--texto-oscuro);
-  background: linear-gradient(-45deg, var(--bg-fondo-a), var(--bg-fondo-b), var(--bg-fondo-c), var(--bg-fondo-b), var(--bg-fondo-a));
-  background-size: 400% 400%;
-  animation: gradientMove 10s ease-in-out infinite;
-  overflow-x: hidden;
+body { 
+font-family: 'Poppins', sans-serif; text-align: center; min-height: 100vh;
+color: var(--texto-oscuro);
+background: linear-gradient(-45deg, var(--bg-fondo-a), var(--bg-fondo-b), var(--bg-fondo-c), var(--bg-fondo-b), var(--bg-fondo-a));
+background-size: 400% 400%; 
+animation: gradientMove 10s ease-in-out infinite;
+position: relative; overflow-x: hidden;
 }
-
 body.force-dark { color-scheme: dark; }
 
-/* =============================================
-   ANIMACIONES
-   ============================================= */
-@keyframes gradientMove {
-  0%   { background-position: 0% 50%; }
-  25%  { background-position: 100% 50%; }
-  50%  { background-position: 100% 100%; }
-  75%  { background-position: 0% 100%; }
-  100% { background-position: 0% 50%; }
+@keyframes gradientMove { 
+0% { background-position: 0% 50%; } 
+25% { background-position: 100% 50%; }
+50% { background-position: 100% 100%; }
+75% { background-position: 0% 100%; }
+100% { background-position: 0% 50%; }
 }
-@keyframes float {
-  0%   { transform: translateY(0) rotate(0deg); }
-  33%  { transform: translateY(-20px) rotate(45deg); }
-  66%  { transform: translateY(15px) rotate(-30deg); }
-  100% { transform: translateY(0) rotate(0deg); }
+.background-shapes { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
+.particle { position: absolute; pointer-events: none; opacity: 0.6; animation: floatParticle 8s ease-in-out infinite; }
+.particle.heart { font-size: 20px; color: var(--accent-principal); animation: floatHeart 10s ease-in-out infinite; }
+.particle.sparkle { width: 8px; height: 8px; background: radial-gradient(circle, var(--accent-secundario), var(--accent-principal)); border-radius: 50%; animation: floatSparkle 6s ease-in-out infinite; }
+.particle.star { font-size: 16px; color: var(--accent-secundario); animation: floatStar 12s ease-in-out infinite; }
+@keyframes floatParticle {
+0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); opacity: 0.3; }
+25% { transform: translateY(-30px) translateX(15px) rotate(90deg); opacity: 0.7; }
+50% { transform: translateY(-20px) translateX(-10px) rotate(180deg); opacity: 0.5; }
+75% { transform: translateY(-40px) translateX(20px) rotate(270deg); opacity: 0.8; }
 }
 @keyframes floatHeart {
-  0%, 100% { transform: translateY(0) scale(1) rotate(0deg); opacity: .4; }
-  33% { transform: translateY(-50px) scale(1.2) rotate(15deg); opacity: .8; }
-  66% { transform: translateY(-30px) scale(.8) rotate(-10deg); opacity: .6; }
+0%, 100% { transform: translateY(0px) scale(1) rotate(0deg); opacity: 0.4; }
+33% { transform: translateY(-50px) scale(1.2) rotate(15deg); opacity: 0.8; }
+66% { transform: translateY(-30px) scale(0.8) rotate(-10deg); opacity: 0.6; }
 }
 @keyframes floatSparkle {
-  0%, 100% { transform: translateY(0) scale(1); opacity: .5; box-shadow: 0 0 10px var(--accent-secundario); }
-  50% { transform: translateY(-40px) scale(1.5); opacity: 1; box-shadow: 0 0 20px var(--accent-principal); }
+0%, 100% { transform: translateY(0px) scale(1); opacity: 0.5; box-shadow: 0 0 10px var(--accent-secundario); }
+50% { transform: translateY(-40px) scale(1.5); opacity: 1; box-shadow: 0 0 20px var(--accent-principal); }
 }
 @keyframes floatStar {
-  0%, 100% { transform: translateY(0) rotate(0deg) scale(1); opacity: .4; }
-  25% { transform: translateY(-35px) rotate(180deg) scale(1.1); opacity: .7; }
-  50% { transform: translateY(-60px) rotate(360deg) scale(.9); opacity: .9; }
-  75% { transform: translateY(-25px) rotate(540deg) scale(1.2); opacity: .6; }
+0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); opacity: 0.4; }
+25% { transform: translateY(-35px) rotate(180deg) scale(1.1); opacity: 0.7; }
+50% { transform: translateY(-60px) rotate(360deg) scale(0.9); opacity: 0.9; }
+75% { transform: translateY(-25px) rotate(540deg) scale(1.2); opacity: 0.6; }
 }
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(30px) scale(.9); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-@keyframes slowRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-@keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-@keyframes confettiFall {
-  0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+/* === PARTÍCULAS REACTIVAS AL MOUSE === */
+.mouse-particle {
+position: fixed;
+left: 0;
+top: 0;
+border-radius: 50%;
+pointer-events: none;
+opacity: 0;
+transition: transform 1s ease-out, opacity 1s ease-out;
+z-index: 1;
 }
 
-/* =============================================
-   FONDO Y PARTICULAS
-   ============================================= */
-.bg-shapes { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
-.shape {
-  position: absolute; border-radius: 50%; opacity: .08;
-  animation: float 15s ease-in-out infinite;
+.shape { 
+position: absolute; border-radius: 50%; opacity: 0.08; 
+animation: float 15s ease-in-out infinite; 
 }
 .shape:nth-child(1) { width: 80px; height: 80px; background: var(--accent-principal); top: 10%; left: 10%; }
 .shape:nth-child(2) { width: 120px; height: 120px; background: var(--accent-secundario); top: 20%; right: 15%; animation-delay: 2s; }
 .shape:nth-child(3) { width: 60px; height: 60px; background: var(--bg-fondo-c); bottom: 20%; left: 20%; animation-delay: 4s; }
 .shape:nth-child(4) { width: 100px; height: 100px; background: var(--accent-principal); bottom: 10%; right: 10%; animation-delay: 1s; }
-
-.particle { position: absolute; pointer-events: none; opacity: .6; }
-.particle.heart { font-size: 20px; color: var(--accent-principal); animation: floatHeart 10s ease-in-out infinite; }
-.particle.sparkle { width: 8px; height: 8px; background: radial-gradient(circle, var(--accent-secundario), var(--accent-principal)); border-radius: 50%; animation: floatSparkle 6s ease-in-out infinite; }
-.particle.star { font-size: 16px; color: var(--accent-secundario); animation: floatStar 12s ease-in-out infinite; }
-
-/* =============================================
-   LAYOUT
-   ============================================= */
+@keyframes float {
+0% { transform: translateY(0) rotate(0deg); }
+33% { transform: translateY(-20px) rotate(45deg); }
+66% { transform: translateY(15px) rotate(-30deg); }
+100% { transform: translateY(0) rotate(0deg); }
+}
 .container {
-  position: relative; z-index: 1; padding: 20px;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  min-height: 100vh; max-width: 1400px; margin: 0 auto; gap: 20px;
+position: relative; z-index: 1; padding: 20px; display: flex; flex-direction: column;
+align-items: center; justify-content: center; min-height: 100vh;
+max-width: 1400px; margin: 0 auto; gap: 20px;
 }
 .main-content {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  width: 100%; max-width: 1200px; flex: 1; gap: 40px;
+display: flex; flex-direction: column; align-items: center; justify-content: center;
+width: 100%; max-width: 1200px; flex: 1; gap: 40px;
 }
-
-/* =============================================
-   CONTROLES (columna izquierda)
-   ============================================= */
+@media (min-width: 992px) {
+.main-content {
+display: grid; grid-template-columns: 1fr auto 1fr;
+align-items: center; gap: 60px;
+}
+.controls-container { grid-column: 1 / 2; justify-self: end; }
+.ruleta-section { grid-column: 2 / 3; }
+.historial-container { 
+grid-column: 3 / 4; 
+justify-self: start; 
+display: none;
+}
+.historial-container.visible { display: flex; }
+}
 .controls-container { display: flex; flex-direction: column; align-items: center; gap: 25px; }
-.controls-section {
-  display: flex; flex-direction: column; align-items: center; gap: 20px;
-  background: var(--glass-white); padding: 35px; border-radius: 25px;
-  box-shadow: 0 15px 35px rgba(0,0,0,.1); backdrop-filter: blur(15px);
-  border: 1px solid var(--glass-border); width: 320px;
-}
-.controls-title {
-  font-family: var(--font-display); color: var(--accent-secundario);
-  font-size: 2.5rem; font-weight: 700;
-  text-shadow: 0 4px 15px rgba(0,0,0,.4), 0 0 10px rgba(255,255,255,.3);
-}
-.form-title {
-  font-family: var(--font-display); font-size: 1.6rem;
-  color: var(--accent-secundario); margin-bottom: 10px;
-  text-shadow: 2px 2px 5px rgba(0,0,0,.15);
-}
-
-#codigo {
-  padding: 18px 20px; font-size: 1.1rem;
-  border: 3px solid var(--accent-principal); border-radius: 20px;
-  width: 100%; text-align: center; transition: all .3s;
-  background: var(--glass-white); font-weight: 600;
-  color: var(--texto-oscuro); text-transform: uppercase;
-}
-#codigo::placeholder { color: var(--texto-suave); opacity: .6; text-transform: none; }
-#codigo:focus {
-  outline: none; box-shadow: 0 0 30px rgba(255,79,163,.5);
-  border-color: var(--accent-secundario); transform: translateY(-2px);
-}
-
-.btn {
-  padding: 15px 25px; font-size: 1rem;
-  background: linear-gradient(45deg, var(--accent-principal), var(--accent-secundario));
-  color: #fff; border: none; border-radius: 20px; cursor: pointer;
-  font-weight: 600; width: 100%; text-transform: uppercase;
-  transition: all .3s; box-shadow: 0 4px 15px rgba(0,0,0,.2);
-  font-family: var(--font);
-}
-.btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,.3); filter: brightness(1.1); }
-.btn:disabled { background: linear-gradient(45deg, #555, #333); cursor: not-allowed; opacity: .6; }
-
-#girarBtn {
-  padding: 18px 50px; font-size: 1.2rem; font-weight: 700;
-  min-width: 280px; border-radius: 30px;
-  box-shadow: 0 6px 20px rgba(0,0,0,.3);
-  text-shadow: 1px 1px 3px rgba(0,0,0,.3);
-}
-#girarBtn:hover:not(:disabled) { transform: translateY(-4px) scale(1.02); }
-
-/* Info tiradas y expiracion */
-.spins-info {
-  display: none; width: 100%; text-align: center;
-  font-weight: 600; color: var(--texto-suave); font-size: .95rem;
-  padding: 10px; border-radius: 12px;
-  background: var(--accent-soft); border: 1px solid var(--accent-border);
-}
-.spins-info.visible { display: block; }
-.countdown { color: var(--accent-principal); font-weight: 700; }
-
-/* =============================================
-   RULETA CANVAS
-   ============================================= */
 .ruleta-section { display: flex; flex-direction: column; align-items: center; gap: 30px; flex-shrink: 0; }
-
-#ruleta {
-  margin: 0 auto; width: 450px; height: 450px;
-  border: 10px solid var(--accent-principal);
-  border-radius: 50%; position: relative;
-  box-shadow: 0 15px 30px rgba(0,0,0,.2);
-  overflow: hidden;
-  background: linear-gradient(135deg, var(--accent-principal), var(--accent-secundario));
-}
-
-#flecha {
-  width: 0; height: 0;
-  border-left: 25px solid transparent; border-right: 25px solid transparent;
-  border-bottom: 50px solid var(--accent-principal);
-  position: absolute; left: 50%; top: -50px; transform: translateX(-50%);
-  z-index: 15;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,.3));
-}
-
-#opciones {
-  position: absolute; width: 100%; height: 100%;
-  top: 0; left: 0; pointer-events: none;
-  border-radius: 50%; z-index: 10;
-}
-
-#opciones.is-idling {
-  animation: slowRotate 30s linear infinite;
-}
-
-/* =============================================
-   HISTORIAL (columna derecha)
-   ============================================= */
 .historial-container { display: flex; flex-direction: column; align-items: center; gap: 25px; }
+
+/* === ESTILOS DEL HISTORIAL DE PREMIOS === */
 .historial-section {
-  background: var(--glass-white); padding: 25px; border-radius: 25px;
-  box-shadow: 0 15px 35px rgba(0,0,0,.1); backdrop-filter: blur(15px);
-  border: 1px solid var(--glass-border); width: 320px; max-height: 500px;
+background: var(--glass-white); padding: 25px; border-radius: 25px;
+box-shadow: 0 15px 35px rgba(0,0,0,0.1); backdrop-filter: blur(15px);
+border: 1px solid var(--glass-border); width: 320px; max-height: 500px;
 }
+
 .historial-title {
-  font-family: var(--font-display); color: var(--accent-secundario);
-  font-size: 2rem; font-weight: 700;
-  text-shadow: 0 4px 15px rgba(0,0,0,.4), 0 0 10px rgba(255,255,255,.3);
-  margin-bottom: 20px; text-align: center;
+font-family: 'Dancing Script', cursive; 
+color: var(--accent-secundario); 
+font-size: 2rem; 
+font-weight: 700; 
+text-shadow: 0px 4px 15px rgba(0, 0, 0, 0.4), 0 0 10px rgba(255, 255, 255, 0.3);
+margin-bottom: 20px;
+text-align: center;
 }
-.historial-lista { max-height: 380px; overflow-y: auto; padding-right: 10px; }
-.historial-lista::-webkit-scrollbar { width: 8px; }
-.historial-lista::-webkit-scrollbar-track { background: rgba(255,255,255,.1); border-radius: 10px; }
-.historial-lista::-webkit-scrollbar-thumb { background: linear-gradient(45deg, var(--accent-principal), var(--accent-secundario)); border-radius: 10px; }
+
+.historial-lista {
+max-height: 380px;
+overflow-y: auto;
+padding-right: 10px;
+}
+
+.historial-lista::-webkit-scrollbar {
+width: 8px;
+}
+
+.historial-lista::-webkit-scrollbar-track {
+background: rgba(232, 221, 255, 0.3);
+border-radius: 10px;
+}
+
+.historial-lista::-webkit-scrollbar-thumb {
+background: linear-gradient(45deg, var(--accent-principal), var(--accent-secundario));
+border-radius: 10px;
+border: 2px solid var(--glass-border);
+}
+
+.historial-lista::-webkit-scrollbar-thumb:hover {
+background: linear-gradient(45deg, var(--accent-secundario), var(--accent-principal));
+}
 
 .premio-item {
-  background: linear-gradient(135deg, var(--accent-soft), rgba(122,92,255,.08));
-  border: 2px solid var(--accent-border); border-radius: 15px;
-  padding: 15px; margin-bottom: 12px; transition: all .3s;
-  position: relative; overflow: hidden;
+background: linear-gradient(135deg, var(--accent-soft), rgba(122, 92, 255, 0.08));
+border: 2px solid var(--accent-border);
+border-radius: 15px;
+padding: 15px;
+margin-bottom: 12px;
+transition: all 0.3s ease;
+position: relative;
+overflow: hidden;
 }
-.premio-item:hover { transform: translateX(5px); box-shadow: 0 8px 20px rgba(0,0,0,.15); }
+
+.premio-item:hover {
+transform: translateX(5px);
+box-shadow: 0 8px 20px rgba(255, 79, 163, 0.2);
+border-color: rgba(122, 92, 255, 0.5);
+}
+
 .premio-item::before {
-  content: ''; position: absolute; top: 0; left: -100%;
-  width: 100%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,.1), transparent);
-  transition: left .5s;
+content: '';
+position: absolute;
+top: 0;
+left: -100%;
+width: 100%;
+height: 100%;
+background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+transition: left 0.5s ease;
 }
-.premio-item:hover::before { left: 100%; }
-.premio-nombre { font-weight: 700; color: var(--accent-secundario); font-size: .95rem; margin-bottom: 5px; }
-.premio-fecha { font-size: .8rem; color: var(--texto-suave); font-weight: 500; display: flex; align-items: center; gap: 5px; }
+
+.premio-item:hover::before {
+left: 100%;
+}
+
+.premio-nombre {
+font-weight: 700;
+color: var(--accent-secundario);
+font-size: 0.95rem;
+margin-bottom: 5px;
+text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.premio-fecha {
+font-size: 0.8rem;
+color: var(--texto-suave);
+font-weight: 500;
+display: flex;
+align-items: center;
+gap: 5px;
+}
+
 .premio-numero {
-  position: absolute; top: 8px; right: 12px;
-  background: linear-gradient(45deg, var(--accent-principal), var(--accent-secundario));
-  color: #fff; border-radius: 50%; width: 25px; height: 25px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: .7rem; font-weight: bold;
-  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+position: absolute;
+top: 8px;
+right: 12px;
+background: linear-gradient(45deg, var(--accent-principal), var(--accent-secundario));
+color: white;
+border-radius: 50%;
+width: 25px;
+height: 25px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 0.7rem;
+font-weight: bold;
+box-shadow: 0 2px 8px rgba(122, 92, 255, 0.3);
 }
+
 .historial-vacio {
-  text-align: center; color: var(--texto-suave); font-style: italic;
-  padding: 30px 20px; background: rgba(255,255,255,.05);
-  border-radius: 15px; border: 2px dashed var(--accent-border);
+text-align: center;
+color: var(--texto-suave);
+font-style: italic;
+padding: 30px 20px;
+background: rgba(255, 255, 255, 0.05);
+border-radius: 15px;
+border: 2px dashed var(--accent-border);
 }
-.historial-vacio::before { content: '🎁'; display: block; font-size: 2rem; margin-bottom: 10px; opacity: .5; }
 
-/* =============================================
-   MENSAJE
-   ============================================= */
+.historial-vacio::before {
+content: '🎁';
+display: block;
+font-size: 2rem;
+margin-bottom: 10px;
+opacity: 0.5;
+}
+.controls-section {
+display: flex; flex-direction: column; align-items: center; gap: 20px;
+background: var(--glass-white); padding: 35px; border-radius: 25px;
+box-shadow: 0 15px 35px rgba(0,0,0,0.1); backdrop-filter: blur(15px);
+border: 1px solid var(--glass-border); width: 320px;
+}
+.controls-title { 
+font-family: 'Dancing Script', cursive; 
+color: var(--accent-secundario); 
+font-size: 2.5rem; 
+font-weight: 700; 
+text-shadow: 0px 4px 15px rgba(0, 0, 0, 0.4), 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+#ruleta { 
+margin: 0 auto; 
+width: 450px; 
+height: 450px; 
+border: 10px solid var(--accent-principal); 
+border-radius: 50%; 
+position: relative; 
+box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+overflow: hidden;
+background: linear-gradient(135deg, var(--accent-principal), var(--accent-secundario));
+}
+
+#flecha { 
+width: 0; 
+height: 0; 
+border-left: 25px solid transparent; 
+border-right: 25px solid transparent; 
+border-bottom: 50px solid var(--accent-principal); 
+position: absolute; 
+left: 50%; 
+top: -50px; 
+transform: translateX(-50%); 
+z-index: 15;
+filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+#opciones { 
+position: absolute; 
+width: 100%; 
+height: 100%; 
+top: 0; 
+left: 0; 
+pointer-events: none; 
+border-radius: 50%;
+z-index: 10;
+}
+
+.is-idling {
+animation: slowRotate 30s linear infinite;
+}
+
 .message-section { width: 100%; max-width: 600px; }
-#mensaje {
-  font-size: 1.1rem; color: var(--accent-secundario); font-weight: 600;
-  background: var(--glass-white); padding: 15px 25px; border-radius: 20px;
-  display: inline-block; box-shadow: 0 8px 20px rgba(0,0,0,.15);
-  backdrop-filter: blur(10px); border: 2px solid var(--glass-border);
-  min-height: 35px; transition: all .3s;
+#mensaje { 
+margin-top: 10px; 
+font-size: 1.1rem; 
+color: var(--accent-secundario); 
+font-weight: 600; 
+background: var(--glass-white); 
+padding: 15px 25px; 
+border-radius: 20px; 
+display: inline-block; 
+box-shadow: 0 8px 20px rgba(0,0,0,0.15); 
+min-height: 35px; 
+backdrop-filter: blur(10px);
+border: 2px solid var(--glass-border);
+}
+.form-title { 
+font-family: 'Dancing Script', cursive; 
+font-size: 1.6rem; 
+color: var(--accent-secundario); 
+margin-bottom: 10px; 
+text-shadow: 2px 2px 5px rgba(0,0,0,0.15);
+}
+#codigo { 
+padding: 18px 20px; 
+font-size: 1.1rem; 
+border: 3px solid var(--accent-principal); 
+border-radius: 20px; 
+width: 100%; 
+text-align: center; 
+transition: all 0.3s ease;
+background: var(--glass-white);
+font-weight: 600;
+color: var(--texto-oscuro);
+text-transform: uppercase;
+}
+#codigo::placeholder { color: var(--texto-suave); opacity: 0.6; text-transform: none; }
+
+#codigo:focus {
+outline: none;
+box-shadow: 0 0 30px rgba(255, 79, 163, 0.5);
+border-color: var(--accent-secundario);
+transform: translateY(-2px);
+}
+#validarBtn { 
+padding: 15px 25px; 
+font-size: 1rem; 
+background: linear-gradient(45deg, var(--accent-principal), var(--accent-secundario)); 
+color: white; 
+border: none; 
+border-radius: 20px; 
+cursor: pointer; 
+font-weight: 600; 
+width: 100%; 
+text-transform: uppercase; 
+transition: all 0.3s ease;
+box-shadow: 0 4px 15px rgba(122, 92, 255, 0.3);
+font-family: 'Poppins', sans-serif;
+margin-top: 12px;
 }
 
-/* =============================================
-   POPUP PREMIO
-   ============================================= */
+#validarBtn:hover:not(:disabled) {
+transform: translateY(-3px);
+box-shadow: 0 8px 25px rgba(122, 92, 255, 0.4);
+filter: brightness(1.1);
+}
+#validarBtn:disabled { background: linear-gradient(45deg, #555, #333); cursor: not-allowed; opacity: 0.6; }
+
+#girarBtn { 
+padding: 18px 50px; 
+font-size: 1.2rem; 
+background: linear-gradient(45deg, var(--accent-principal), var(--accent-secundario), var(--accent-principal)); 
+color: white; 
+border: none; 
+border-radius: 30px; 
+cursor: pointer; 
+font-weight: 700; 
+min-width: 280px; 
+transition: all 0.3s ease;
+box-shadow: 0 6px 20px rgba(255, 79, 163, 0.4);
+text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+font-family: 'Poppins', sans-serif;
+}
+
+#girarBtn:hover:not(:disabled) {
+transform: translateY(-4px) scale(1.02);
+box-shadow: 0 12px 30px rgba(255, 79, 163, 0.5);
+}
+#girarBtn:disabled { background: linear-gradient(45deg, #555, #333); cursor: not-allowed; opacity: 0.6; }
+
+.button {
+transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+cursor: pointer;
+}
+
+.button:hover:not(:disabled) {
+transform: translateY(-3px) scale(1.05);
+box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+filter: brightness(1.1);
+}
 .popup-overlay {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,.5); backdrop-filter: blur(8px);
-  display: flex; justify-content: center; align-items: center;
-  z-index: 1000; opacity: 0; visibility: hidden; transition: all .3s;
+position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(8px); display: flex; justify-content: center;
+align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s ease;
 }
 .popup-overlay.show { opacity: 1; visibility: visible; }
 .popup-content {
-  background: linear-gradient(135deg, var(--accent-principal), var(--accent-secundario));
-  border-radius: 30px; padding: 40px; text-align: center;
-  max-width: 500px; width: 90%;
-  transform: scale(.5); transition: all .4s cubic-bezier(.68,-.55,.27,1.55);
+background: linear-gradient(135deg, var(--accent-principal), var(--accent-secundario)); border-radius: 30px; padding: 40px; text-align: center;
+max-width: 500px; width: 90%; transform: scale(0.5); transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 .popup-overlay.show .popup-content { transform: scale(1); }
-.popup-title { font-family: var(--font-display); font-size: 3rem; color: #fff; margin-bottom: 20px; }
-.popup-prize { font-size: 1.5rem; color: #fff; font-weight: 700; margin: 20px 0; padding: 15px; background: rgba(255,255,255,.2); border-radius: 15px; }
-.popup-message { font-size: .95rem; color: #fff; opacity: .9; margin-top: 15px; font-weight: 500; }
+.popup-title { font-family: 'Dancing Script', cursive; font-size: 3rem; color: white; margin-bottom: 20px; }
+.popup-prize { font-size: 1.5rem; color: white; font-weight: 700; margin: 20px 0; padding: 15px; background: rgba(255,255,255,0.2); border-radius: 15px; }
+.popup-message { font-size: 0.95rem; color: white; opacity: 0.9; margin-top: 15px; font-weight: 500; }
 .popup-buttons { display: flex; gap: 12px; justify-content: center; margin-top: 25px; flex-wrap: wrap; }
 .popup-btn {
-  background: #fff; color: var(--accent-secundario); border: none;
-  padding: 15px 30px; border-radius: 25px; font-weight: 700;
-  font-size: 1.1rem; cursor: pointer; font-family: var(--font);
-  transition: all .3s;
+background: white; color: var(--accent-secundario); border: none; padding: 15px 30px; border-radius: 25px; font-weight: 700; font-size: 1.1rem; cursor: pointer;
+font-family: 'Poppins', sans-serif; transition: all 0.3s ease;
 }
 .popup-btn:hover { transform: scale(1.05); }
-.popup-btn.share { background: rgba(255,255,255,.2); color: #fff; font-size: .9rem; padding: 10px 20px; }
+.popup-btn.share { background: rgba(255,255,255,0.2); color: #fff; font-size: 0.9rem; padding: 10px 20px; }
 
-/* =============================================
-   NOTIFICACION
-   ============================================= */
-.notif {
-  position: fixed; top: 0; left: 0; width: 100%; z-index: 10000;
-  display: none; transform: translateY(-100%); transition: transform .3s;
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(30px) scale(0.9); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        @keyframes slowRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .mensaje-update {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+
+/* === SISTEMA DE NOTIFICACIONES === */
+.notification-banner {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+z-index: 10000;
+display: none;
+transform: translateY(-100%);
+transition: transform 0.3s ease;
 }
-.notif.show { transform: translateY(0); }
-.notif.success { background: linear-gradient(135deg, var(--accent-secundario), var(--accent-principal)); }
-.notif.error { background: linear-gradient(135deg, #d9534f, #c9302c); }
-.notif-inner { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; max-width: 1200px; margin: 0 auto; }
-.notif-text { color: #fff; font-weight: 600; flex: 1; }
-.notif-close { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; padding: 0 10px; opacity: .8; }
-.notif-close:hover { opacity: 1; }
 
-/* =============================================
-   CONTROLES SUPERIORES (mute)
-   ============================================= */
+.notification-banner.show {
+transform: translateY(0);
+}
+
+.notification-banner.success {
+background: linear-gradient(135deg, var(--accent-secundario), var(--accent-principal));
+}
+
+.notification-banner.error {
+background: linear-gradient(135deg, #d9534f, #c9302c);
+}
+
+.notification-banner.warning {
+background: linear-gradient(135deg, var(--accent-principal), var(--accent-secundario));
+}
+
+.notification-content {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 15px 20px;
+max-width: 1200px;
+margin: 0 auto;
+}
+
+.notification-text {
+color: white;
+font-weight: 600;
+font-size: 1rem;
+flex-grow: 1;
+}
+
+.notification-close {
+background: none;
+border: none;
+color: white;
+font-size: 1.5rem;
+font-weight: bold;
+cursor: pointer;
+padding: 0 10px;
+opacity: 0.8;
+transition: opacity 0.3s ease;
+}
+
+.notification-close:hover {
+opacity: 1;
+}
+
+/* === INDICADORES DE CARGA === */
+.loading {
+position: relative;
+pointer-events: none;
+}
+
+.loading::after {
+content: '';
+position: absolute;
+top: 50%;
+left: 50%;
+width: 20px;
+height: 20px;
+margin: -10px 0 0 -10px;
+border: 2px solid transparent;
+border-top-color: currentColor;
+border-radius: 50%;
+animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+to {
+transform: rotate(360deg);
+}
+}
+
+.spinner {
+display: inline-block;
+width: 20px;
+height: 20px;
+border: 2px solid transparent;
+border-top-color: currentColor;
+border-radius: 50%;
+animation: spin 1s linear infinite;
+margin-right: 8px;
+}
+
+/* === CONTROLES SUPERIORES (mute) === */
 .top-controls {
-  position: fixed; top: 15px; right: 15px; z-index: 100;
-  display: flex; gap: 10px;
+position: fixed; top: 15px; right: 15px; z-index: 100;
+display: flex; gap: 10px;
 }
 .top-btn {
-  width: 44px; height: 44px; border-radius: 50%;
-  background: var(--glass-white); border: 1px solid var(--glass-border);
-  backdrop-filter: blur(10px); display: flex; align-items: center;
-  justify-content: center; font-size: 1.3rem; cursor: pointer;
-  transition: all .3s; color: var(--texto-oscuro);
+width: 44px; height: 44px; border-radius: 50%;
+background: var(--glass-white); border: 1px solid var(--glass-border);
+backdrop-filter: blur(10px); display: flex; align-items: center;
+justify-content: center; font-size: 1.3rem; cursor: pointer;
+transition: all 0.3s ease; color: var(--texto-oscuro);
 }
 .top-btn:hover { transform: scale(1.1); background: var(--accent-soft); }
 
-/* =============================================
-   PANTALLA ERROR / CARGA
-   ============================================= */
+/* === PANTALLA ERROR / CARGA === */
 .screen-error, .screen-loading {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  display: flex; flex-direction: column; align-items: center;
-  justify-content: center; z-index: 2000;
-  background: linear-gradient(-45deg, var(--bg-fondo-a), var(--bg-fondo-b), var(--bg-fondo-c));
+position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+display: flex; flex-direction: column; align-items: center;
+justify-content: center; z-index: 2000;
+background: linear-gradient(-45deg, var(--bg-fondo-a), var(--bg-fondo-b), var(--bg-fondo-c));
 }
 .screen-error h1 { font-size: 4rem; margin-bottom: 20px; }
 .screen-error p { font-size: 1.3rem; color: var(--texto-suave); max-width: 400px; }
 .screen-loading .spinner-lg {
-  width: 60px; height: 60px; border: 4px solid var(--glass-border);
-  border-top-color: var(--accent-principal); border-radius: 50%;
-  animation: spin 1s linear infinite;
+width: 60px; height: 60px; border: 4px solid var(--glass-border);
+border-top-color: var(--accent-principal); border-radius: 50%;
+animation: spin 1s linear infinite;
 }
 
-/* Confetti CSS fallback */
-.confetti-piece {
-  position: fixed; width: 10px; height: 10px; top: -10px;
-  z-index: 999; pointer-events: none;
-  animation: confettiFall 3s ease-in forwards;
+/* === DISEÑO RESPONSIVO COMPLETO === */
+
+/* Tablets y pantallas medianas */
+@media (max-width: 992px) {
+    .main-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        align-items: start;
+        justify-items: center;
+        width: 100%;
+    }
+
+    .controls-container {
+        grid-column: 1 / 2;
+        justify-self: center;
+    }
+    .historial-container {
+        grid-column: 2 / 3;
+        justify-self: center;
+    }
+    .ruleta-section {
+        grid-column: 1 / -1;
+    }
+
+    .controls-section,
+    .historial-section {
+        width: 100%;
+        max-width: 280px;
+        padding: 15px;
+        margin: 0;
+        height: auto;
+    }
+
+    .historial-section, .historial-lista { max-height: 400px; }
+    .historial-title { font-size: 1.8rem; }
+    .controls-title { font-size: 2.2rem; }
+    #ruleta { width: 400px; height: 400px; border-width: 8px; }
+    #flecha { border-left-width: 22px; border-right-width: 22px; border-bottom-width: 45px; top: -45px; }
+    #girarBtn { min-width: 250px; padding: 16px 40px; font-size: 1.1rem; }
 }
 
-/* =============================================
-   RESPONSIVE
-   ============================================= */
-@media (min-width: 992px) {
-  .main-content {
-    display: grid; grid-template-columns: 1fr auto 1fr;
-    align-items: center; gap: 60px;
-  }
-  .controls-container { grid-column: 1; justify-self: end; }
-  .ruleta-section { grid-column: 2; }
-  .historial-container { grid-column: 3; justify-self: start; display: none; }
-  .historial-container.visible { display: flex; }
-}
-
-@media (max-width: 991px) {
-  .main-content {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 15px; align-items: start; justify-items: center;
-  }
-  .controls-container { grid-column: 1; }
-  .historial-container { grid-column: 2; }
-  .ruleta-section { grid-column: 1 / -1; }
-  .controls-section, .historial-section { width: 100%; max-width: 280px; padding: 15px; }
-  .controls-title { font-size: 2.2rem; }
-  .historial-title { font-size: 1.8rem; }
-  #ruleta { width: 400px; height: 400px; border-width: 8px; }
-  #flecha { border-left-width: 22px; border-right-width: 22px; border-bottom-width: 45px; top: -45px; }
-  #girarBtn { min-width: 250px; padding: 16px 40px; font-size: 1.1rem; }
-}
-
+/* Tablets pequeñas y móviles grandes */
 @media (max-width: 768px) {
-  .container { padding: 15px; gap: 15px; }
-  #ruleta { width: 350px; height: 350px; border-width: 7px; }
-  #flecha { border-left-width: 20px; border-right-width: 20px; border-bottom-width: 40px; top: -40px; }
-  .controls-title { font-size: 2rem; }
-  .form-title { font-size: 1.4rem; }
-  #codigo { font-size: .95rem; padding: 15px 18px; }
-  #mensaje { font-size: 1rem; padding: 12px 20px; }
-  .popup-content { padding: 30px; max-width: 400px; }
-  .popup-title { font-size: 2.5rem; }
+.container {
+padding: 15px;
+gap: 15px;
 }
 
+.historial-section {
+width: 280px;
+padding: 18px;
+max-height: 350px;
+}
+
+.historial-title {
+font-size: 1.6rem;
+margin-bottom: 15px;
+}
+
+.historial-lista {
+max-height: 250px;
+}
+
+.premio-item {
+padding: 12px;
+margin-bottom: 10px;
+}
+
+.premio-nombre {
+font-size: 0.9rem;
+}
+
+.premio-fecha {
+font-size: 0.75rem;
+}
+
+.controls-title {
+font-size: 2rem;
+margin-bottom: 15px;
+}
+
+.form-title {
+font-size: 1.6rem;
+margin-bottom: 12px;
+}
+
+#codigo {
+font-size: 0.95rem;
+padding: 15px 18px;
+}
+
+#validarBtn {
+font-size: 0.9rem;
+padding: 14px 22px;
+}
+
+#mensaje {
+font-size: 1rem;
+padding: 12px 20px;
+}
+
+#ruleta {
+width: 350px;
+height: 350px;
+border-width: 7px;
+}
+
+#flecha {
+border-left-width: 20px;
+border-right-width: 20px;
+border-bottom-width: 40px;
+top: -40px;
+}
+
+.form-title {
+font-size: 1.5rem;
+}
+
+#codigo {
+padding: 14px 18px;
+font-size: 1rem;
+}
+
+#validarBtn {
+padding: 14px 22px;
+font-size: 0.95rem;
+}
+
+#girarBtn {
+min-width: 220px;
+padding: 15px 35px;
+font-size: 0.95rem;
+}
+
+#mensaje {
+font-size: 0.9rem;
+padding: 10px 16px;
+}
+
+.popup-content {
+padding: 30px;
+max-width: 400px;
+}
+
+.popup-title {
+font-size: 2.5rem;
+}
+
+.popup-prize {
+font-size: 1.3rem;
+padding: 12px;
+}
+
+.popup-btn {
+padding: 12px 25px;
+font-size: 1rem;
+}
+}
+
+/* Móviles pequeños */
 @media (max-width: 480px) {
-  .main-content { grid-template-columns: 1fr; }
-  .controls-container, .historial-container { grid-column: 1; }
-  .controls-section, .historial-section { max-width: 100%; width: 100%; }
-  #ruleta { width: 300px; height: 300px; border-width: 6px; }  /* Nota: en el original la flecha se achica pero no desaparece */
-  #flecha { border-left-width: 18px; border-right-width: 18px; border-bottom-width: 35px; top: -35px; }
-  .controls-title { font-size: 1.8rem; }
-  #girarBtn { min-width: 200px; padding: 14px 30px; font-size: .95rem; }
-  .popup-content { padding: 25px; max-width: 340px; }
-  .popup-title { font-size: 2.2rem; }
-  .shape:nth-child(1) { width: 50px; height: 50px; }
-  .shape:nth-child(2) { width: 70px; height: 70px; }
-  .shape:nth-child(3) { width: 40px; height: 40px; }
-  .shape:nth-child(4) { width: 60px; height: 60px; }
-  .particle.heart { font-size: 16px; }
-  .particle.sparkle { width: 6px; height: 6px; }
-  .particle.star { font-size: 12px; }
+.main-content { grid-template-columns: 1fr; }
+.controls-container, .historial-container { grid-column: 1; }
+
+.container {
+padding: 10px;
 }
 
+.historial-section {
+width: 260px;
+padding: 15px;
+max-height: 300px;
+}
+
+.historial-title {
+font-size: 1.4rem;
+margin-bottom: 12px;
+}
+
+.historial-lista {
+max-height: 200px;
+}
+
+.premio-item {
+padding: 10px;
+margin-bottom: 8px;
+}
+
+.premio-nombre {
+font-size: 0.85rem;
+}
+
+.premio-fecha {
+font-size: 0.7rem;
+}
+
+.premio-numero {
+width: 20px;
+height: 20px;
+font-size: 0.6rem;
+}
+
+.controls-title {
+font-size: 1.8rem;
+text-align: center;
+margin-bottom: 10px;
+}
+
+.controls-section, .historial-section { max-width: 100%; width: 100%; }
+
+#ruleta {
+width: 280px;
+height: 280px;
+border-width: 6px;
+}
+
+#flecha {
+border-left-width: 18px;
+border-right-width: 18px;
+border-bottom-width: 35px;
+top: -35px;
+}
+
+.form-title {
+font-size: 1.4rem;
+}
+
+#codigo {
+padding: 12px 15px;
+font-size: 0.95rem;
+}
+
+#validarBtn {
+padding: 12px 18px;
+font-size: 0.9rem;
+}
+
+#girarBtn {
+min-width: 200px;
+padding: 14px 30px;
+font-size: 0.9rem;
+}
+
+#mensaje {
+font-size: 0.85rem;
+padding: 8px 14px;
+margin-top: 8px;
+}
+
+.popup-content {
+padding: 25px;
+max-width: 340px;
+}
+
+.popup-title {
+font-size: 2.2rem;
+margin-bottom: 15px;
+}
+
+.popup-prize {
+font-size: 1.2rem;
+padding: 10px;
+margin: 15px 0;
+}
+
+.popup-message {
+font-size: 0.8rem;
+margin-top: 20px;
+}
+
+.popup-btn {
+padding: 10px 20px;
+font-size: 0.95rem;
+}
+
+/* Ajustar formas de fondo para móviles */
+.shape:nth-child(1) { width: 50px; height: 50px; }
+.shape:nth-child(2) { width: 70px; height: 70px; }
+.shape:nth-child(3) { width: 40px; height: 40px; }
+.shape:nth-child(4) { width: 60px; height: 60px; }
+
+.particle.heart { font-size: 16px; }
+.particle.sparkle { width: 6px; height: 6px; }
+.particle.star { font-size: 12px; }
+}
+
+/* Móviles muy pequeños */
 @media (max-width: 360px) {
-  #ruleta { width: 260px; height: 260px; border-width: 5px; }
-  .controls-title { font-size: 1.6rem; }
-  #girarBtn { min-width: 180px; padding: 12px 25px; font-size: .85rem; }
+.controls-title {
+font-size: 1.6rem;
+}
+
+#ruleta {
+width: 250px;
+height: 250px;
+border-width: 5px;
+}
+
+#flecha {
+border-left-width: 15px;
+border-right-width: 15px;
+border-bottom-width: 30px;
+top: -30px;
+}
+
+#girarBtn {
+min-width: 180px;
+padding: 12px 25px;
+font-size: 0.85rem;
+}
+
+.popup-content {
+padding: 20px;
+max-width: 300px;
+}
+
+.popup-title {
+font-size: 2rem;
+}
 }
 </style>
 </head>
@@ -441,7 +905,7 @@ body.force-dark { color-scheme: dark; }
 <div class="screen-loading" id="screen-loading">
   <div style="text-align:center">
     <div style="font-size:3rem;margin-bottom:20px">🎰</div>
-    <div>Cargando ruleta...</div>
+    <div style="color:var(--texto-oscuro)">Cargando ruleta...</div>
     <div class="spinner-lg" style="margin-top:20px"></div>
   </div>
 </div>
@@ -452,30 +916,28 @@ body.force-dark { color-scheme: dark; }
   <p id="error-msg">Error</p>
 </div>
 
-<!-- Notificacion -->
-<div class="notif" id="notif">
-  <div class="notif-inner">
-    <span class="notif-text" id="notif-text"></span>
-    <button class="notif-close" id="notif-close">&times;</button>
-  </div>
+<!-- Banner de notificaciones -->
+<div id="notification-banner" class="notification-banner">
+<div class="notification-content">
+<span class="notification-text"></span>
+<button class="notification-close" onclick="cerrarNotificacion()">×</button>
+</div>
 </div>
 
-<!-- Popup premio -->
-<div class="popup-overlay" id="popup">
-  <div class="popup-content">
-    <div class="popup-title" id="popup-title">¡FELICIDADES!</div>
-    <div class="popup-prize" id="popup-prize"></div>
-    <div class="popup-message" id="popup-message"></div>
-    <div class="popup-buttons">
-      <button class="popup-btn" id="popup-close-btn">✨ ¡Genial! ✨</button>
-      <button class="popup-btn share" id="popup-share-btn">📤 Compartir</button>
-    </div>
-  </div>
+<div class="background-shapes">
+<div class="shape"></div> <div class="shape"></div> <div class="shape"></div> <div class="shape"></div>
 </div>
 
-<!-- Fondo -->
-<div class="bg-shapes">
-  <div class="shape"></div><div class="shape"></div><div class="shape"></div><div class="shape"></div>
+<div id="popup-overlay" class="popup-overlay">
+<div class="popup-content">
+<div class="popup-title" id="popup-title">¡FELICITACIONES!</div>
+<div id="popup-prize" class="popup-prize"></div>
+<div class="popup-message" id="popup-message"></div>
+<div class="popup-buttons">
+<button class="popup-btn" id="popupCloseBtn">✨ ¡Genial! ✨</button>
+<button class="popup-btn share" id="popup-share-btn">📤 Compartir</button>
+</div>
+</div>
 </div>
 
 <!-- Controles superiores -->
@@ -483,49 +945,50 @@ body.force-dark { color-scheme: dark; }
   <button class="top-btn" id="btn-mute" title="Silenciar">🔊</button>
 </div>
 
-<!-- Contenido principal -->
 <div class="container">
-  <div class="main-content">
-
-    <!-- COLUMNA IZQUIERDA: Controles -->
-    <div class="controls-container">
-      <div class="controls-title" id="model-name">PlayOFans</div>
-      <div class="controls-section">
-        <div class="form-title" id="form-title">💝 Codigo Exclusivo</div>
-        <div id="form-code">
-          <input type="text" id="codigo" placeholder="Introduce tu codigo" maxlength="20" autocomplete="off">
-          <button class="btn" id="validarBtn" style="margin-top:12px">✨ Validar Código ✨</button>
-        </div>
-        <div class="spins-info" id="spins-info"></div>
-      </div>
-    </div>
-
-    <!-- COLUMNA CENTRAL: Ruleta (Canvas) -->
-    <div class="ruleta-section">
-      <div id="ruleta">
-        <div id="flecha"></div>
-        <canvas id="opciones" width="450" height="450" class="is-idling"></canvas>
-      </div>
-      <button class="btn" id="girarBtn" disabled>🎯 ¡GIRAR RULETA! 🎯</button>
-    </div>
-
-    <!-- COLUMNA DERECHA: Historial -->
-    <div class="historial-container" id="historial-container">
-      <div class="historial-section">
-        <div class="historial-title" id="historial-title">🏆 Mis Premios</div>
-        <div class="historial-lista" id="historial-lista">
-          <div class="historial-vacio" id="historial-vacio">Aun no has ganado premios.<br>¡Gira la ruleta para empezar!</div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-  <div class="message-section">
-    <div id="mensaje">✨ Ingresa tu codigo para comenzar ✨</div>
-  </div>
+<div class="main-content">
+<div class="controls-container">
+<div class="controls-title" id="tituloModelo">PlayOFans</div>
+<div class="controls-section">
+<div class="form-title">💝 Código Exclusivo</div>
+<div id="formulario">
+<input type="text" id="codigo" placeholder="Introduce tu código exclusivo" maxlength="20" autocomplete="off">
+<button id="validarBtn" class="button">✨ Validar Código ✨</button>
+</div>
+</div>
+</div>
+<div class="ruleta-section">
+<div id="ruleta">
+<div id="flecha"></div>
+<canvas id="opciones" width="450" height="450"></canvas>
+</div>
+<button id="girarBtn" class="button" disabled>🎯 ¡GIRAR RULETA! 🎯</button>
+</div>
+<!-- Historial de premios -->
+<div class="historial-container" id="historial-container">
+<div class="historial-section">
+<div class="historial-title">🏆 Mis Premios</div>
+<div class="historial-lista" id="historial-lista">
+<div class="historial-vacio" id="historial-vacio">
+Aún no has ganado premios.<br>
+¡Gira la ruleta para empezar!
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="message-section">
+<div id="mensaje">✨ Ingresa tu código para comenzar la experiencia mágica ✨</div>
+</div>
 </div>
 
 <script>
+// =============================================================================
+// VARIABLES GLOBALES
+// =============================================================================
+let premiosDisponibles = [];
+const coloresPremios = [ "#ff6b9d", "#c44569", "#f8b500", "#ff9ff3", "#54a0ff", "#5f27cd", "#ff9f43", "#10ac84", "#ee5a24", "#0abde3", "#feca57", "#ff6348" ];
+
 // =============================================================================
 // TEMAS
 // =============================================================================
@@ -534,116 +997,155 @@ const THEMES = {
     bgA:'#1a0a1e', bgB:'#2d1b3d', bgC:'#1e0a28',
     accent:'#ff0066', accent2:'#b300ff',
     text:'#ffffff', textSoft:'#e0b3ff',
-    glass:'rgba(30,10,40,0.85)', glassBorder:'rgba(179,0,255,0.3)',
-    accentSoft:'rgba(255,0,102,0.15)', accentBorder:'rgba(255,0,102,0.5)',
+    glass:'rgba(30,10,40,0.85)',
+    glassBorder:'rgba(179,0,255,0.3)',
+    accentSoft:'rgba(255,0,102,0.15)',
+    accentBorder:'rgba(255,0,102,0.5)',
     emoji:'💎',
-    sliceColors:['#ff6b9d','#c44569','#f8b500','#ff9ff3','#54a0ff','#5f27cd','#ff9f43','#10ac84','#ee5a24','#0abde3']
+    sliceColors:['#ff6b9d','#c44569','#f8b500','#ff9ff3','#54a0ff','#5f27cd','#ff9f43','#10ac84','#ee5a24','#0abde3','#feca57','#ff6348']
   },
   rose_gold: {
-    bgA:'#1a0f0f', bgB:'#2d1a1a', bgC:'#1e0e0e',
-    accent:'#e8a87c', accent2:'#d4a373',
-    text:'#fff5eb', textSoft:'#f0d9c0',
-    glass:'rgba(40,20,20,0.85)', glassBorder:'rgba(232,168,124,0.3)',
-    accentSoft:'rgba(232,168,124,0.15)', accentBorder:'rgba(212,163,115,0.5)',
+    bgA:'#1a0a10', bgB:'#2d1520', bgC:'#1e0a15',
+    accent:'#ff69b4', accent2:'#ffd700',
+    text:'#fff0f5', textSoft:'#ffb6c1',
+    glass:'rgba(40,10,20,0.85)',
+    glassBorder:'rgba(255,215,0,0.3)',
+    accentSoft:'rgba(255,105,180,0.15)',
+    accentBorder:'rgba(255,105,180,0.5)',
     emoji:'🌹',
-    sliceColors:['#e8a87c','#d4a373','#c9956b','#deb887','#f4c2a1','#e6b08a','#ccac93','#f0d5b8','#d4a57b','#c4956a']
+    sliceColors:['#ff69b4','#ffd700','#ff85a2','#ffcc00','#ff1493','#ffa500','#ff77aa','#ffb300','#ff4499','#ff8c00','#ff99bb','#ffc107']
   },
   neon_cyber: {
-    bgA:'#0a0a0f', bgB:'#0f1628', bgC:'#050510',
-    accent:'#00f0ff', accent2:'#7b2ff7',
-    text:'#e0f7ff', textSoft:'#80d0e0',
-    glass:'rgba(10,15,30,0.9)', glassBorder:'rgba(0,240,255,0.3)',
-    accentSoft:'rgba(0,240,255,0.1)', accentBorder:'rgba(123,47,247,0.5)',
+    bgA:'#000814', bgB:'#001233', bgC:'#000814',
+    accent:'#00f5ff', accent2:'#7700ff',
+    text:'#e0ffff', textSoft:'#80dfff',
+    glass:'rgba(0,8,20,0.9)',
+    glassBorder:'rgba(0,245,255,0.3)',
+    accentSoft:'rgba(0,245,255,0.1)',
+    accentBorder:'rgba(119,0,255,0.5)',
     emoji:'⚡',
-    sliceColors:['#00f0ff','#7b2ff7','#ff0080','#00ff88','#ffaa00','#ff4444','#00ccff','#aa44ff','#ff6600','#44ffaa']
+    sliceColors:['#00f5ff','#7700ff','#0099ff','#ff00ff','#00ccff','#3300ff','#00ffcc','#ff0066','#0066ff','#ff3399','#00e5ff','#cc00ff']
   },
   gold_vip: {
-    bgA:'#0a0a00', bgB:'#1a1500', bgC:'#0f0d00',
-    accent:'#ffd700', accent2:'#daa520',
-    text:'#fff8dc', textSoft:'#d4c680',
-    glass:'rgba(20,18,0,0.9)', glassBorder:'rgba(255,215,0,0.3)',
-    accentSoft:'rgba(255,215,0,0.1)', accentBorder:'rgba(218,165,32,0.5)',
+    bgA:'#0d0d00', bgB:'#1a1500', bgC:'#0a0800',
+    accent:'#ffd700', accent2:'#ff8c00',
+    text:'#fff9e6', textSoft:'#ffd966',
+    glass:'rgba(13,10,0,0.9)',
+    glassBorder:'rgba(255,215,0,0.3)',
+    accentSoft:'rgba(255,215,0,0.1)',
+    accentBorder:'rgba(255,140,0,0.5)',
     emoji:'👑',
-    sliceColors:['#ffd700','#daa520','#b8860b','#f0c040','#e6b800','#ccac00','#ffc800','#d4a017','#c5941b','#b8960f']
+    sliceColors:['#ffd700','#ff8c00','#ffcc00','#ff6600','#ffb300','#ff4500','#ffa500','#ff3300','#ffaa00','#ff2200','#ff9900','#ff1100']
   },
   red_hot: {
-    bgA:'#1a0000', bgB:'#2d0a0a', bgC:'#1e0505',
-    accent:'#ff1a1a', accent2:'#cc0000',
-    text:'#ffffff', textSoft:'#ff9999',
-    glass:'rgba(40,5,5,0.9)', glassBorder:'rgba(255,26,26,0.3)',
-    accentSoft:'rgba(255,26,26,0.1)', accentBorder:'rgba(204,0,0,0.5)',
+    bgA:'#1a0000', bgB:'#2d0000', bgC:'#1a0000',
+    accent:'#ff2200', accent2:'#ff6600',
+    text:'#fff5f0', textSoft:'#ffccbb',
+    glass:'rgba(26,0,0,0.9)',
+    glassBorder:'rgba(255,34,0,0.3)',
+    accentSoft:'rgba(255,34,0,0.1)',
+    accentBorder:'rgba(255,102,0,0.5)',
     emoji:'🔥',
-    sliceColors:['#ff1a1a','#cc0000','#ff4444','#e60000','#ff6666','#b30000','#ff3333','#990000','#ff5555','#dd0000']
+    sliceColors:['#ff0000','#cc0000','#ff3300','#990000','#ff6600','#cc3300','#ff2200','#aa0000','#ff4400','#880000','#ff1100','#ff5500']
   },
   halloween: {
     bgA:'#0a0510', bgB:'#1a0f20', bgC:'#100818',
     accent:'#ff6600', accent2:'#8b00ff',
     text:'#ffe0c0', textSoft:'#cc9966',
-    glass:'rgba(20,10,30,0.9)', glassBorder:'rgba(255,102,0,0.3)',
-    accentSoft:'rgba(255,102,0,0.1)', accentBorder:'rgba(139,0,255,0.5)',
+    glass:'rgba(20,10,30,0.9)',
+    glassBorder:'rgba(255,102,0,0.3)',
+    accentSoft:'rgba(255,102,0,0.1)',
+    accentBorder:'rgba(139,0,255,0.5)',
     emoji:'🎃',
-    sliceColors:['#ff6600','#8b00ff','#ff8800','#6a0dad','#ffaa00','#4b0082','#ff9933','#7722aa','#cc5500','#9933ff']
+    sliceColors:['#ff6600','#8b00ff','#ff8800','#6a0dad','#ffaa00','#4b0082','#ff9933','#7722aa','#cc5500','#9933ff','#ff7700','#6600cc']
   },
   navidad: {
     bgA:'#0a1a0a', bgB:'#1a0a0a', bgC:'#0f150a',
     accent:'#ff0000', accent2:'#00aa00',
     text:'#fff5f0', textSoft:'#ffcccc',
-    glass:'rgba(15,10,10,0.9)', glassBorder:'rgba(255,0,0,0.3)',
-    accentSoft:'rgba(255,0,0,0.1)', accentBorder:'rgba(0,170,0,0.5)',
+    glass:'rgba(15,10,10,0.9)',
+    glassBorder:'rgba(255,0,0,0.3)',
+    accentSoft:'rgba(255,0,0,0.1)',
+    accentBorder:'rgba(0,170,0,0.5)',
     emoji:'❄️',
-    sliceColors:['#ff0000','#00aa00','#ffd700','#cc0000','#008800','#ffcc00','#ee0000','#006600','#ffb800','#dd0000']
+    sliceColors:['#ff0000','#00aa00','#ffd700','#cc0000','#008800','#ffcc00','#ee0000','#006600','#ffb800','#dd0000','#004400','#ff9900']
   },
   san_valentin: {
     bgA:'#1a0510', bgB:'#2d0a1a', bgC:'#1e0512',
     accent:'#ff1493', accent2:'#ff69b4',
     text:'#fff0f5', textSoft:'#ffb6c1',
-    glass:'rgba(40,8,20,0.9)', glassBorder:'rgba(255,20,147,0.3)',
-    accentSoft:'rgba(255,20,147,0.1)', accentBorder:'rgba(255,105,180,0.5)',
+    glass:'rgba(40,8,20,0.9)',
+    glassBorder:'rgba(255,20,147,0.3)',
+    accentSoft:'rgba(255,20,147,0.1)',
+    accentBorder:'rgba(255,105,180,0.5)',
     emoji:'❤️‍🔥',
-    sliceColors:['#ff1493','#ff69b4','#ff007f','#ff85a2','#ff3385','#ff5599','#e6005c','#ff4d94','#cc0066','#ff77aa']
+    sliceColors:['#ff1493','#ff69b4','#ff007f','#ff85a2','#ff3385','#ff5599','#e6005c','#ff4d94','#cc0066','#ff77aa','#ff2277','#ff99bb']
   },
   summer: {
     bgA:'#001a1a', bgB:'#002020', bgC:'#001515',
     accent:'#00d4aa', accent2:'#ff8c00',
     text:'#e0fff5', textSoft:'#80ddc0',
-    glass:'rgba(0,25,25,0.9)', glassBorder:'rgba(0,212,170,0.3)',
-    accentSoft:'rgba(0,212,170,0.1)', accentBorder:'rgba(255,140,0,0.5)',
+    glass:'rgba(0,25,25,0.9)',
+    glassBorder:'rgba(0,212,170,0.3)',
+    accentSoft:'rgba(0,212,170,0.1)',
+    accentBorder:'rgba(255,140,0,0.5)',
     emoji:'🌴',
-    sliceColors:['#00d4aa','#ff8c00','#00bfa5','#ff6347','#20b2aa','#ffa500','#48d1cc','#ff7f50','#00ced1','#ffb347']
+    sliceColors:['#00d4aa','#ff8c00','#00bfa5','#ff6347','#20b2aa','#ffa500','#48d1cc','#ff7f50','#00ced1','#ffb347','#00a896','#ff9933']
   },
   galaxy: {
     bgA:'#0a0020', bgB:'#150040', bgC:'#0d0030',
     accent:'#7c4dff', accent2:'#00e5ff',
     text:'#e8e0ff', textSoft:'#b0a0d0',
-    glass:'rgba(15,0,40,0.9)', glassBorder:'rgba(124,77,255,0.3)',
-    accentSoft:'rgba(124,77,255,0.1)', accentBorder:'rgba(0,229,255,0.5)',
+    glass:'rgba(15,0,40,0.9)',
+    glassBorder:'rgba(124,77,255,0.3)',
+    accentSoft:'rgba(124,77,255,0.1)',
+    accentBorder:'rgba(0,229,255,0.5)',
     emoji:'🌙',
-    sliceColors:['#7c4dff','#00e5ff','#e040fb','#18ffff','#b388ff','#84ffff','#ea80fc','#a7ffeb','#d500f9','#1de9b6']
+    sliceColors:['#7c4dff','#00e5ff','#e040fb','#18ffff','#b388ff','#84ffff','#ea80fc','#a7ffeb','#d500f9','#1de9b6','#aa00ff','#00b8d4']
   }
 };
+
+let temaActual = THEMES.dark_luxury;
+
+function aplicarTema(themeId) {
+  const t = THEMES[themeId] || THEMES.dark_luxury;
+  temaActual = t;
+  const r = document.documentElement.style;
+  r.setProperty('--bg-fondo-a', t.bgA);
+  r.setProperty('--bg-fondo-b', t.bgB);
+  r.setProperty('--bg-fondo-c', t.bgC);
+  r.setProperty('--accent-principal', t.accent);
+  r.setProperty('--accent-secundario', t.accent2);
+  r.setProperty('--texto-oscuro', t.text);
+  r.setProperty('--texto-suave', t.textSoft);
+  r.setProperty('--glass-white', t.glass);
+  r.setProperty('--glass-border', t.glassBorder);
+  r.setProperty('--accent-soft', t.accentSoft);
+  r.setProperty('--accent-border', t.accentBorder);
+  // Actualizar colores de la ruleta con los del tema
+  coloresPremios.splice(0, coloresPremios.length, ...t.sliceColors);
+  // Redibujar la ruleta con los nuevos colores
+  if (premiosDisponibles.length > 0) dibujarRuletaCompleta();
+}
 
 // =============================================================================
 // ESTADO GLOBAL
 // =============================================================================
-let slug = '';
+let SLUG = '';
 let config = null;
-let currentTheme = THEMES.dark_luxury;
 let premiosActuales = [];
-let premiosDisponibles = [];
+let tiradasRestantes = 0;
 let nombreUsuario = '';
 let codigoActual = '';
-let tiradasRestantes = 0;
-let totalSpins = 0;
-let expiresAt = null;
 let isSpinning = false;
 let isMuted = false;
-let historial = [];
-let historialCount = 0;
+let expiresAt = null;
+let mensajeBienvenida = '';
+let mensajePremio = '';
 
-// Sonidos
-const soundClick = new Audio('sounds/click.wav');
-const soundSpin = new Audio('sounds/spin.wav');
-const soundWin = new Audio('sounds/win.wav');
+// Variables para el historial de premios
+let historialPremios = [];
+let contadorPremios = 0;
 
 // =============================================================================
 // getCurrentRotation — EXACT from original
@@ -666,414 +1168,310 @@ function getCurrentRotation(element) {
     return 0;
 }
 
+const soundClick = new Audio('sounds/click.wav');
+const soundWin = new Audio('sounds/win.wav');
+const soundSpin = new Audio('sounds/spin.wav');
+
 // =============================================================================
-// NOTIFICACIONES
+// SISTEMA DE NOTIFICACIONES
 // =============================================================================
-function mostrarNotificacion(msg, type) {
-  const el = document.getElementById('notif');
-  document.getElementById('notif-text').textContent = msg;
-  el.className = `notif ${type || 'success'}`;
-  el.style.display = 'flex';
-  setTimeout(() => el.classList.add('show'), 10);
-  setTimeout(cerrarNotif, 4000);
+function mostrarNotificacion(mensaje, tipo = 'success') {
+const banner = document.getElementById('notification-banner');
+const textElement = banner.querySelector('.notification-text');
+
+textElement.textContent = mensaje;
+banner.className = `notification-banner ${tipo}`;
+
+banner.style.display = 'flex';
+setTimeout(() => {
+banner.classList.add('show');
+}, 10);
+
+setTimeout(() => {
+cerrarNotificacion();
+}, 4000);
 }
-function cerrarNotif() {
-  const el = document.getElementById('notif');
-  el.classList.remove('show');
-  setTimeout(() => el.style.display = 'none', 400);
+
+function cerrarNotificacion() {
+const banner = document.getElementById('notification-banner');
+banner.classList.remove('show');
+
+setTimeout(() => {
+banner.style.display = 'none';
+}, 400);
 }
 
 // =============================================================================
-// MENSAJE
-// =============================================================================
-function mostrarMensaje(html) {
-  const el = document.getElementById('mensaje');
-  if (el) el.innerHTML = html;
-}
-
-// =============================================================================
-// HISTORIAL
+// FUNCIONES DEL HISTORIAL DE PREMIOS
 // =============================================================================
 function inicializarHistorial() {
-  try {
-    const saved = localStorage.getItem(`pof_historial_${slug}_${codigoActual}`);
-    if (saved) {
-      historial = JSON.parse(saved);
-      historialCount = historial.length;
-    }
-  } catch (e) {
-    historial = [];
-  }
-  actualizarHistorialVisual();
-  document.getElementById('historial-container').classList.add('visible');
+const historialGuardado = localStorage.getItem(`pof_historial_${SLUG}_${codigoActual}`);
+if (historialGuardado) {
+try {
+historialPremios = JSON.parse(historialGuardado);
+contadorPremios = historialPremios.length;
+actualizarHistorialVisual();
+} catch (error) {
+historialPremios = [];
+contadorPremios = 0;
+}
+} else {
+historialPremios = [];
+contadorPremios = 0;
+}
+
+if (codigoActual) {
+mostrarHistorial();
+}
 }
 
 function agregarPremioAlHistorial(premio) {
-  historialCount++;
-  historial.unshift({
-    id: historialCount,
-    nombre: premio,
-    fecha: new Date().toLocaleString('es-ES', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }),
-  });
-  try {
-    localStorage.setItem(`pof_historial_${slug}_${codigoActual}`, JSON.stringify(historial));
-  } catch (e) {}
-  actualizarHistorialVisual();
+contadorPremios++;
+const nuevoPremio = {
+id: contadorPremios,
+nombre: premio,
+fecha: new Date().toLocaleString('es-ES', {
+day: '2-digit',
+month: '2-digit',
+year: 'numeric',
+hour: '2-digit',
+minute: '2-digit'
+}),
+timestamp: Date.now()
+};
+
+historialPremios.unshift(nuevoPremio);
+
+try {
+localStorage.setItem(`pof_historial_${SLUG}_${codigoActual}`, JSON.stringify(historialPremios));
+} catch (error) {}
+
+actualizarHistorialVisual();
+mostrarHistorial();
 }
 
 function actualizarHistorialVisual() {
-  const lista = document.getElementById('historial-lista');
-  const vacio = document.getElementById('historial-vacio');
+const historialLista = document.getElementById('historial-lista');
+const historialVacio = document.getElementById('historial-vacio');
 
-  if (historial.length === 0) {
-    if (vacio) vacio.style.display = 'block';
-    lista.querySelectorAll('.premio-item').forEach(el => el.remove());
-    return;
-  }
+if (!historialLista) return;
 
-  if (vacio) vacio.style.display = 'none';
+if (historialPremios.length === 0) {
+if (historialVacio) {
+historialVacio.style.display = 'block';
+}
+return;
+}
 
-  // Construir solo los items sin recrear historial-vacio
-  lista.querySelectorAll('.premio-item').forEach(el => el.remove());
+if (historialVacio) {
+historialVacio.style.display = 'none';
+}
 
-  historial.forEach((p, i) => {
-    const div = document.createElement('div');
-    div.className = 'premio-item';
-    div.style.animation = `fadeInUp .5s ease ${i * .1}s both`;
-    div.innerHTML = `
-      <div class="premio-numero">${p.id}</div>
-      <div class="premio-nombre">${escapeHtml(p.nombre)}</div>
-      <div class="premio-fecha">🕐 ${p.fecha}</div>
-    `;
-    lista.appendChild(div);
-  });
+let historialHTML = '';
+historialPremios.forEach((premio, index) => {
+historialHTML += `
+                   <div class="premio-item" style="animation: fadeInUp 0.5s ease ${index * 0.1}s both;">
+                       <div class="premio-numero">${premio.id}</div>
+                       <div class="premio-nombre">${escapeHtml(premio.nombre)}</div>
+                       <div class="premio-fecha">
+                           🕐 ${premio.fecha}
+                       </div>
+                   </div>
+               `;
+});
 
-  lista.scrollTop = 0;
+historialLista.innerHTML = historialHTML;
+
+if (historialPremios.length > 0) {
+setTimeout(() => {
+historialLista.scrollTop = 0;
+}, 100);
+}
 }
 
 function escapeHtml(t) {
   return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+function mostrarHistorial() {
+const historialContainer = document.getElementById('historial-container');
+if (historialContainer) {
+historialContainer.classList.add('visible');
+}
+}
+
+function verificarProgresoPremiosUnicos() {
+    if (!premiosActuales || premiosActuales.length === 0) return { total: 0, ganados: 0, restantes: 0 };
+    const premiosYaGanados = historialPremios.map(item => item.nombre);
+    const premiosUnicos = [...new Set(premiosActuales)];
+    const premiosUnicosGanados = [...new Set(premiosYaGanados.filter(p => premiosUnicos.includes(p)))];
+    return {
+        total: premiosUnicos.length,
+        ganados: premiosUnicosGanados.length,
+        restantes: premiosUnicos.length - premiosUnicosGanados.length
+    };
+}
+
 // =============================================================================
-// DIBUJAR RULETA COMPLETA — Canvas
+// DIBUJAR RULETA COMPLETA — Canvas (EXACTA del original)
 // =============================================================================
 function dibujarRuletaCompleta() {
-  const canvas = document.getElementById('opciones');
-  const ctx = canvas.getContext('2d');
-  const n = premiosActuales.length;
-  if (n < 2) return;
-
-  const w = canvas.width;
-  const h = canvas.height;
-  const cx = w / 2;
-  const cy = h / 2;
-  const r = Math.min(cx, cy) - 5;
-
-  ctx.clearRect(0, 0, w, h);
-
-  const sliceAngle = (2 * Math.PI) / n;
-  const colors = currentTheme.sliceColors;
-
-  for (let i = 0; i < n; i++) {
-    const startAngle = sliceAngle * i;
-    const endAngle = startAngle + sliceAngle;
-    const color = colors[i % colors.length];
-
-    // Draw slice
-    ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.arc(cx, cy, r, startAngle, endAngle);
-    ctx.closePath();
-    ctx.fillStyle = color;
-    ctx.fill();
-
-    // Slice border
-    ctx.strokeStyle = 'rgba(255,255,255,0.4)';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-
-    // Draw text
-    ctx.save();
-    const midAngle = startAngle + sliceAngle / 2;
-    const textR = r * 0.65;
-    const tx = cx + textR * Math.cos(midAngle);
-    const ty = cy + textR * Math.sin(midAngle);
-
-    ctx.translate(tx, ty);
-    let rotacion = midAngle;
-    if (rotacion > Math.PI/2 && rotacion < 3*Math.PI/2) rotacion += Math.PI;
-    ctx.rotate(rotacion);
-
-    // Clean text (remove emojis)
-    const clean = premiosActuales[i].replace(/[\u{1F300}-\u{1F9FF}]/gu, '').trim().toUpperCase();
-    const words = clean.split(' ');
-    let lines = [];
-    let line = '';
-    words.forEach(w => {
-      if ((line + w).length > 10 && line) {
-        lines.push(line.trim());
-        line = w + ' ';
-      } else {
-        line += w + ' ';
-      }
-    });
-    lines.push(line.trim());
-
-    const fontSize = n > 6 ? 11 : 14;
-    ctx.font = `bold ${fontSize}px Poppins, sans-serif`;
-    ctx.fillStyle = '#fff';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-
-    // Text shadow effect
-    ctx.shadowColor = 'rgba(0,0,0,0.7)';
-    ctx.shadowBlur = 3;
-    ctx.shadowOffsetX = 1;
-    ctx.shadowOffsetY = 1;
-
-    const lineH = fontSize + 3;
-    const startY = -(lines.length - 1) * lineH / 2;
-
-    lines.forEach((l, j) => {
-      ctx.fillText(l, 0, startY + j * lineH);
-    });
-
-    ctx.shadowColor = 'transparent';
-    ctx.shadowBlur = 0;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
-    ctx.restore();
-  }
-
-  // Center circle
-  ctx.beginPath();
-  ctx.arc(cx, cy, 38, 0, 2 * Math.PI);
-  ctx.fillStyle = currentTheme.accent;
-  ctx.globalAlpha = 0.8;
-  ctx.fill();
-  ctx.globalAlpha = 1;
-  ctx.strokeStyle = 'rgba(255,255,255,0.8)';
-  ctx.lineWidth = 3;
-  ctx.stroke();
-
-  // Center emoji
-  ctx.font = '32px serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(currentTheme.emoji, cx, cy);
+if (!premiosDisponibles || premiosDisponibles.length === 0) {
+return;
 }
 
-// =============================================================================
-// APPLY THEME
-// =============================================================================
-function applyTheme(themeId) {
-  const t = THEMES[themeId] || THEMES.dark_luxury;
-  currentTheme = t;
-  const r = document.documentElement.style;
-  r.setProperty('--bg-fondo-a', t.bgA);
-  r.setProperty('--bg-fondo-b', t.bgB);
-  r.setProperty('--bg-fondo-c', t.bgC);
-  r.setProperty('--accent-principal', t.accent);
-  r.setProperty('--accent-secundario', t.accent2);
-  r.setProperty('--texto-oscuro', t.text);
-  r.setProperty('--texto-suave', t.textSoft);
-  r.setProperty('--glass-white', t.glass);
-  r.setProperty('--glass-border', t.glassBorder);
-  r.setProperty('--accent-soft', t.accentSoft);
-  r.setProperty('--accent-border', t.accentBorder);
+const canvas = document.getElementById('opciones');
+if (!canvas) return;
+
+const ctx = canvas.getContext('2d');
+const total = premiosDisponibles.length;
+const radio = 220;
+const centroX = 225;
+const centroY = 225;
+
+ctx.clearRect(0, 0, 450, 450);
+
+for (let i = 0; i < total; i++) {
+const anguloInicio = (2 * Math.PI / total) * i;
+const anguloFin = (2 * Math.PI / total) * (i + 1);
+
+ctx.save();
+ctx.beginPath();
+ctx.moveTo(centroX, centroY);
+ctx.arc(centroX, centroY, radio, anguloInicio, anguloFin);
+ctx.closePath();
+                ctx.fillStyle = coloresPremios[i % coloresPremios.length];
+                
+                const baseColor = coloresPremios[i % coloresPremios.length];
+                ctx.fillStyle = baseColor + 'E6';
+ctx.fill();
+                
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+                ctx.shadowBlur = 3;
+                ctx.shadowOffsetX = 1;
+                ctx.shadowOffsetY = 1;
+                ctx.fill();
+                
+ctx.clip();
+
+                ctx.fillStyle = "#ffffff";
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                ctx.shadowBlur = 4;
+                ctx.shadowOffsetX = 2;
+                ctx.shadowOffsetY = 2;
+                
+const anguloMedio = (anguloInicio + anguloFin) / 2;
+const distanciaTexto = radio * 0.65;
+const textoX = centroX + Math.cos(anguloMedio) * distanciaTexto;
+const textoY = centroY + Math.sin(anguloMedio) * distanciaTexto;
+
+ctx.translate(textoX, textoY);
+let rotacion = anguloMedio;
+if (rotacion > Math.PI/2 && rotacion < 3*Math.PI/2) rotacion += Math.PI;
+ctx.rotate(rotacion);
+
+let textoLimpio = premiosDisponibles[i].replace(/[\u{1F300}-\u{1F9FF}]/gu, '').trim().toUpperCase();
+const palabras = textoLimpio.split(' ');
+let lineas = [], lineaActual = '';
+palabras.forEach(palabra => {
+if ((lineaActual + palabra).length > 10 && lineaActual) {
+lineas.push(lineaActual.trim());
+lineaActual = palabra + ' ';
+} else {
+lineaActual += palabra + ' ';
+}
+});
+lineas.push(lineaActual.trim());
+
+ctx.textAlign = "center";
+ctx.textBaseline = "middle";
+
+let fontSize = 16;
+let lineHeight = 18;
+
+if (window.innerWidth <= 360) {
+fontSize = 11;
+lineHeight = 13;
+} else if (window.innerWidth <= 480) {
+fontSize = 12;
+lineHeight = 14;
+} else if (window.innerWidth <= 768) {
+fontSize = 14;
+lineHeight = 16;
+} else if (window.innerWidth <= 992) {
+fontSize = 15;
+lineHeight = 17;
 }
 
-// =============================================================================
-// OG TAGS
-// =============================================================================
-function updateOGTags(cfg) {
-  const url = `https://playofans.com/${slug}/ruleta`;
-  setMeta('og:title', `${cfg.display_name} — Ruleta de Premios`);
-  setMeta('og:description', `Gira la ruleta de ${cfg.display_name} y gana premios exclusivos`);
-  setMeta('og:url', url);
-  document.title = `${cfg.display_name} — Ruleta | PlayOFans`;
-}
-function setMeta(prop, content) {
-  let el = document.querySelector(`meta[property="${prop}"]`);
-  if (el) el.setAttribute('content', content);
+ctx.font = `bold ${fontSize}px Poppins, sans-serif`;
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+                ctx.shadowBlur = 4;
+                ctx.shadowOffsetX = 1;
+                ctx.shadowOffsetY = 1;
+
+const startY = -(lineas.length - 1) * lineHeight / 2;
+lineas.forEach((linea, index) => ctx.fillText(linea, 0, startY + (index * lineHeight)));
+ctx.restore();
 }
 
-// =============================================================================
-// INIT
-// =============================================================================
-document.addEventListener('DOMContentLoaded', init);
-
-async function init() {
-  // Extract slug from URL: /xvickyluna/ruleta -> "xvickyluna"
-  const parts = window.location.pathname.split('/').filter(Boolean);
-  slug = parts[0] || '';
-
-  if (!slug) return showError('Modelo no encontrado');
-
-  // Preloaded code from ?c=XXXX
-  const params = new URLSearchParams(window.location.search);
-  const preCode = params.get('c');
-
-  // Event listeners
-  document.getElementById('validarBtn').addEventListener('click', validarCodigo);
-  document.getElementById('codigo').addEventListener('keydown', e => { if (e.key === 'Enter') validarCodigo(); });
-  document.getElementById('girarBtn').addEventListener('click', girarRuleta);
-  document.getElementById('popup-close-btn').addEventListener('click', cerrarPopup);
-  document.getElementById('popup-share-btn').addEventListener('click', compartirPremio);
-  document.getElementById('btn-mute').addEventListener('click', toggleMute);
-  document.getElementById('notif-close').addEventListener('click', cerrarNotif);
-
-  // Load tenant config
-  try {
-    const res = await fetch(`/api/tenant-config?slug=${slug}`);
-    const data = await res.json();
-
-    if (res.status === 404) return showError('Modelo no encontrado');
-    if (res.status === 403) return showError(data.error || 'Esta ruleta no esta disponible');
-    if (!res.ok) return showError(data.error || 'Esta ruleta no esta disponible');
-
-    config = data;
-    premiosActuales = data.prizes || [];
-    premiosDisponibles = [...premiosActuales];
-
-    applyTheme(data.theme || 'dark_luxury');
-    updateOGTags(data);
-
-    document.getElementById('model-name').textContent = data.display_name || slug;
-
-    isMuted = !data.sound_enabled_default;
-    document.getElementById('btn-mute').textContent = isMuted ? '🔇' : '🔊';
-
-    if (data.force_dark_mode) document.body.classList.add('force-dark');
-
-    dibujarRuletaCompleta();
-    createParticles();
-
-    // Add idling class
-    document.getElementById('opciones').classList.add('is-idling');
-
-    // Hide loading screen
-    document.getElementById('screen-loading').style.display = 'none';
-
-    // If preloaded code
-    if (preCode) {
-      document.getElementById('codigo').value = preCode;
-      validarCodigo();
-    }
-
-    // Recovery: check pending token in localStorage
-    const savedRaw = localStorage.getItem(`pof_token_${slug}`);
-    if (savedRaw) {
-      try {
-        const parsed = JSON.parse(savedRaw);
-        if (parsed.code === codigoActual) {
-          // Token still pending — will be recovered on next spin
-        } else {
-          localStorage.removeItem(`pof_token_${slug}`);
-        }
-      } catch (e) {
-        localStorage.removeItem(`pof_token_${slug}`);
-      }
-    }
-
-  } catch (err) {
-    showError('Esta ruleta no esta disponible 🎰');
-  }
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.8)";
+            ctx.lineWidth = 2;
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+            ctx.shadowBlur = 2;
+            ctx.shadowOffsetX = 1;
+            ctx.shadowOffsetY = 1;
+            
+for (let i = 0; i < total; i++) {
+const anguloFin = (2 * Math.PI / total) * (i + 1);
+ctx.beginPath();
+ctx.moveTo(centroX, centroY);
+ctx.lineTo(centroX + radio * Math.cos(anguloFin), centroY + radio * Math.sin(anguloFin));
+ctx.stroke();
 }
 
-// =============================================================================
-// VALIDAR CODIGO
-// =============================================================================
-async function validarCodigo() {
-    if (!isMuted) soundClick.play().catch(()=>{});
-    const codigoInput = document.getElementById('codigo');
-    const validarBtn = document.getElementById('validarBtn');
-    const codigo = codigoInput.value.trim().toUpperCase();
+let circleRadius = 40;
+let emojiSize = 40;
 
-    if (!codigo) {
-        mostrarMensaje("❌ Por favor ingresa un código.");
-        codigoInput.style.animation = 'shake 0.5s ease-in-out';
-        setTimeout(() => codigoInput.style.animation = '', 500);
-        return;
-    }
+if (window.innerWidth <= 360) {
+circleRadius = 28;
+emojiSize = 28;
+} else if (window.innerWidth <= 480) {
+circleRadius = 32;
+emojiSize = 32;
+} else if (window.innerWidth <= 768) {
+circleRadius = 35;
+emojiSize = 35;
+} else if (window.innerWidth <= 992) {
+circleRadius = 38;
+emojiSize = 38;
+}
 
-    validarBtn.disabled = true;
-    validarBtn.textContent = '⏳ Validando...';
-    mostrarMensaje("🔍 Validando tu código...");
+ctx.beginPath();
+ctx.arc(centroX, centroY, circleRadius, 0, 2 * Math.PI);
+            
+            const gradient = ctx.createRadialGradient(centroX, centroY, 0, centroX, centroY, circleRadius);
+            gradient.addColorStop(0, temaActual.accent + 'E6');
+            gradient.addColorStop(0.7, temaActual.accent + 'B3');
+            gradient.addColorStop(1, temaActual.accent + '80');
+            
+            ctx.fillStyle = gradient;
+ctx.fill();
+            
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.8)";
+            ctx.lineWidth = 3;
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+            ctx.shadowBlur = 5;
+ctx.stroke();
 
-    try {
-        const response = await fetch('/api/validate-code', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ slug: slug, codigoId: codigo, fanName: '' })
-        });
-        const data = await response.json();
-
-        if (!response.ok) {
-            mostrarNotificacion(data.error || 'Codigo no valido', 'error');
-            mostrarMensaje(`❌ ${data.error || 'Codigo no valido'}`);
-            codigoInput.style.animation = 'shake 0.5s ease-in-out';
-            setTimeout(() => codigoInput.style.animation = '', 500);
-            validarBtn.disabled = false;
-            validarBtn.textContent = '✨ Validar Código ✨';
-            return;
-        }
-
-        // Success
-        codigoActual = codigo;
-        nombreUsuario = data.fan_name;
-        tiradasRestantes = data.remaining_spins;
-        totalSpins = data.total_spins;
-
-        // Prizes from code or global
-        if (data.prizes && Array.isArray(data.prizes) && data.prizes.length >= 2) {
-            premiosActuales = [...data.prizes];
-            premiosDisponibles = [...data.prizes];
-            dibujarRuletaCompleta();
-        }
-
-        // Expires at
-        if (data.expires_at) expiresAt = new Date(data.expires_at);
-
-        mostrarNotificacion(`¡Bienvenid@ ${nombreUsuario}! Código válido con ${tiradasRestantes} tirada(s) 🎉`, 'success');
-
-        // Show welcome message
-        if (data.welcome_message) {
-            mostrarMensaje(data.welcome_message);
-        } else {
-            mostrarMensaje(`💖 ¡Hola ${nombreUsuario}! Tienes ${tiradasRestantes} tirada(s). ¡Mucha suerte!`);
-        }
-
-        // Enable spin button
-        const girarBtn = document.getElementById('girarBtn');
-        if (tiradasRestantes > 0) {
-            girarBtn.disabled = false;
-            girarBtn.textContent = '✨ Girar Ruleta ✨';
-        } else {
-            girarBtn.disabled = true;
-            girarBtn.textContent = '😢 Sin tiradas';
-            mostrarMensaje('Ya usaste todas tus tiradas. Estos fueron tus premios:');
-        }
-
-        // Disable code form
-        codigoInput.disabled = true;
-        validarBtn.disabled = true;
-        codigoInput.style.borderColor = '#10ac84';
-        validarBtn.style.background = 'linear-gradient(45deg, #10ac84, #00d2d3)';
-        validarBtn.textContent = '✅ Código Válido';
-
-        // Init history and show
-        inicializarHistorial();
-        actualizarTiradasInfo();
-        iniciarCountdown();
-
-    } catch (error) {
-        mostrarNotificacion("Error de conexión. Inténtalo de nuevo.", 'error');
-        mostrarMensaje("❌ Error de conexión.");
-        validarBtn.disabled = false;
-        validarBtn.textContent = '✨ Validar Código ✨';
-    }
+ctx.fillStyle = "#ffffff";
+ctx.font = `bold ${emojiSize}px Poppins, sans-serif`;
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+            ctx.shadowBlur = 3;
+            ctx.shadowOffsetX = 1;
+            ctx.shadowOffsetY = 1;
+ctx.textBaseline = "middle";
+ctx.textAlign = "center";
+ctx.fillText(temaActual.emoji, centroX, centroY + 4);
 }
 
 // =============================================================================
@@ -1090,61 +1488,74 @@ async function girarRuleta() {
     soundSpin.loop = true;
     if (!isMuted) soundSpin.play().catch(()=>{});
 
-    mostrarMensaje("🎯 ¡La ruleta está girando! ✨");
+    mostrarMensaje("🎯 ¡La ruleta está girando mágicamente! ✨");
 
     try {
         // 1. Call prepare-spin (server picks the prize)
-        const res = await fetch('/api/prepare-spin', {
+        const spinRes = await fetch('/api/prepare-spin', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ codigoId: codigoActual, slug: slug })
+            body: JSON.stringify({ codigoId: codigoActual, slug: SLUG })
         });
-        const data = await res.json();
+        const spinData = await spinRes.json();
 
-        if (!res.ok) {
-            mostrarNotificacion(data.error || 'Error al preparar la tirada', 'error');
-            mostrarMensaje(data.error || 'Error');
+        if (!spinRes.ok) {
+            mostrarNotificacion(spinData.error || 'Error al preparar la tirada', 'error');
+            mostrarMensaje(spinData.error || 'Error');
+            soundSpin.pause();
+            soundSpin.currentTime = 0;
             resetearBotonGirar();
             return;
         }
 
-        const { prize, wheelIndex, token, recovered } = data;
+        const { prize: premioGanado, wheelIndex, token, recovered } = spinData;
 
         // Save token for recovery
-        localStorage.setItem(`pof_token_${slug}`, JSON.stringify({ token, code: codigoActual }));
+        localStorage.setItem('pof_token_' + SLUG, JSON.stringify({ token, code: codigoActual }));
 
         if (recovered) mostrarNotificacion('Recuperando tirada anterior...', 'success');
 
-        // 2. EXACT animation block from original
+        // Usar wheelIndex directamente (el servidor ya eligió el premio)
+        const indiceEnRuletaCompleta = wheelIndex;
+
+        // --- INICIO DEL BLOQUE DE ANIMACIÓN (EXACTO del original) ---
         const opcionesCanvas = document.getElementById('opciones');
+
+        // 1. Obtener la rotación actual y detener la animación CSS
         const currentAngle = getCurrentRotation(opcionesCanvas);
         opcionesCanvas.classList.remove('is-idling');
         opcionesCanvas.style.transition = 'none';
         opcionesCanvas.style.transform = `rotate(${currentAngle}deg)`;
 
-        // Force reflow
-        opcionesCanvas.offsetWidth;
+        // Forzar un reflow del navegador
+        opcionesCanvas.offsetWidth; 
 
-        // Calculate final angle
-        const anguloPorPremio = 360 / premiosActuales.length;
-        const anguloDeGiro = (360 * 6) + (wheelIndex * anguloPorPremio) + (anguloPorPremio / 2);
+        // 2. Calcular el ángulo final del giro
+        const anguloPorPremio = 360 / premiosDisponibles.length;
+        const anguloDeGiro = (360 * 6) + (indiceEnRuletaCompleta * anguloPorPremio) + (anguloPorPremio / 2);
         const anguloFinalTotal = currentAngle + anguloDeGiro;
 
-        // Apply transition
+        // 3. Aplicar la transición para el giro rápido
         opcionesCanvas.style.transition = "transform 5s cubic-bezier(.17,.67,.83,.67)";
         opcionesCanvas.style.transform = `rotate(${anguloFinalTotal}deg)`;
 
-        // 3. After 5200ms, process result
+        // 4. Procesar el resultado después de que termine el giro
         setTimeout(async () => {
             soundSpin.pause();
             soundSpin.currentTime = 0;
             if (!isMuted) soundWin.play().catch(()=>{});
 
+            confetti({
+                particleCount: 200,
+                spread: 100,
+                origin: { y: 0.6 },
+                gravity: 0.8
+            });
+
+            // Detener la transición para que la ruleta se quede fija
             opcionesCanvas.style.transition = 'none';
 
-            confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, gravity: 0.8 });
-
-            // Confirm spin
+            // Confirm spin con el servidor
             try {
                 const confirmRes = await fetch('/api/confirm-spin', {
                     method: 'POST',
@@ -1155,19 +1566,19 @@ async function girarRuleta() {
                 if (confirmRes.ok && confirmData.success) {
                     tiradasRestantes = confirmData.remaining_spins;
                 }
-            } catch (e) {
+            } catch(e) {
                 console.error('Error confirming spin:', e);
             }
 
             // Clean token
-            localStorage.removeItem(`pof_token_${slug}`);
+            localStorage.removeItem('pof_token_' + SLUG);
 
-            // Show result
-            const postMsg = (config.post_prize_message || '').replace(/\{nombre\}/gi, nombreUsuario);
-            mostrarPopupPremio(prize, postMsg);
-            mostrarMensaje(`🎉 ¡Felicidades ${nombreUsuario}! Ganaste: <b>${prize}</b>`);
-            agregarPremioAlHistorial(prize);
-            actualizarTiradasInfo();
+            // Mostrar resultado con mensaje post-premio personalizado
+            const postMsg = (mensajePremio || '').replace(/\{nombre\}/gi, nombreUsuario);
+            mostrarPopupPremio(premioGanado, postMsg);
+            mostrarMensaje(`🎉 ¡Felicidades ${nombreUsuario}! Ganaste: <b>${premioGanado}</b>`);
+            agregarPremioAlHistorial(premioGanado);
+            mostrarInfoTiradas(tiradasRestantes, expiresAt);
 
             // Reset button after 3s
             setTimeout(() => {
@@ -1175,11 +1586,12 @@ async function girarRuleta() {
             }, 3000);
 
         }, 5200);
+        // --- FIN DEL BLOQUE DE ANIMACIÓN ---
 
     } catch (err) {
         soundSpin.pause();
         soundSpin.currentTime = 0;
-        mostrarNotificacion('Error de conexion. Tu tirada esta guardada.', 'error');
+        mostrarNotificacion('Error de conexión. Tu tirada está guardada.', 'error');
         resetearBotonGirar();
     }
 }
@@ -1202,62 +1614,127 @@ function resetearBotonGirar() {
 }
 
 // =============================================================================
-// ACTUALIZAR TIRADAS INFO
+// VALIDAR CODIGO
 // =============================================================================
-function actualizarTiradasInfo() {
-    const el = document.getElementById('spins-info');
-    if (!el) return;
-    const word = tiradasRestantes === 1 ? 'tirada' : 'tiradas';
-    el.innerHTML = `Te quedan <strong>${tiradasRestantes}</strong> ${word}`;
-    el.classList.add('visible');
+async function validarCodigo() {
+if (!isMuted) soundClick.play().catch(()=>{});
+const codigoInput = document.getElementById('codigo');
+const validarBtn = document.getElementById('validarBtn');
+const codigo = codigoInput.value.trim().toUpperCase();
+
+if (!codigo) {
+mostrarMensaje("❌ Por favor ingresa un código.");
+codigoInput.style.animation = 'shake 0.5s ease-in-out';
+setTimeout(() => { codigoInput.style.animation = ''; }, 500);
+return;
 }
 
-// =============================================================================
-// COUNTDOWN
-// =============================================================================
-let countdownInterval;
-function iniciarCountdown() {
-    if (!expiresAt) return;
-    clearInterval(countdownInterval);
-    function update() {
-        const diff = expiresAt - Date.now();
-        if (diff <= 0) {
-            const el = document.getElementById('spins-info');
-            if (el) el.innerHTML += ' <span class="countdown">⏰ Código expirado</span>';
-            clearInterval(countdownInterval);
-            return;
-        }
-        if (diff < 72 * 3600 * 1000) {
-            const h = Math.floor(diff / 3600000);
-            const m = Math.floor((diff % 3600000) / 60000);
-            const el = document.getElementById('spins-info');
-            const word = tiradasRestantes === 1 ? 'tirada' : 'tiradas';
-            if (el) el.innerHTML = `Te quedan <strong>${tiradasRestantes}</strong> ${word} <span class="countdown">⏰ Expira en ${h}h ${m}m</span>`;
-        }
-    }
-    update();
-    countdownInterval = setInterval(update, 60000);
+validarBtn.disabled = true;
+validarBtn.textContent = '⏳ Validando...';
+mostrarMensaje("🔍 Validando tu código...");
+
+try {
+const response = await fetch('/api/validate-code', {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json'},
+  body: JSON.stringify({ slug: SLUG, codigoId: codigo, fanName: '' })
+});
+const result = await response.json();
+
+if (!response.ok) {
+mostrarNotificacion(result.error || 'Código no válido', 'error');
+mostrarMensaje(`❌ ${result.error || 'Código no válido'}`);
+codigoInput.style.animation = 'shake 0.5s ease-in-out';
+setTimeout(() => { codigoInput.style.animation = ''; }, 500);
+validarBtn.disabled = false;
+validarBtn.textContent = '✨ Validar Código ✨';
+return;
+}
+
+// Success
+codigoActual = codigo;
+nombreUsuario = result.fan_name || '';
+tiradasRestantes = result.remaining_spins || 0;
+
+// Premios del código o globales
+if (result.prizes && Array.isArray(result.prizes) && result.prizes.length >= 2) {
+premiosActuales = [...result.prizes];
+premiosDisponibles = [...result.prizes];
+dibujarRuletaCompleta();
+} else if (premiosDisponibles && premiosDisponibles.length > 0) {
+premiosActuales = [...premiosDisponibles];
+}
+
+// Expires at
+if (result.expires_at) expiresAt = new Date(result.expires_at);
+
+mostrarNotificacion(`¡Bienvenid@ ${nombreUsuario}! Código válido con ${tiradasRestantes} tirada(s) 🎉`, 'success');
+
+// Mostrar mensaje de bienvenida personalizado
+const welcomeMsg = (mensajeBienvenida || '').replace(/\{nombre\}/gi, nombreUsuario);
+if (welcomeMsg) {
+    mostrarMensaje('💖 ' + welcomeMsg);
+} else {
+    mostrarMensaje(`💖 ¡Hola ${nombreUsuario}! Tienes ${tiradasRestantes} tirada(s). ¡Mucha suerte!`);
+}
+
+// Habilitar botón de girar
+const girarBtn = document.getElementById('girarBtn');
+if (tiradasRestantes > 0) {
+    girarBtn.disabled = false;
+    girarBtn.textContent = '✨ Girar Ruleta ✨';
+} else {
+    girarBtn.disabled = true;
+    girarBtn.textContent = '😢 Sin tiradas';
+}
+
+codigoInput.disabled = true;
+validarBtn.disabled = true;
+
+codigoInput.style.borderColor = '#10ac84';
+validarBtn.style.background = 'linear-gradient(45deg, #10ac84, #00d2d3)';
+validarBtn.textContent = '✅ Código Válido';
+
+// Inicializar historial y mostrar contador de tiradas
+inicializarHistorial();
+mostrarInfoTiradas(tiradasRestantes, expiresAt);
+
+} catch (error) {
+mostrarNotificacion("Error de conexión. Por favor, inténtalo de nuevo.", 'error');
+mostrarMensaje("❌ Error de conexión.");
+validarBtn.disabled = false;
+validarBtn.textContent = '✨ Validar Código ✨';
+}
 }
 
 // =============================================================================
 // POPUP
 // =============================================================================
-function mostrarPopupPremio(prize, message) {
-    document.getElementById('popup-title').textContent = '¡FELICIDADES!';
-    document.getElementById('popup-prize').textContent = prize;
-    document.getElementById('popup-message').textContent = message || '';
-    document.getElementById('popup').classList.add('show');
+function mostrarPopupPremio(premio, message) {
+document.getElementById('popup-title').textContent = '¡FELICITACIONES!';
+document.getElementById('popup-prize').textContent = premio;
+document.getElementById('popup-message').textContent = message || '';
+document.getElementById('popup-overlay').classList.add('show');
 }
 
 function cerrarPopup() {
-    document.getElementById('popup').classList.remove('show');
-    // Restore idling if not spinning
+    if (!isMuted) soundClick.play().catch(()=>{});
+    document.getElementById('popup-overlay').classList.remove('show');
+
+    // Volver a girar lentamente
     if (!isSpinning) {
-        const opcionesCanvas = document.getElementById('opciones');
-        opcionesCanvas.classList.add('is-idling');
-        opcionesCanvas.style.transition = 'none';
-        // NO resetear style.transform aquí
+        document.getElementById('opciones').classList.add('is-idling');
     }
+}
+
+function mostrarMensaje(msg) {
+const mensajeElement = document.getElementById('mensaje');
+mensajeElement.innerHTML = msg;
+
+mensajeElement.classList.add('mensaje-update');
+setTimeout(() => {
+mensajeElement.classList.remove('mensaje-update');
+}, 500);
 }
 
 // =============================================================================
@@ -1265,8 +1742,8 @@ function cerrarPopup() {
 // =============================================================================
 async function compartirPremio() {
     const prize = document.getElementById('popup-prize').textContent;
-    const name = config?.display_name || slug;
-    const theme = currentTheme;
+    const name = config?.display_name || SLUG;
+    const theme = temaActual;
     const canvas = document.createElement('canvas');
     canvas.width = 600; canvas.height = 400;
     const ctx = canvas.getContext('2d');
@@ -1286,7 +1763,7 @@ async function compartirPremio() {
     ctx.fillText(prize, 300, 220);
     ctx.font = '16px Poppins, sans-serif';
     ctx.fillStyle = theme.textSoft;
-    ctx.fillText('playofans.com/' + slug + '/ruleta', 300, 340);
+    ctx.fillText('playofans.com/' + SLUG + '/ruleta', 300, 340);
     canvas.toBlob(async blob => {
         if (navigator.share && navigator.canShare) {
             try {
@@ -1303,23 +1780,176 @@ async function compartirPremio() {
 }
 
 // =============================================================================
-// SONIDOS
+// SONIDOS — Mute toggle
 // =============================================================================
+function actualizarBotonMute() {
+  const btn = document.getElementById('btn-mute');
+  if (btn) btn.textContent = isMuted ? '🔇' : '🔊';
+}
+
 function toggleMute() {
     isMuted = !isMuted;
-    document.getElementById('btn-mute').textContent = isMuted ? '🔇' : '🔊';
+    actualizarBotonMute();
     if (isMuted) {
-        soundClick.pause(); soundClick.currentTime = 0;
-        soundSpin.pause(); soundSpin.currentTime = 0;
-        soundWin.pause(); soundWin.currentTime = 0;
+        soundSpin.pause();
+        soundWin.pause();
+        soundClick.pause();
     }
 }
 
 // =============================================================================
-// PARTICULAS
+// CONTADOR DE TIRADAS Y COUNTDOWN
 // =============================================================================
+function mostrarInfoTiradas(restantes, expiresAtDate) {
+  const word = restantes === 1 ? 'tirada' : 'tiradas';
+  let html = `Te quedan <strong>${restantes}</strong> ${word}`;
+  if (expiresAtDate) {
+    const diff = new Date(expiresAtDate) - Date.now();
+    if (diff > 0 && diff < 72 * 3600 * 1000) {
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      html += ` <span style="color:var(--accent-principal);font-weight:700">⏰ Expira en ${h}h ${m}m</span>`;
+    }
+  }
+  let infoEl = document.getElementById('tiradas-info');
+  if (!infoEl) {
+    infoEl = document.createElement('div');
+    infoEl.id = 'tiradas-info';
+    infoEl.style.cssText = 'font-weight:600;color:var(--texto-suave);font-size:.95rem;padding:10px;border-radius:12px;background:var(--accent-soft);border:1px solid var(--accent-border);margin-top:10px;';
+    document.getElementById('formulario')?.after(infoEl);
+  }
+  infoEl.innerHTML = html;
+}
+
+let countdownInterval;
+function iniciarCountdown() {
+    if (!expiresAt) return;
+    clearInterval(countdownInterval);
+    countdownInterval = setInterval(() => {
+        if (document.getElementById('tiradas-info')) {
+            mostrarInfoTiradas(tiradasRestantes, expiresAt);
+        }
+        const diff = expiresAt - Date.now();
+        if (diff <= 0) {
+            clearInterval(countdownInterval);
+        }
+    }, 60000);
+}
+
+// =============================================================================
+// PANTALLA ERROR / CARGA
+// =============================================================================
+function showError(msg) {
+    document.getElementById('screen-loading').style.display = 'none';
+    const screen = document.getElementById('screen-error');
+    document.getElementById('error-msg').textContent = msg;
+    screen.style.display = 'flex';
+}
+
+// =============================================================================
+// FONDO INTERACTIVO REACTIVO AL MOUSE
+// =============================================================================
+function inicializarFondoInteractivo() {
+const paleta = ['#ff6b9d', '#ffffff', '#f8b500', '#c44569', '#feca57', '#23a6d5', '#ff9a9e', '#8a2be2'];
+
+crearExplosionBienvenida(paleta);
+
+document.addEventListener('mousemove', function(e) {
+if (this._throttleTimer) return;
+this._throttleTimer = setTimeout(() => {
+this._throttleTimer = null;
+}, 50);
+crearParticulaMouse(e.clientX, e.clientY, paleta);
+});
+}
+
+function crearExplosionBienvenida(paleta) {
+const centroX = window.innerWidth / 2;
+const centroY = window.innerHeight / 2;
+
+for (let i = 0; i < 30; i++) {
+setTimeout(() => {
+crearParticulaBienvenida(centroX, centroY, paleta, i);
+}, i * 50);
+}
+}
+
+function crearParticulaBienvenida(x, y, paleta, index) {
+const particula = document.createElement('div');
+particula.className = 'mouse-particle';
+
+const tamaño = Math.random() * 30 + 10;
+const color = paleta[Math.floor(Math.random() * paleta.length)];
+
+particula.style.cssText = `
+width: ${tamaño}px;
+height: ${tamaño}px;
+background: ${color};
+left: ${x - tamaño/2}px;
+top: ${y - tamaño/2}px;
+box-shadow: 0 0 ${tamaño}px ${color};
+opacity: 1;
+z-index: 5;
+`;
+
+document.body.appendChild(particula);
+
+setTimeout(() => {
+const angulo = (index / 30) * 2 * Math.PI;
+const distancia = Math.random() * 300 + 200;
+const moveX = Math.cos(angulo) * distancia;
+const moveY = Math.sin(angulo) * distancia;
+const scale = Math.random() * 1.5 + 0.5;
+
+particula.style.transform = `translate(${moveX}px, ${moveY}px) scale(${scale}) rotate(720deg)`;
+particula.style.opacity = '0';
+}, 100);
+
+setTimeout(() => {
+if (particula.parentNode) {
+document.body.removeChild(particula);
+}
+}, 1500);
+}
+
+function crearParticulaMouse(x, y, paleta) {
+const particula = document.createElement('div');
+particula.className = 'mouse-particle';
+
+const tamaño = Math.random() * 20 + 5;
+const color = paleta[Math.floor(Math.random() * paleta.length)];
+
+particula.style.cssText = `
+width: ${tamaño}px;
+height: ${tamaño}px;
+background: ${color};
+left: ${x - tamaño/2}px;
+top: ${y - tamaño/2}px;
+box-shadow: 0 0 ${tamaño/2}px ${color};
+opacity: 0.8;
+`;
+
+document.body.appendChild(particula);
+
+setTimeout(() => {
+const moveX = (Math.random() - 0.5) * 80;
+const moveY = (Math.random() - 0.5) * 80;
+const scale = Math.random() * 2 + 0.5;
+
+particula.style.transform = `translate(${moveX}px, ${moveY}px) scale(${scale})`;
+particula.style.opacity = '0';
+}, 10);
+
+setTimeout(() => {
+if (particula.parentNode) {
+document.body.removeChild(particula);
+}
+}, 1000);
+}
+
 function createParticles() {
-    const container = document.querySelector('.bg-shapes');
+    const container = document.querySelector('.background-shapes');
+    if (!container) return;
     const types = ['heart', 'sparkle', 'star'];
     const emojis = { heart: '💖', star: '✨' };
 
@@ -1335,50 +1965,133 @@ function createParticles() {
     }
 }
 
-// Mouse particles
-document.addEventListener('mousemove', (function() {
-    let lastTime = 0;
-    return function(e) {
-        const now = Date.now();
-        if (now - lastTime < 80) return;
-        lastTime = now;
-        const particle = document.createElement('div');
-        particle.style.cssText = `position:fixed;left:${e.clientX}px;top:${e.clientY}px;width:6px;height:6px;border-radius:50%;pointer-events:none;z-index:9999;background:var(--accent-principal);opacity:0.7;transition:all 0.6s ease-out;`;
-        document.body.appendChild(particle);
-        requestAnimationFrame(() => {
-            particle.style.transform = `translate(${(Math.random()-0.5)*40}px, ${(Math.random()-0.5)*40}px) scale(0)`;
-            particle.style.opacity = '0';
-        });
-        setTimeout(() => particle.remove(), 700);
-    };
-})());
+// =============================================================================
+// INICIALIZACIÓN — Carga multi-tenant
+// =============================================================================
+window.addEventListener('load', async () => {
+    // CAMBIO 1 — Slug desde URL
+    const urlParts = window.location.pathname.split('/').filter(Boolean);
+    SLUG = urlParts[0] || '';
+    if (!SLUG) { showError('Modelo no encontrado'); return; }
+
+    // Leer código pre-cargado desde ?c=CODIGO
+    const urlParams = new URLSearchParams(window.location.search);
+    const preloadedCode = urlParams.get('c');
+
+    try {
+        // CAMBIO 2 — Carga inicial (reemplaza config-manager)
+        const res = await fetch('/api/tenant-config?slug=' + SLUG);
+        const data = await res.json();
+
+        if (res.status === 403) { showError(data.error || 'Ruleta no disponible'); return; }
+        if (!res.ok) { showError('Ruleta no encontrada'); return; }
+
+        config = data;
+
+        // Cargar premios globales
+        premiosDisponibles = data.prizes || [];
+        premiosActuales = [...premiosDisponibles];
+
+        // Mostrar nombre del modelo
+        document.querySelector('.controls-title').textContent = data.display_name || SLUG;
+
+        // Actualizar título de página y OG tags
+        document.title = data.display_name + ' — Ruleta | PlayOFans';
+        document.querySelector('meta[property="og:title"]')
+          ?.setAttribute('content', data.display_name + ' — Ruleta 🎰');
+        document.querySelector('meta[property="og:url"]')
+          ?.setAttribute('content', 'https://playofans.com/' + SLUG + '/ruleta');
+
+        // Aplicar tema visual
+        aplicarTema(data.theme || 'dark_luxury');
+
+        // Configurar música
+        isMuted = !data.sound_enabled_default;
+        actualizarBotonMute();
+
+        // Forzar modo oscuro si está configurado
+        if (data.force_dark_mode) document.body.classList.add('force-dark');
+
+        // Guardar mensajes personalizados en variables globales
+        mensajeBienvenida = data.welcome_message || '';
+        mensajePremio = data.post_prize_message || '';
+
+        // Dibujar la ruleta
+        dibujarRuletaCompleta();
+
+        // Iniciar la animación de rotación lenta
+        document.getElementById('opciones').classList.add('is-idling');
+
+        // Crear partículas
+        createParticles();
+
+        // Ocultar pantalla de carga
+        document.getElementById('screen-loading').style.display = 'none';
+
+        // Registrar eventos
+        registrarEventos();
+
+        // Inicializar fondo interactivo
+        inicializarFondoInteractivo();
+
+        // Si hay código pre-cargado, rellenarlo
+        if (preloadedCode) {
+          document.getElementById('codigo').value = preloadedCode;
+          validarCodigo();
+        }
+
+        // Recovery: check pending token in localStorage
+        const savedRaw = localStorage.getItem('pof_token_' + SLUG);
+        if (savedRaw) {
+          try {
+            const parsed = JSON.parse(savedRaw);
+            if (parsed.code !== codigoActual) {
+              localStorage.removeItem('pof_token_' + SLUG);
+            }
+          } catch (e) {
+            localStorage.removeItem('pof_token_' + SLUG);
+          }
+        }
+
+    } catch (error) {
+        showError('Esta ruleta no está disponible 🎰');
+    }
+});
 
 // =============================================================================
-// PANTALLA ERROR
+// FUNCIÓN PARA REGISTRAR EVENTOS
 // =============================================================================
-function showError(msg) {
-    document.getElementById('screen-loading').style.display = 'none';
-    const screen = document.getElementById('screen-error');
-    document.getElementById('error-msg').textContent = msg;
-    screen.style.display = 'flex';
+function registrarEventos() {
+const validarBtn = document.getElementById('validarBtn');
+const girarBtn = document.getElementById('girarBtn');
+const popupCloseBtn = document.getElementById('popupCloseBtn');
+const codigoInput = document.getElementById('codigo');
+const btnMute = document.getElementById('btn-mute');
+const shareBtn = document.getElementById('popup-share-btn');
+
+if (validarBtn) validarBtn.addEventListener('click', validarCodigo);
+if (girarBtn) girarBtn.addEventListener('click', () => { if (!isMuted) soundClick.play().catch(()=>{}); girarRuleta(); });
+if (popupCloseBtn) popupCloseBtn.addEventListener('click', cerrarPopup);
+if (codigoInput) codigoInput.addEventListener('keypress', e => { if (e.key === 'Enter') validarCodigo(); });
+if (btnMute) btnMute.addEventListener('click', toggleMute);
+if (shareBtn) shareBtn.addEventListener('click', compartirPremio);
 }
 
 // =============================================================================
 // RESIZE HANDLER — redraw canvas on resize
 // =============================================================================
-window.addEventListener('resize', (function() {
-    let resizeTimer;
-    return function() {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-            if (premiosActuales.length >= 2) {
-                dibujarRuletaCompleta();
-            }
-        }, 250);
-    };
-})());
+let resizeTimeout;
+window.addEventListener('resize', () => {
+clearTimeout(resizeTimeout);
+resizeTimeout = setTimeout(() => {
+if (premiosDisponibles && premiosDisponibles.length > 0) {
+dibujarRuletaCompleta();
+}
+}, 250);
+});
 </script>
 
+<!-- Canvas Confetti Library -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 </body>
 </html>
