@@ -18,14 +18,14 @@
    CSS VARIABLES — se sobreescriben por tema
    ============================================= */
 :root {
-  --bg-a: #1a0a1e;
-  --bg-b: #2d1b3d;
-  --bg-c: #1e0a28;
-  --accent: #ff0066;
-  --accent2: #b300ff;
-  --text: #ffffff;
-  --text-soft: #e0b3ff;
-  --glass: rgba(30, 10, 40, 0.85);
+  --bg-fondo-a: #1a0a1e;
+  --bg-fondo-b: #2d1b3d;
+  --bg-fondo-c: #1e0a28;
+  --accent-principal: #ff0066;
+  --accent-secundario: #b300ff;
+  --texto-oscuro: #ffffff;
+  --texto-suave: #e0b3ff;
+  --glass-white: rgba(30, 10, 40, 0.85);
   --glass-border: rgba(179, 0, 255, 0.3);
   --accent-soft: rgba(255, 0, 102, 0.15);
   --accent-border: rgba(255, 0, 102, 0.5);
@@ -39,8 +39,8 @@ body {
   font-family: var(--font);
   text-align: center;
   min-height: 100vh;
-  color: var(--text);
-  background: linear-gradient(-45deg, var(--bg-a), var(--bg-b), var(--bg-c), var(--bg-b), var(--bg-a));
+  color: var(--texto-oscuro);
+  background: linear-gradient(-45deg, var(--bg-fondo-a), var(--bg-fondo-b), var(--bg-fondo-c), var(--bg-fondo-b), var(--bg-fondo-a));
   background-size: 400% 400%;
   animation: gradientMove 10s ease-in-out infinite;
   overflow-x: hidden;
@@ -70,8 +70,8 @@ body.force-dark { color-scheme: dark; }
   66% { transform: translateY(-30px) scale(.8) rotate(-10deg); opacity: .6; }
 }
 @keyframes floatSparkle {
-  0%, 100% { transform: translateY(0) scale(1); opacity: .5; box-shadow: 0 0 10px var(--accent2); }
-  50% { transform: translateY(-40px) scale(1.5); opacity: 1; box-shadow: 0 0 20px var(--accent); }
+  0%, 100% { transform: translateY(0) scale(1); opacity: .5; box-shadow: 0 0 10px var(--accent-secundario); }
+  50% { transform: translateY(-40px) scale(1.5); opacity: 1; box-shadow: 0 0 20px var(--accent-principal); }
 }
 @keyframes floatStar {
   0%, 100% { transform: translateY(0) rotate(0deg) scale(1); opacity: .4; }
@@ -100,15 +100,15 @@ body.force-dark { color-scheme: dark; }
   position: absolute; border-radius: 50%; opacity: .08;
   animation: float 15s ease-in-out infinite;
 }
-.shape:nth-child(1) { width: 80px; height: 80px; background: var(--accent); top: 10%; left: 10%; }
-.shape:nth-child(2) { width: 120px; height: 120px; background: var(--accent2); top: 20%; right: 15%; animation-delay: 2s; }
-.shape:nth-child(3) { width: 60px; height: 60px; background: var(--bg-c); bottom: 20%; left: 20%; animation-delay: 4s; }
-.shape:nth-child(4) { width: 100px; height: 100px; background: var(--accent); bottom: 10%; right: 10%; animation-delay: 1s; }
+.shape:nth-child(1) { width: 80px; height: 80px; background: var(--accent-principal); top: 10%; left: 10%; }
+.shape:nth-child(2) { width: 120px; height: 120px; background: var(--accent-secundario); top: 20%; right: 15%; animation-delay: 2s; }
+.shape:nth-child(3) { width: 60px; height: 60px; background: var(--bg-fondo-c); bottom: 20%; left: 20%; animation-delay: 4s; }
+.shape:nth-child(4) { width: 100px; height: 100px; background: var(--accent-principal); bottom: 10%; right: 10%; animation-delay: 1s; }
 
 .particle { position: absolute; pointer-events: none; opacity: .6; }
-.particle.heart { font-size: 20px; color: var(--accent); animation: floatHeart 10s ease-in-out infinite; }
-.particle.sparkle { width: 8px; height: 8px; background: radial-gradient(circle, var(--accent2), var(--accent)); border-radius: 50%; animation: floatSparkle 6s ease-in-out infinite; }
-.particle.star { font-size: 16px; color: var(--accent2); animation: floatStar 12s ease-in-out infinite; }
+.particle.heart { font-size: 20px; color: var(--accent-principal); animation: floatHeart 10s ease-in-out infinite; }
+.particle.sparkle { width: 8px; height: 8px; background: radial-gradient(circle, var(--accent-secundario), var(--accent-principal)); border-radius: 50%; animation: floatSparkle 6s ease-in-out infinite; }
+.particle.star { font-size: 16px; color: var(--accent-secundario); animation: floatStar 12s ease-in-out infinite; }
 
 /* =============================================
    LAYOUT
@@ -129,37 +129,37 @@ body.force-dark { color-scheme: dark; }
 .controls-container { display: flex; flex-direction: column; align-items: center; gap: 25px; }
 .controls-section {
   display: flex; flex-direction: column; align-items: center; gap: 20px;
-  background: var(--glass); padding: 35px; border-radius: 25px;
+  background: var(--glass-white); padding: 35px; border-radius: 25px;
   box-shadow: 0 15px 35px rgba(0,0,0,.1); backdrop-filter: blur(15px);
   border: 1px solid var(--glass-border); width: 320px;
 }
 .controls-title {
-  font-family: var(--font-display); color: var(--accent2);
+  font-family: var(--font-display); color: var(--accent-secundario);
   font-size: 2.5rem; font-weight: 700;
   text-shadow: 0 4px 15px rgba(0,0,0,.4), 0 0 10px rgba(255,255,255,.3);
 }
 .form-title {
   font-family: var(--font-display); font-size: 1.6rem;
-  color: var(--accent2); margin-bottom: 10px;
+  color: var(--accent-secundario); margin-bottom: 10px;
   text-shadow: 2px 2px 5px rgba(0,0,0,.15);
 }
 
 #codigo {
   padding: 18px 20px; font-size: 1.1rem;
-  border: 3px solid var(--accent); border-radius: 20px;
+  border: 3px solid var(--accent-principal); border-radius: 20px;
   width: 100%; text-align: center; transition: all .3s;
-  background: var(--glass); font-weight: 600;
-  color: var(--text); text-transform: uppercase;
+  background: var(--glass-white); font-weight: 600;
+  color: var(--texto-oscuro); text-transform: uppercase;
 }
-#codigo::placeholder { color: var(--text-soft); opacity: .6; text-transform: none; }
+#codigo::placeholder { color: var(--texto-suave); opacity: .6; text-transform: none; }
 #codigo:focus {
   outline: none; box-shadow: 0 0 30px rgba(255,79,163,.5);
-  border-color: var(--accent2); transform: translateY(-2px);
+  border-color: var(--accent-secundario); transform: translateY(-2px);
 }
 
 .btn {
   padding: 15px 25px; font-size: 1rem;
-  background: linear-gradient(45deg, var(--accent), var(--accent2));
+  background: linear-gradient(45deg, var(--accent-principal), var(--accent-secundario));
   color: #fff; border: none; border-radius: 20px; cursor: pointer;
   font-weight: 600; width: 100%; text-transform: uppercase;
   transition: all .3s; box-shadow: 0 4px 15px rgba(0,0,0,.2);
@@ -179,39 +179,44 @@ body.force-dark { color-scheme: dark; }
 /* Info tiradas y expiracion */
 .spins-info {
   display: none; width: 100%; text-align: center;
-  font-weight: 600; color: var(--text-soft); font-size: .95rem;
+  font-weight: 600; color: var(--texto-suave); font-size: .95rem;
   padding: 10px; border-radius: 12px;
   background: var(--accent-soft); border: 1px solid var(--accent-border);
 }
 .spins-info.visible { display: block; }
-.countdown { color: var(--accent); font-weight: 700; }
+.countdown { color: var(--accent-principal); font-weight: 700; }
 
 /* =============================================
-   RULETA SVG
+   RULETA CANVAS
    ============================================= */
 .ruleta-section { display: flex; flex-direction: column; align-items: center; gap: 30px; flex-shrink: 0; }
-.wheel-wrapper {
-  position: relative; width: 450px; height: 450px;
+
+#ruleta {
+  margin: 0 auto; width: 450px; height: 450px;
+  border: 10px solid var(--accent-principal);
+  border-radius: 50%; position: relative;
+  box-shadow: 0 15px 30px rgba(0,0,0,.2);
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--accent-principal), var(--accent-secundario));
 }
-.wheel-border {
-  width: 100%; height: 100%; border-radius: 50%;
-  border: 10px solid var(--accent);
-  box-shadow: 0 15px 30px rgba(0,0,0,.2), inset 0 0 30px rgba(0,0,0,.1);
-  overflow: hidden; position: relative;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-}
-#wheel-svg {
-  width: 100%; height: 100%;
-  transition: none;
-}
-#wheel-svg.idling { animation: slowRotate 30s linear infinite; }
-.wheel-pointer {
-  position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+
+#flecha {
   width: 0; height: 0;
-  border-left: 22px solid transparent; border-right: 22px solid transparent;
-  border-top: 45px solid var(--accent);
-  filter: drop-shadow(0 3px 6px rgba(0,0,0,.4));
+  border-left: 25px solid transparent; border-right: 25px solid transparent;
+  border-bottom: 50px solid var(--accent-principal);
+  position: absolute; left: 50%; top: -50px; transform: translateX(-50%);
   z-index: 15;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,.3));
+}
+
+#opciones {
+  position: absolute; width: 100%; height: 100%;
+  top: 0; left: 0; pointer-events: none;
+  border-radius: 50%; z-index: 10;
+}
+
+#opciones.is-idling {
+  animation: slowRotate 30s linear infinite;
 }
 
 /* =============================================
@@ -219,12 +224,12 @@ body.force-dark { color-scheme: dark; }
    ============================================= */
 .historial-container { display: flex; flex-direction: column; align-items: center; gap: 25px; }
 .historial-section {
-  background: var(--glass); padding: 25px; border-radius: 25px;
+  background: var(--glass-white); padding: 25px; border-radius: 25px;
   box-shadow: 0 15px 35px rgba(0,0,0,.1); backdrop-filter: blur(15px);
   border: 1px solid var(--glass-border); width: 320px; max-height: 500px;
 }
 .historial-title {
-  font-family: var(--font-display); color: var(--accent2);
+  font-family: var(--font-display); color: var(--accent-secundario);
   font-size: 2rem; font-weight: 700;
   text-shadow: 0 4px 15px rgba(0,0,0,.4), 0 0 10px rgba(255,255,255,.3);
   margin-bottom: 20px; text-align: center;
@@ -232,7 +237,7 @@ body.force-dark { color-scheme: dark; }
 .historial-lista { max-height: 380px; overflow-y: auto; padding-right: 10px; }
 .historial-lista::-webkit-scrollbar { width: 8px; }
 .historial-lista::-webkit-scrollbar-track { background: rgba(255,255,255,.1); border-radius: 10px; }
-.historial-lista::-webkit-scrollbar-thumb { background: linear-gradient(45deg, var(--accent), var(--accent2)); border-radius: 10px; }
+.historial-lista::-webkit-scrollbar-thumb { background: linear-gradient(45deg, var(--accent-principal), var(--accent-secundario)); border-radius: 10px; }
 
 .premio-item {
   background: linear-gradient(135deg, var(--accent-soft), rgba(122,92,255,.08));
@@ -248,18 +253,18 @@ body.force-dark { color-scheme: dark; }
   transition: left .5s;
 }
 .premio-item:hover::before { left: 100%; }
-.premio-nombre { font-weight: 700; color: var(--accent2); font-size: .95rem; margin-bottom: 5px; }
-.premio-fecha { font-size: .8rem; color: var(--text-soft); font-weight: 500; display: flex; align-items: center; gap: 5px; }
+.premio-nombre { font-weight: 700; color: var(--accent-secundario); font-size: .95rem; margin-bottom: 5px; }
+.premio-fecha { font-size: .8rem; color: var(--texto-suave); font-weight: 500; display: flex; align-items: center; gap: 5px; }
 .premio-numero {
   position: absolute; top: 8px; right: 12px;
-  background: linear-gradient(45deg, var(--accent), var(--accent2));
+  background: linear-gradient(45deg, var(--accent-principal), var(--accent-secundario));
   color: #fff; border-radius: 50%; width: 25px; height: 25px;
   display: flex; align-items: center; justify-content: center;
   font-size: .7rem; font-weight: bold;
   box-shadow: 0 2px 8px rgba(0,0,0,.2);
 }
 .historial-vacio {
-  text-align: center; color: var(--text-soft); font-style: italic;
+  text-align: center; color: var(--texto-suave); font-style: italic;
   padding: 30px 20px; background: rgba(255,255,255,.05);
   border-radius: 15px; border: 2px dashed var(--accent-border);
 }
@@ -270,8 +275,8 @@ body.force-dark { color-scheme: dark; }
    ============================================= */
 .message-section { width: 100%; max-width: 600px; }
 #mensaje {
-  font-size: 1.1rem; color: var(--accent2); font-weight: 600;
-  background: var(--glass); padding: 15px 25px; border-radius: 20px;
+  font-size: 1.1rem; color: var(--accent-secundario); font-weight: 600;
+  background: var(--glass-white); padding: 15px 25px; border-radius: 20px;
   display: inline-block; box-shadow: 0 8px 20px rgba(0,0,0,.15);
   backdrop-filter: blur(10px); border: 2px solid var(--glass-border);
   min-height: 35px; transition: all .3s;
@@ -288,7 +293,7 @@ body.force-dark { color-scheme: dark; }
 }
 .popup-overlay.show { opacity: 1; visibility: visible; }
 .popup-content {
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  background: linear-gradient(135deg, var(--accent-principal), var(--accent-secundario));
   border-radius: 30px; padding: 40px; text-align: center;
   max-width: 500px; width: 90%;
   transform: scale(.5); transition: all .4s cubic-bezier(.68,-.55,.27,1.55);
@@ -299,7 +304,7 @@ body.force-dark { color-scheme: dark; }
 .popup-message { font-size: .95rem; color: #fff; opacity: .9; margin-top: 15px; font-weight: 500; }
 .popup-buttons { display: flex; gap: 12px; justify-content: center; margin-top: 25px; flex-wrap: wrap; }
 .popup-btn {
-  background: #fff; color: var(--accent2); border: none;
+  background: #fff; color: var(--accent-secundario); border: none;
   padding: 15px 30px; border-radius: 25px; font-weight: 700;
   font-size: 1.1rem; cursor: pointer; font-family: var(--font);
   transition: all .3s;
@@ -315,7 +320,7 @@ body.force-dark { color-scheme: dark; }
   display: none; transform: translateY(-100%); transition: transform .3s;
 }
 .notif.show { transform: translateY(0); }
-.notif.success { background: linear-gradient(135deg, var(--accent2), var(--accent)); }
+.notif.success { background: linear-gradient(135deg, var(--accent-secundario), var(--accent-principal)); }
 .notif.error { background: linear-gradient(135deg, #d9534f, #c9302c); }
 .notif-inner { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; max-width: 1200px; margin: 0 auto; }
 .notif-text { color: #fff; font-weight: 600; flex: 1; }
@@ -323,7 +328,7 @@ body.force-dark { color-scheme: dark; }
 .notif-close:hover { opacity: 1; }
 
 /* =============================================
-   CONTROLES SUPERIORES (mute + admin)
+   CONTROLES SUPERIORES (mute)
    ============================================= */
 .top-controls {
   position: fixed; top: 15px; right: 15px; z-index: 100;
@@ -331,10 +336,10 @@ body.force-dark { color-scheme: dark; }
 }
 .top-btn {
   width: 44px; height: 44px; border-radius: 50%;
-  background: var(--glass); border: 1px solid var(--glass-border);
+  background: var(--glass-white); border: 1px solid var(--glass-border);
   backdrop-filter: blur(10px); display: flex; align-items: center;
   justify-content: center; font-size: 1.3rem; cursor: pointer;
-  transition: all .3s; color: var(--text);
+  transition: all .3s; color: var(--texto-oscuro);
 }
 .top-btn:hover { transform: scale(1.1); background: var(--accent-soft); }
 
@@ -345,17 +350,17 @@ body.force-dark { color-scheme: dark; }
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   display: flex; flex-direction: column; align-items: center;
   justify-content: center; z-index: 2000;
-  background: linear-gradient(-45deg, var(--bg-a), var(--bg-b), var(--bg-c));
+  background: linear-gradient(-45deg, var(--bg-fondo-a), var(--bg-fondo-b), var(--bg-fondo-c));
 }
 .screen-error h1 { font-size: 4rem; margin-bottom: 20px; }
-.screen-error p { font-size: 1.3rem; color: var(--text-soft); max-width: 400px; }
+.screen-error p { font-size: 1.3rem; color: var(--texto-suave); max-width: 400px; }
 .screen-loading .spinner-lg {
   width: 60px; height: 60px; border: 4px solid var(--glass-border);
-  border-top-color: var(--accent); border-radius: 50%;
+  border-top-color: var(--accent-principal); border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
-/* Confetti */
+/* Confetti CSS fallback */
 .confetti-piece {
   position: fixed; width: 10px; height: 10px; top: -10px;
   z-index: 999; pointer-events: none;
@@ -387,17 +392,15 @@ body.force-dark { color-scheme: dark; }
   .controls-section, .historial-section { width: 100%; max-width: 280px; padding: 15px; }
   .controls-title { font-size: 2.2rem; }
   .historial-title { font-size: 1.8rem; }
-  .wheel-wrapper { width: 400px; height: 400px; }
-  .wheel-border { border-width: 8px; }
-  .wheel-pointer { border-left-width: 20px; border-right-width: 20px; border-top-width: 40px; top: -15px; }
+  #ruleta { width: 400px; height: 400px; border-width: 8px; }
+  #flecha { border-left-width: 22px; border-right-width: 22px; border-bottom-width: 45px; top: -45px; }
   #girarBtn { min-width: 250px; padding: 16px 40px; font-size: 1.1rem; }
 }
 
 @media (max-width: 768px) {
   .container { padding: 15px; gap: 15px; }
-  .wheel-wrapper { width: 350px; height: 350px; }
-  .wheel-border { border-width: 7px; }
-  .wheel-pointer { border-left-width: 18px; border-right-width: 18px; border-top-width: 35px; top: -12px; }
+  #ruleta { width: 350px; height: 350px; border-width: 7px; }
+  #flecha { border-left-width: 20px; border-right-width: 20px; border-bottom-width: 40px; top: -40px; }
   .controls-title { font-size: 2rem; }
   .form-title { font-size: 1.4rem; }
   #codigo { font-size: .95rem; padding: 15px 18px; }
@@ -410,9 +413,8 @@ body.force-dark { color-scheme: dark; }
   .main-content { grid-template-columns: 1fr; }
   .controls-container, .historial-container { grid-column: 1; }
   .controls-section, .historial-section { max-width: 100%; width: 100%; }
-  .wheel-wrapper { width: 300px; height: 300px; }
-  .wheel-border { border-width: 6px; }
-  .wheel-pointer { border-left-width: 16px; border-right-width: 16px; border-top-width: 30px; top: -10px; }
+  #ruleta { width: 300px; height: 300px; border-width: 6px; }  /* Nota: en el original la flecha se achica pero no desaparece */
+  #flecha { border-left-width: 18px; border-right-width: 18px; border-bottom-width: 35px; top: -35px; }
   .controls-title { font-size: 1.8rem; }
   #girarBtn { min-width: 200px; padding: 14px 30px; font-size: .95rem; }
   .popup-content { padding: 25px; max-width: 340px; }
@@ -427,8 +429,7 @@ body.force-dark { color-scheme: dark; }
 }
 
 @media (max-width: 360px) {
-  .wheel-wrapper { width: 260px; height: 260px; }
-  .wheel-border { border-width: 5px; }
+  #ruleta { width: 260px; height: 260px; border-width: 5px; }
   .controls-title { font-size: 1.6rem; }
   #girarBtn { min-width: 180px; padding: 12px 25px; font-size: .85rem; }
 }
@@ -438,13 +439,17 @@ body.force-dark { color-scheme: dark; }
 
 <!-- Pantalla de carga -->
 <div class="screen-loading" id="screen-loading">
-  <div class="spinner-lg"></div>
+  <div style="text-align:center">
+    <div style="font-size:3rem;margin-bottom:20px">🎰</div>
+    <div>Cargando ruleta...</div>
+    <div class="spinner-lg" style="margin-top:20px"></div>
+  </div>
 </div>
 
 <!-- Pantalla de error -->
 <div class="screen-error" id="screen-error" style="display:none">
-  <h1 id="error-emoji">🎰</h1>
-  <p id="error-msg"></p>
+  <h1 id="error-emoji">😢</h1>
+  <p id="error-msg">Error</p>
 </div>
 
 <!-- Notificacion -->
@@ -458,11 +463,11 @@ body.force-dark { color-scheme: dark; }
 <!-- Popup premio -->
 <div class="popup-overlay" id="popup">
   <div class="popup-content">
-    <div class="popup-title" id="popup-title"></div>
+    <div class="popup-title" id="popup-title">¡FELICIDADES!</div>
     <div class="popup-prize" id="popup-prize"></div>
     <div class="popup-message" id="popup-message"></div>
     <div class="popup-buttons">
-      <button class="popup-btn" id="popup-close-btn"></button>
+      <button class="popup-btn" id="popup-close-btn">✨ ¡Genial! ✨</button>
       <button class="popup-btn share" id="popup-share-btn">📤 Compartir</button>
     </div>
   </div>
@@ -486,69 +491,41 @@ body.force-dark { color-scheme: dark; }
     <div class="controls-container">
       <div class="controls-title" id="model-name">PlayOFans</div>
       <div class="controls-section">
-        <div class="form-title" id="form-title"></div>
+        <div class="form-title" id="form-title">💝 Codigo Exclusivo</div>
         <div id="form-code">
-          <input type="text" id="codigo" placeholder="" maxlength="20" autocomplete="off">
-          <button class="btn" id="btn-validar"></button>
+          <input type="text" id="codigo" placeholder="Introduce tu codigo" maxlength="20" autocomplete="off">
+          <button class="btn" id="validarBtn" style="margin-top:12px">✨ Validar Código ✨</button>
         </div>
         <div class="spins-info" id="spins-info"></div>
       </div>
     </div>
 
-    <!-- COLUMNA CENTRAL: Ruleta -->
+    <!-- COLUMNA CENTRAL: Ruleta (Canvas) -->
     <div class="ruleta-section">
-      <div class="wheel-wrapper">
-        <div class="wheel-pointer"></div>
-        <div class="wheel-border">
-          <svg id="wheel-svg" viewBox="0 0 450 450" class="idling"></svg>
-        </div>
+      <div id="ruleta">
+        <div id="flecha"></div>
+        <canvas id="opciones" width="450" height="450" class="is-idling"></canvas>
       </div>
-      <button class="btn" id="girarBtn" disabled></button>
+      <button class="btn" id="girarBtn" disabled>🎯 ¡GIRAR RULETA! 🎯</button>
     </div>
 
     <!-- COLUMNA DERECHA: Historial -->
     <div class="historial-container" id="historial-container">
       <div class="historial-section">
-        <div class="historial-title" id="historial-title"></div>
+        <div class="historial-title" id="historial-title">🏆 Mis Premios</div>
         <div class="historial-lista" id="historial-lista">
-          <div class="historial-vacio" id="historial-vacio"></div>
+          <div class="historial-vacio" id="historial-vacio">Aun no has ganado premios.<br>¡Gira la ruleta para empezar!</div>
         </div>
       </div>
     </div>
 
   </div>
   <div class="message-section">
-    <div id="mensaje"></div>
+    <div id="mensaje">✨ Ingresa tu codigo para comenzar ✨</div>
   </div>
 </div>
 
 <script>
-// =============================================================================
-// TEXTOS UI (todo en un solo objeto para i18n futuro)
-// =============================================================================
-const TEXTS = {
-  formTitle: '💝 Codigo Exclusivo',
-  placeholder: 'Introduce tu codigo',
-  btnValidar: '✨ Validar Codigo ✨',
-  btnGirar: '🎯 ¡GIRAR RULETA! 🎯',
-  btnGirando: '🎲 Girando...',
-  btnSinTiradas: '😢 Sin tiradas',
-  historialTitle: '🏆 Mis Premios',
-  historialVacio: 'Aun no has ganado premios.<br>¡Gira la ruleta para empezar!',
-  msgInicial: '✨ Ingresa tu codigo para comenzar ✨',
-  msgGirando: '🎯 ¡La ruleta esta girando! ✨',
-  msgValidando: '🔍 Validando codigo...',
-  popupTitle: '¡FELICIDADES!',
-  popupClose: '✨ ¡Genial! ✨',
-  popupShare: '📤 Compartir',
-  errorNoDisponible: 'Esta ruleta no esta disponible 🎰',
-  errorNoEncontrado: 'Modelo no encontrado',
-  expiraEn: '⏰ Expira en',
-  tiradas: 'tiradas',
-  tirada: 'tirada',
-  teQuedan: 'Te quedan',
-};
-
 // =============================================================================
 // TEMAS
 // =============================================================================
@@ -648,647 +625,51 @@ const THEMES = {
 // =============================================================================
 // ESTADO GLOBAL
 // =============================================================================
-let STATE = {
-  slug: '',
-  config: null,
-  prizes: [],
-  fanName: '',
-  code: '',
-  remainingSpins: 0,
-  totalSpins: 0,
-  expiresAt: null,
-  pendingToken: null,
-  isSpinning: false,
-  isMuted: false,
-  history: [],
-  historyCount: 0,
-};
+let slug = '';
+let config = null;
+let currentTheme = THEMES.dark_luxury;
+let premiosActuales = [];
+let premiosDisponibles = [];
+let nombreUsuario = '';
+let codigoActual = '';
+let tiradasRestantes = 0;
+let totalSpins = 0;
+let expiresAt = null;
+let isSpinning = false;
+let isMuted = false;
+let historial = [];
+let historialCount = 0;
 
-const sounds = {
-  click: new Audio('sounds/click.wav'),
-  spin:  new Audio('sounds/spin.wav'),
-  win:   new Audio('sounds/win.wav'),
-};
+// Sonidos
+const soundClick = new Audio('sounds/click.wav');
+const soundSpin = new Audio('sounds/spin.wav');
+const soundWin = new Audio('sounds/win.wav');
 
 // =============================================================================
-// INICIALIZACION
+// getCurrentRotation — EXACT from original
 // =============================================================================
-document.addEventListener('DOMContentLoaded', init);
-
-async function init() {
-  // Extraer slug de la URL: /xvickyluna/ruleta → "xvickyluna"
-  const parts = window.location.pathname.split('/').filter(Boolean);
-  STATE.slug = parts[0] || '';
-
-  if (!STATE.slug) return showError(TEXTS.errorNoEncontrado);
-
-  // Codigo precargado desde ?c=XXXX
-  const params = new URLSearchParams(window.location.search);
-  const preCode = params.get('c');
-
-  // Inicializar textos UI
-  setText('form-title', TEXTS.formTitle);
-  setText('historial-title', TEXTS.historialTitle);
-  setText('historial-vacio', TEXTS.historialVacio);
-  setText('mensaje', TEXTS.msgInicial);
-  document.getElementById('codigo').placeholder = TEXTS.placeholder;
-  document.getElementById('btn-validar').textContent = TEXTS.btnValidar;
-  document.getElementById('girarBtn').textContent = TEXTS.btnGirar;
-  document.getElementById('popup-close-btn').textContent = TEXTS.popupClose;
-
-  // Event listeners
-  document.getElementById('btn-validar').addEventListener('click', validarCodigo);
-  document.getElementById('codigo').addEventListener('keydown', e => { if (e.key === 'Enter') validarCodigo(); });
-  document.getElementById('girarBtn').addEventListener('click', girarRuleta);
-  document.getElementById('popup-close-btn').addEventListener('click', cerrarPopup);
-  document.getElementById('popup-share-btn').addEventListener('click', compartirPremio);
-  document.getElementById('btn-mute').addEventListener('click', toggleMute);
-  document.getElementById('notif-close').addEventListener('click', cerrarNotif);
-
-  // Cargar config del tenant
-  try {
-    const res = await fetch(`/api/tenant-config?slug=${STATE.slug}`);
-    const data = await res.json();
-
-    if (res.status === 404) return showError(TEXTS.errorNoEncontrado);
-    if (res.status === 403) return showError(data.error || TEXTS.errorNoDisponible);
-    if (!res.ok) return showError(data.error || TEXTS.errorNoDisponible);
-
-    STATE.config = data;
-    STATE.prizes = data.prizes || [];
-
-    applyTheme(data.theme || 'dark_luxury');
-    updateOGTags(data);
-
-    document.getElementById('model-name').textContent = data.display_name || STATE.slug;
-
-    STATE.isMuted = !data.sound_enabled_default;
-    document.getElementById('btn-mute').textContent = STATE.isMuted ? '🔇' : '🔊';
-
-    if (data.force_dark_mode) document.body.classList.add('force-dark');
-
-    drawWheel(STATE.prizes);
-    createParticles();
-
-    // Ocultar pantalla de carga
-    document.getElementById('screen-loading').style.display = 'none';
-
-    // Si hay codigo precargado
-    if (preCode) {
-      document.getElementById('codigo').value = preCode;
-      validarCodigo();
+function getCurrentRotation(element) {
+    const st = window.getComputedStyle(element, null);
+    const tm = st.getPropertyValue("-webkit-transform") ||
+               st.getPropertyValue("-moz-transform") ||
+               st.getPropertyValue("-ms-transform") ||
+               st.getPropertyValue("-o-transform") ||
+               st.getPropertyValue("transform") ||
+               "none";
+    if (tm !== "none") {
+        const values = tm.split('(')[1].split(')')[0].split(',');
+        const a = values[0];
+        const b = values[1];
+        const angle = Math.round(Math.atan2(b, a) * (180/Math.PI));
+        return (angle < 0) ? angle + 360 : angle;
     }
-
-    // Recovery: comprobar token pendiente en localStorage
-    const savedRaw = localStorage.getItem(`pof_token_${STATE.slug}`);
-    if (savedRaw) {
-      try {
-        const parsed = JSON.parse(savedRaw);
-        if (parsed.code === STATE.code) {
-          STATE.pendingToken = parsed.token;
-        } else {
-          localStorage.removeItem(`pof_token_${STATE.slug}`);
-        }
-      } catch (e) {
-        localStorage.removeItem(`pof_token_${STATE.slug}`);
-      }
-    }
-
-  } catch (err) {
-    showError(TEXTS.errorNoDisponible);
-  }
-}
-
-// =============================================================================
-// TEMA
-// =============================================================================
-function applyTheme(themeId) {
-  const t = THEMES[themeId] || THEMES.dark_luxury;
-  const r = document.documentElement.style;
-  r.setProperty('--bg-a', t.bgA);
-  r.setProperty('--bg-b', t.bgB);
-  r.setProperty('--bg-c', t.bgC);
-  r.setProperty('--accent', t.accent);
-  r.setProperty('--accent2', t.accent2);
-  r.setProperty('--text', t.text);
-  r.setProperty('--text-soft', t.textSoft);
-  r.setProperty('--glass', t.glass);
-  r.setProperty('--glass-border', t.glassBorder);
-  r.setProperty('--accent-soft', t.accentSoft);
-  r.setProperty('--accent-border', t.accentBorder);
-}
-
-// =============================================================================
-// OG TAGS DINAMICAS
-// =============================================================================
-function updateOGTags(config) {
-  const url = `https://playofans.com/${STATE.slug}/ruleta`;
-  setMeta('og:title', `${config.display_name} — Ruleta de Premios`);
-  setMeta('og:description', `Gira la ruleta de ${config.display_name} y gana premios exclusivos`);
-  setMeta('og:url', url);
-  document.title = `${config.display_name} — Ruleta | PlayOFans`;
-}
-function setMeta(prop, content) {
-  let el = document.querySelector(`meta[property="${prop}"]`);
-  if (el) el.setAttribute('content', content);
-}
-
-// =============================================================================
-// DIBUJAR RULETA SVG
-// =============================================================================
-function drawWheel(prizes) {
-  const svg = document.getElementById('wheel-svg');
-  const theme = THEMES[STATE.config?.theme] || THEMES.dark_luxury;
-  const n = prizes.length;
-  if (n < 2) return;
-
-  const cx = 225, cy = 225, r = 220;
-  let html = '';
-
-  for (let i = 0; i < n; i++) {
-    const a1 = (2 * Math.PI / n) * i - Math.PI / 2;
-    const a2 = (2 * Math.PI / n) * (i + 1) - Math.PI / 2;
-    const x1 = cx + r * Math.cos(a1);
-    const y1 = cy + r * Math.sin(a1);
-    const x2 = cx + r * Math.cos(a2);
-    const y2 = cy + r * Math.sin(a2);
-    const large = (a2 - a1 > Math.PI) ? 1 : 0;
-    const color = theme.sliceColors[i % theme.sliceColors.length];
-
-    // Slice
-    html += `<path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} Z" fill="${color}" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>`;
-
-    // Texto
-    const aMid = (a1 + a2) / 2;
-    const textR = r * 0.65;
-    const tx = cx + textR * Math.cos(aMid);
-    const ty = cy + textR * Math.sin(aMid);
-    const angleDeg = (aMid * 180 / Math.PI);
-
-    // Limpiar emojis y partir en lineas
-    const clean = prizes[i].replace(/[\u{1F300}-\u{1F9FF}]/gu, '').trim().toUpperCase();
-    const words = clean.split(' ');
-    let lines = [], line = '';
-    words.forEach(w => {
-      if ((line + w).length > 10 && line) { lines.push(line.trim()); line = w + ' '; }
-      else { line += w + ' '; }
-    });
-    lines.push(line.trim());
-
-    const fontSize = n > 6 ? 11 : 14;
-    const lineH = fontSize + 3;
-    const startY = -(lines.length - 1) * lineH / 2;
-
-    html += `<g transform="translate(${tx},${ty}) rotate(${angleDeg})">`;
-    lines.forEach((l, j) => {
-      html += `<text x="0" y="${startY + j * lineH}" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Poppins,sans-serif" font-weight="700" font-size="${fontSize}" style="text-shadow:1px 1px 3px rgba(0,0,0,.7)">${escapeHtml(l)}</text>`;
-    });
-    html += '</g>';
-  }
-
-  // Circulo central
-  const emoji = theme.emoji;
-  html += `<circle cx="${cx}" cy="${cy}" r="38" fill="${theme.accent}" fill-opacity="0.8" stroke="rgba(255,255,255,0.8)" stroke-width="3"/>`;
-  html += `<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="32">${emoji}</text>`;
-
-  svg.innerHTML = html;
-}
-
-function escapeHtml(t) {
-  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-// =============================================================================
-// VALIDAR CODIGO
-// =============================================================================
-async function validarCodigo() {
-  const input = document.getElementById('codigo');
-  const code = input.value.trim().toUpperCase();
-  if (!code) { input.style.animation = 'shake .5s'; setTimeout(() => input.style.animation = '', 500); return; }
-
-  setText('mensaje', TEXTS.msgValidando);
-  document.getElementById('btn-validar').disabled = true;
-
-  try {
-    const res = await fetch('/api/validate-code', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ slug: STATE.slug, codigoId: code, fanName: '' }),
-    });
-    const data = await res.json();
-
-    if (!res.ok) {
-      notif(data.error || 'Codigo no valido', 'error');
-      setText('mensaje', data.error || 'Codigo no valido');
-      document.getElementById('btn-validar').disabled = false;
-      return;
-    }
-
-    // Exito
-    STATE.code = code;
-    STATE.fanName = data.fan_name;
-    STATE.remainingSpins = data.remaining_spins;
-    STATE.totalSpins = data.total_spins;
-    STATE.expiresAt = data.expires_at ? new Date(data.expires_at) : null;
-
-    // Premios del codigo o globales
-    if (data.prizes && data.prizes.length >= 2) {
-      STATE.prizes = data.prizes;
-      drawWheel(STATE.prizes);
-    }
-
-    // Mostrar mensaje de bienvenida
-    setText('mensaje', data.welcome_message);
-
-    // Actualizar UI
-    updateSpinsInfo();
-    startCountdown();
-    loadHistory();
-
-    // Habilitar/deshabilitar boton girar
-    const girarBtn = document.getElementById('girarBtn');
-    if (STATE.remainingSpins > 0) {
-      girarBtn.disabled = false;
-      girarBtn.textContent = TEXTS.btnGirar;
-    } else {
-      girarBtn.disabled = true;
-      girarBtn.textContent = TEXTS.btnSinTiradas;
-      // Código agotado: mostrar historial con mensaje
-      setText('mensaje', 'Ya usaste todas tus tiradas. Estos fueron tus premios:');
-    }
-
-    // Ocultar formulario, mostrar historial
-    document.getElementById('form-code').style.display = 'none';
-    document.getElementById('historial-container').classList.add('visible');
-
-    playSound('click');
-
-  } catch (err) {
-    notif('Error de conexion', 'error');
-    document.getElementById('btn-validar').disabled = false;
-  }
-}
-
-// =============================================================================
-// GIRAR RULETA
-// =============================================================================
-async function girarRuleta() {
-  if (STATE.isSpinning || STATE.remainingSpins <= 0) return;
-  STATE.isSpinning = true;
-
-  const girarBtn = document.getElementById('girarBtn');
-  girarBtn.disabled = true;
-  girarBtn.textContent = TEXTS.btnGirando;
-  setText('mensaje', TEXTS.msgGirando);
-
-  try {
-    // 1. Llamar prepare-spin
-    const res = await fetch('/api/prepare-spin', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ codigoId: STATE.code, slug: STATE.slug }),
-    });
-    const data = await res.json();
-
-    if (!res.ok) {
-      notif(data.error || 'Error al preparar la tirada', 'error');
-      setText('mensaje', data.error || 'Error');
-      resetSpinButton();
-      return;
-    }
-
-    const { prize, wheelIndex, token, recovered } = data;
-
-    // Guardar token en localStorage para recovery
-    localStorage.setItem(`pof_token_${STATE.slug}`, JSON.stringify({ token, code: STATE.code }));
-    STATE.pendingToken = token;
-
-    if (recovered) notif('Recuperando tirada anterior...', 'success');
-
-    // 2. Animar ruleta hacia el wheelIndex
-    playSound('spin', true);
-    await animateWheel(wheelIndex);
-
-    // 3. Confirmar spin
-    stopSound('spin');
-    playSound('win');
-
-    const confirmRes = await fetch('/api/confirm-spin', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token }),
-    });
-    const confirmData = await confirmRes.json();
-
-    if (confirmRes.ok && confirmData.success) {
-      STATE.remainingSpins = confirmData.remaining_spins;
-    }
-
-    // Limpiar token
-    localStorage.removeItem(`pof_token_${STATE.slug}`);
-    STATE.pendingToken = null;
-
-    // 4. Mostrar resultado
-    const postMsg = (STATE.config.post_prize_message || '').replace(/\{nombre\}/gi, STATE.fanName);
-    showPopup(prize, postMsg);
-    setText('mensaje', `🎉 ¡Ganaste: ${prize}!`);
-    addToHistory(prize);
-    launchConfetti();
-    updateSpinsInfo();
-
-    // Resetear boton
-    resetSpinButton();
-
-  } catch (err) {
-    stopSound('spin');
-    notif('Error de conexion. Tu tirada esta guardada.', 'error');
-    resetSpinButton();
-  }
-}
-
-function resetSpinButton() {
-  STATE.isSpinning = false;
-  const btn = document.getElementById('girarBtn');
-  if (STATE.remainingSpins > 0) {
-    btn.disabled = false;
-    btn.textContent = TEXTS.btnGirar;
-  } else {
-    btn.disabled = true;
-    btn.textContent = TEXTS.btnSinTiradas;
-  }
-}
-
-// =============================================================================
-// ANIMACION RULETA
-// =============================================================================
-function getCurrentRotation(el) {
-  const st = window.getComputedStyle(el);
-  const tr = st.getPropertyValue('transform');
-  if (!tr || tr === 'none') return 0;
-  const values = tr.split('(')[1].split(')')[0].split(',');
-  const a = parseFloat(values[0]);
-  const b = parseFloat(values[1]);
-  return Math.round(Math.atan2(b, a) * (180 / Math.PI));
-}
-
-function animateWheel(wheelIndex) {
-  return new Promise((resolve) => {
-    const svg = document.getElementById('wheel-svg');
-
-    // 1. Obtener rotación actual (incluso durante idling)
-    const currentAngle = getCurrentRotation(svg);
-
-    // 2. Quitar idling y fijar posición actual
-    svg.classList.remove('idling');
-    svg.style.transition = 'none';
-    svg.style.transform = `rotate(${currentAngle}deg)`;
-
-    // 3. Forzar reflow
-    svg.offsetWidth;
-
-    // 4. Calcular ángulo final
-    const anglePer = 360 / STATE.prizes.length;
-    const targetAngle = (360 * 6) + (wheelIndex * anglePer) + (anglePer / 2);
-    const finalAngle = currentAngle + targetAngle;
-
-    // 5. Aplicar transición
-    svg.style.transition = 'transform 5s cubic-bezier(.17,.67,.83,.67)';
-    svg.style.transform = `rotate(${finalAngle}deg)`;
-
-    // 6. Esperar fin de animación (NO usar transitionend)
-    setTimeout(() => {
-      svg.style.transition = 'none';
-      resolve();
-    }, 5200);
-  });
-}
-
-// =============================================================================
-// HISTORIAL PREMIOS
-// =============================================================================
-function loadHistory() {
-  try {
-    const saved = localStorage.getItem(`pof_history_${STATE.slug}_${STATE.code}`);
-    if (saved) {
-      STATE.history = JSON.parse(saved);
-      STATE.historyCount = STATE.history.length;
-    }
-  } catch (e) {
-    STATE.history = [];
-  }
-  renderHistory();
-}
-
-function addToHistory(prize) {
-  STATE.historyCount++;
-  STATE.history.unshift({
-    id: STATE.historyCount,
-    nombre: prize,
-    fecha: new Date().toLocaleString('es-ES', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }),
-  });
-  try {
-    localStorage.setItem(`pof_history_${STATE.slug}_${STATE.code}`, JSON.stringify(STATE.history));
-  } catch (e) {}
-  renderHistory();
-}
-
-function renderHistory() {
-  const lista = document.getElementById('historial-lista');
-  const vacio = document.getElementById('historial-vacio');
-
-  if (STATE.history.length === 0) {
-    vacio.style.display = 'block';
-    // Limpiar items previos pero mantener el div vacio
-    Array.from(lista.querySelectorAll('.premio-item')).forEach(el => el.remove());
-    return;
-  }
-  vacio.style.display = 'none';
-
-  // Generar todos los items del historial
-  const itemsHtml = STATE.history.map((p, i) => `
-    <div class="premio-item" style="animation:fadeInUp .5s ease ${i * .1}s both">
-      <div class="premio-numero">${p.id}</div>
-      <div class="premio-nombre">${escapeHtml(p.nombre)}</div>
-      <div class="premio-fecha">🕐 ${p.fecha}</div>
-    </div>
-  `).join('');
-
-  // Reemplazar contenido manteniendo el div vacio
-  lista.innerHTML = `<div class="historial-vacio" id="historial-vacio" style="display:none"></div>` + itemsHtml;
-
-  lista.scrollTop = 0;
-}
-
-// =============================================================================
-// INFO TIRADAS + COUNTDOWN
-// =============================================================================
-function updateSpinsInfo() {
-  const el = document.getElementById('spins-info');
-  const word = STATE.remainingSpins === 1 ? TEXTS.tirada : TEXTS.tiradas;
-  el.innerHTML = `${TEXTS.teQuedan} <strong>${STATE.remainingSpins}</strong> ${word}`;
-  el.classList.add('visible');
-}
-
-let countdownInterval = null;
-function startCountdown() {
-  if (countdownInterval) clearInterval(countdownInterval);
-  if (!STATE.expiresAt) return;
-
-  const el = document.getElementById('spins-info');
-
-  function update() {
-    const diff = STATE.expiresAt - Date.now();
-    if (diff <= 0) {
-      el.innerHTML += ' <span class="countdown">⏰ Codigo expirado</span>';
-      clearInterval(countdownInterval);
-      return;
-    }
-    // Solo mostrar si < 72h
-    if (diff < 72 * 3600 * 1000) {
-      const h = Math.floor(diff / 3600000);
-      const m = Math.floor((diff % 3600000) / 60000);
-      const word = STATE.remainingSpins === 1 ? TEXTS.tirada : TEXTS.tiradas;
-      el.innerHTML = `${TEXTS.teQuedan} <strong>${STATE.remainingSpins}</strong> ${word} <span class="countdown">${TEXTS.expiraEn} ${h}h ${m}m</span>`;
-    }
-  }
-
-  update();
-  countdownInterval = setInterval(update, 60000);
-}
-
-// =============================================================================
-// POPUP
-// =============================================================================
-function showPopup(prize, message) {
-  document.getElementById('popup-title').textContent = TEXTS.popupTitle;
-  document.getElementById('popup-prize').textContent = prize;
-  document.getElementById('popup-message').textContent = message;
-  document.getElementById('popup').classList.add('show');
-}
-function cerrarPopup() {
-  document.getElementById('popup').classList.remove('show');
-}
-
-// =============================================================================
-// COMPARTIR (Canvas API)
-// =============================================================================
-async function compartirPremio() {
-  const prize = document.getElementById('popup-prize').textContent;
-  const name = STATE.config?.display_name || STATE.slug;
-  const theme = THEMES[STATE.config?.theme] || THEMES.dark_luxury;
-
-  const canvas = document.createElement('canvas');
-  canvas.width = 600; canvas.height = 400;
-  const ctx = canvas.getContext('2d');
-
-  // Fondo gradiente
-  const grad = ctx.createLinearGradient(0, 0, 600, 400);
-  grad.addColorStop(0, theme.bgA);
-  grad.addColorStop(1, theme.bgB);
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, 600, 400);
-
-  // Texto
-  ctx.fillStyle = '#fff';
-  ctx.textAlign = 'center';
-
-  ctx.font = 'bold 28px Poppins, sans-serif';
-  ctx.fillText(`${theme.emoji} ${name}`, 300, 80);
-
-  ctx.font = 'bold 22px Poppins, sans-serif';
-  ctx.fillText('¡Gane en la ruleta!', 300, 140);
-
-  ctx.font = 'bold 36px Poppins, sans-serif';
-  ctx.fillStyle = theme.accent;
-  ctx.fillText(prize, 300, 220);
-
-  ctx.font = '16px Poppins, sans-serif';
-  ctx.fillStyle = theme.textSoft;
-  ctx.fillText('playofans.com/' + STATE.slug + '/ruleta', 300, 340);
-
-  canvas.toBlob(async blob => {
-    if (navigator.share && navigator.canShare) {
-      try {
-        const file = new File([blob], 'premio.png', { type: 'image/png' });
-        await navigator.share({ files: [file], text: `¡Gane "${prize}" en la ruleta de ${name}!` });
-      } catch (e) { /* user cancelled */ }
-    } else {
-      // Fallback: descargar
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'premio.png';
-      a.click();
-    }
-  }, 'image/png');
-}
-
-// =============================================================================
-// SONIDOS
-// =============================================================================
-function playSound(name, loop) {
-  if (STATE.isMuted) return;
-  const s = sounds[name];
-  if (!s) return;
-  s.loop = !!loop;
-  s.currentTime = 0;
-  s.play().catch(() => {});
-}
-function stopSound(name) {
-  const s = sounds[name];
-  if (!s) return;
-  s.pause();
-  s.currentTime = 0;
-}
-function toggleMute() {
-  STATE.isMuted = !STATE.isMuted;
-  document.getElementById('btn-mute').textContent = STATE.isMuted ? '🔇' : '🔊';
-  if (STATE.isMuted) Object.values(sounds).forEach(s => { s.pause(); s.currentTime = 0; });
-}
-
-// =============================================================================
-// PARTICULAS
-// =============================================================================
-function createParticles() {
-  const container = document.querySelector('.bg-shapes');
-  const types = ['heart', 'sparkle', 'star'];
-  const emojis = { heart: '💖', star: '✨' };
-
-  for (let i = 0; i < 15; i++) {
-    const type = types[i % types.length];
-    const el = document.createElement('div');
-    el.className = `particle ${type}`;
-    el.style.left = Math.random() * 100 + '%';
-    el.style.top = Math.random() * 100 + '%';
-    el.style.animationDelay = (Math.random() * 5) + 's';
-    if (emojis[type]) el.textContent = emojis[type];
-    container.appendChild(el);
-  }
-}
-
-// =============================================================================
-// CONFETTI
-// =============================================================================
-function launchConfetti() {
-  const colors = ['#ff0066', '#b300ff', '#ffd700', '#00ff88', '#ff6600', '#00d4ff'];
-  for (let i = 0; i < 80; i++) {
-    const el = document.createElement('div');
-    el.className = 'confetti-piece';
-    el.style.left = Math.random() * 100 + 'vw';
-    el.style.background = colors[Math.floor(Math.random() * colors.length)];
-    el.style.animationDuration = (2 + Math.random() * 2) + 's';
-    el.style.animationDelay = (Math.random() * .5) + 's';
-    el.style.borderRadius = Math.random() > .5 ? '50%' : '0';
-    el.style.width = (6 + Math.random() * 8) + 'px';
-    el.style.height = (6 + Math.random() * 8) + 'px';
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 4000);
-  }
+    return 0;
 }
 
 // =============================================================================
 // NOTIFICACIONES
 // =============================================================================
-function notif(msg, type) {
+function mostrarNotificacion(msg, type) {
   const el = document.getElementById('notif');
   document.getElementById('notif-text').textContent = msg;
   el.className = `notif ${type || 'success'}`;
@@ -1303,19 +684,694 @@ function cerrarNotif() {
 }
 
 // =============================================================================
-// PANTALLA ERROR / HELPERS
+// MENSAJE
 // =============================================================================
-function showError(msg) {
-  document.getElementById('screen-loading').style.display = 'none';
-  const screen = document.getElementById('screen-error');
-  document.getElementById('error-msg').textContent = msg;
-  screen.style.display = 'flex';
-}
-
-function setText(id, html) {
-  const el = document.getElementById(id);
+function mostrarMensaje(html) {
+  const el = document.getElementById('mensaje');
   if (el) el.innerHTML = html;
 }
+
+// =============================================================================
+// HISTORIAL
+// =============================================================================
+function inicializarHistorial() {
+  try {
+    const saved = localStorage.getItem(`pof_historial_${slug}_${codigoActual}`);
+    if (saved) {
+      historial = JSON.parse(saved);
+      historialCount = historial.length;
+    }
+  } catch (e) {
+    historial = [];
+  }
+  actualizarHistorialVisual();
+  document.getElementById('historial-container').classList.add('visible');
+}
+
+function agregarPremioAlHistorial(premio) {
+  historialCount++;
+  historial.unshift({
+    id: historialCount,
+    nombre: premio,
+    fecha: new Date().toLocaleString('es-ES', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }),
+  });
+  try {
+    localStorage.setItem(`pof_historial_${slug}_${codigoActual}`, JSON.stringify(historial));
+  } catch (e) {}
+  actualizarHistorialVisual();
+}
+
+function actualizarHistorialVisual() {
+  const lista = document.getElementById('historial-lista');
+  const vacio = document.getElementById('historial-vacio');
+
+  if (historial.length === 0) {
+    vacio.style.display = 'block';
+    Array.from(lista.querySelectorAll('.premio-item')).forEach(el => el.remove());
+    return;
+  }
+  vacio.style.display = 'none';
+
+  const itemsHtml = historial.map((p, i) => `
+    <div class="premio-item" style="animation:fadeInUp .5s ease ${i * .1}s both">
+      <div class="premio-numero">${p.id}</div>
+      <div class="premio-nombre">${escapeHtml(p.nombre)}</div>
+      <div class="premio-fecha">🕐 ${p.fecha}</div>
+    </div>
+  `).join('');
+
+  lista.innerHTML = `<div class="historial-vacio" id="historial-vacio" style="display:none">Aun no has ganado premios.<br>¡Gira la ruleta para empezar!</div>` + itemsHtml;
+  lista.scrollTop = 0;
+}
+
+function escapeHtml(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// =============================================================================
+// DIBUJAR RULETA COMPLETA — Canvas
+// =============================================================================
+function dibujarRuletaCompleta() {
+  const canvas = document.getElementById('opciones');
+  const ctx = canvas.getContext('2d');
+  const n = premiosActuales.length;
+  if (n < 2) return;
+
+  const w = canvas.width;
+  const h = canvas.height;
+  const cx = w / 2;
+  const cy = h / 2;
+  const r = Math.min(cx, cy) - 5;
+
+  ctx.clearRect(0, 0, w, h);
+
+  const sliceAngle = (2 * Math.PI) / n;
+  const colors = currentTheme.sliceColors;
+
+  for (let i = 0; i < n; i++) {
+    const startAngle = sliceAngle * i;
+    const endAngle = startAngle + sliceAngle;
+    const color = colors[i % colors.length];
+
+    // Draw slice
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, startAngle, endAngle);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+
+    // Slice border
+    ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Draw text
+    ctx.save();
+    const midAngle = startAngle + sliceAngle / 2;
+    const textR = r * 0.65;
+    const tx = cx + textR * Math.cos(midAngle);
+    const ty = cy + textR * Math.sin(midAngle);
+
+    ctx.translate(tx, ty);
+    let rotacion = midAngle;
+    if (rotacion > Math.PI/2 && rotacion < 3*Math.PI/2) rotacion += Math.PI;
+    ctx.rotate(rotacion);
+
+    // Clean text (remove emojis)
+    const clean = premiosActuales[i].replace(/[\u{1F300}-\u{1F9FF}]/gu, '').trim().toUpperCase();
+    const words = clean.split(' ');
+    let lines = [];
+    let line = '';
+    words.forEach(w => {
+      if ((line + w).length > 10 && line) {
+        lines.push(line.trim());
+        line = w + ' ';
+      } else {
+        line += w + ' ';
+      }
+    });
+    lines.push(line.trim());
+
+    const fontSize = n > 6 ? 11 : 14;
+    ctx.font = `bold ${fontSize}px Poppins, sans-serif`;
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    // Text shadow effect
+    ctx.shadowColor = 'rgba(0,0,0,0.7)';
+    ctx.shadowBlur = 3;
+    ctx.shadowOffsetX = 1;
+    ctx.shadowOffsetY = 1;
+
+    const lineH = fontSize + 3;
+    const startY = -(lines.length - 1) * lineH / 2;
+
+    lines.forEach((l, j) => {
+      ctx.fillText(l, 0, startY + j * lineH);
+    });
+
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+    ctx.restore();
+  }
+
+  // Center circle
+  ctx.beginPath();
+  ctx.arc(cx, cy, 38, 0, 2 * Math.PI);
+  ctx.fillStyle = currentTheme.accent;
+  ctx.globalAlpha = 0.8;
+  ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  // Center emoji
+  ctx.font = '32px serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(currentTheme.emoji, cx, cy);
+}
+
+// =============================================================================
+// APPLY THEME
+// =============================================================================
+function applyTheme(themeId) {
+  const t = THEMES[themeId] || THEMES.dark_luxury;
+  currentTheme = t;
+  const r = document.documentElement.style;
+  r.setProperty('--bg-fondo-a', t.bgA);
+  r.setProperty('--bg-fondo-b', t.bgB);
+  r.setProperty('--bg-fondo-c', t.bgC);
+  r.setProperty('--accent-principal', t.accent);
+  r.setProperty('--accent-secundario', t.accent2);
+  r.setProperty('--texto-oscuro', t.text);
+  r.setProperty('--texto-suave', t.textSoft);
+  r.setProperty('--glass-white', t.glass);
+  r.setProperty('--glass-border', t.glassBorder);
+  r.setProperty('--accent-soft', t.accentSoft);
+  r.setProperty('--accent-border', t.accentBorder);
+}
+
+// =============================================================================
+// OG TAGS
+// =============================================================================
+function updateOGTags(cfg) {
+  const url = `https://playofans.com/${slug}/ruleta`;
+  setMeta('og:title', `${cfg.display_name} — Ruleta de Premios`);
+  setMeta('og:description', `Gira la ruleta de ${cfg.display_name} y gana premios exclusivos`);
+  setMeta('og:url', url);
+  document.title = `${cfg.display_name} — Ruleta | PlayOFans`;
+}
+function setMeta(prop, content) {
+  let el = document.querySelector(`meta[property="${prop}"]`);
+  if (el) el.setAttribute('content', content);
+}
+
+// =============================================================================
+// INIT
+// =============================================================================
+document.addEventListener('DOMContentLoaded', init);
+
+async function init() {
+  // Extract slug from URL: /xvickyluna/ruleta -> "xvickyluna"
+  const parts = window.location.pathname.split('/').filter(Boolean);
+  slug = parts[0] || '';
+
+  if (!slug) return showError('Modelo no encontrado');
+
+  // Preloaded code from ?c=XXXX
+  const params = new URLSearchParams(window.location.search);
+  const preCode = params.get('c');
+
+  // Event listeners
+  document.getElementById('validarBtn').addEventListener('click', validarCodigo);
+  document.getElementById('codigo').addEventListener('keydown', e => { if (e.key === 'Enter') validarCodigo(); });
+  document.getElementById('girarBtn').addEventListener('click', girarRuleta);
+  document.getElementById('popup-close-btn').addEventListener('click', cerrarPopup);
+  document.getElementById('popup-share-btn').addEventListener('click', compartirPremio);
+  document.getElementById('btn-mute').addEventListener('click', toggleMute);
+  document.getElementById('notif-close').addEventListener('click', cerrarNotif);
+
+  // Load tenant config
+  try {
+    const res = await fetch(`/api/tenant-config?slug=${slug}`);
+    const data = await res.json();
+
+    if (res.status === 404) return showError('Modelo no encontrado');
+    if (res.status === 403) return showError(data.error || 'Esta ruleta no esta disponible');
+    if (!res.ok) return showError(data.error || 'Esta ruleta no esta disponible');
+
+    config = data;
+    premiosActuales = data.prizes || [];
+    premiosDisponibles = [...premiosActuales];
+
+    applyTheme(data.theme || 'dark_luxury');
+    updateOGTags(data);
+
+    document.getElementById('model-name').textContent = data.display_name || slug;
+
+    isMuted = !data.sound_enabled_default;
+    document.getElementById('btn-mute').textContent = isMuted ? '🔇' : '🔊';
+
+    if (data.force_dark_mode) document.body.classList.add('force-dark');
+
+    dibujarRuletaCompleta();
+    createParticles();
+
+    // Add idling class
+    document.getElementById('opciones').classList.add('is-idling');
+
+    // Hide loading screen
+    document.getElementById('screen-loading').style.display = 'none';
+
+    // If preloaded code
+    if (preCode) {
+      document.getElementById('codigo').value = preCode;
+      validarCodigo();
+    }
+
+    // Recovery: check pending token in localStorage
+    const savedRaw = localStorage.getItem(`pof_token_${slug}`);
+    if (savedRaw) {
+      try {
+        const parsed = JSON.parse(savedRaw);
+        if (parsed.code === codigoActual) {
+          // Token still pending — will be recovered on next spin
+        } else {
+          localStorage.removeItem(`pof_token_${slug}`);
+        }
+      } catch (e) {
+        localStorage.removeItem(`pof_token_${slug}`);
+      }
+    }
+
+  } catch (err) {
+    showError('Esta ruleta no esta disponible 🎰');
+  }
+}
+
+// =============================================================================
+// VALIDAR CODIGO
+// =============================================================================
+async function validarCodigo() {
+    if (!isMuted) soundClick.play().catch(()=>{});
+    const codigoInput = document.getElementById('codigo');
+    const validarBtn = document.getElementById('validarBtn');
+    const codigo = codigoInput.value.trim().toUpperCase();
+
+    if (!codigo) {
+        mostrarMensaje("❌ Por favor ingresa un código.");
+        codigoInput.style.animation = 'shake 0.5s ease-in-out';
+        setTimeout(() => codigoInput.style.animation = '', 500);
+        return;
+    }
+
+    validarBtn.disabled = true;
+    validarBtn.textContent = '⏳ Validando...';
+    mostrarMensaje("🔍 Validando tu código...");
+
+    try {
+        const response = await fetch('/api/validate-code', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ slug: slug, codigoId: codigo, fanName: '' })
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+            mostrarNotificacion(data.error || 'Codigo no valido', 'error');
+            mostrarMensaje(`❌ ${data.error || 'Codigo no valido'}`);
+            codigoInput.style.animation = 'shake 0.5s ease-in-out';
+            setTimeout(() => codigoInput.style.animation = '', 500);
+            validarBtn.disabled = false;
+            validarBtn.textContent = '✨ Validar Código ✨';
+            return;
+        }
+
+        // Success
+        codigoActual = codigo;
+        nombreUsuario = data.fan_name;
+        tiradasRestantes = data.remaining_spins;
+        totalSpins = data.total_spins;
+
+        // Prizes from code or global
+        if (data.prizes && Array.isArray(data.prizes) && data.prizes.length >= 2) {
+            premiosActuales = [...data.prizes];
+            premiosDisponibles = [...data.prizes];
+            dibujarRuletaCompleta();
+        }
+
+        // Expires at
+        if (data.expires_at) expiresAt = new Date(data.expires_at);
+
+        mostrarNotificacion(`¡Bienvenid@ ${nombreUsuario}! Código válido con ${tiradasRestantes} tirada(s) 🎉`, 'success');
+
+        // Show welcome message
+        if (data.welcome_message) {
+            mostrarMensaje(data.welcome_message);
+        } else {
+            mostrarMensaje(`💖 ¡Hola ${nombreUsuario}! Tienes ${tiradasRestantes} tirada(s). ¡Mucha suerte!`);
+        }
+
+        // Enable spin button
+        const girarBtn = document.getElementById('girarBtn');
+        if (tiradasRestantes > 0) {
+            girarBtn.disabled = false;
+            girarBtn.textContent = '✨ Girar Ruleta ✨';
+        } else {
+            girarBtn.disabled = true;
+            girarBtn.textContent = '😢 Sin tiradas';
+            mostrarMensaje('Ya usaste todas tus tiradas. Estos fueron tus premios:');
+        }
+
+        // Disable code form
+        codigoInput.disabled = true;
+        validarBtn.disabled = true;
+        codigoInput.style.borderColor = '#10ac84';
+        validarBtn.style.background = 'linear-gradient(45deg, #10ac84, #00d2d3)';
+        validarBtn.textContent = '✅ Código Válido';
+
+        // Init history and show
+        inicializarHistorial();
+        actualizarTiradasInfo();
+        iniciarCountdown();
+
+    } catch (error) {
+        mostrarNotificacion("Error de conexión. Inténtalo de nuevo.", 'error');
+        mostrarMensaje("❌ Error de conexión.");
+        validarBtn.disabled = false;
+        validarBtn.textContent = '✨ Validar Código ✨';
+    }
+}
+
+// =============================================================================
+// GIRAR RULETA — server-side flow with EXACT animation from original
+// =============================================================================
+async function girarRuleta() {
+    if (isSpinning || tiradasRestantes <= 0 || premiosActuales.length === 0) return;
+    isSpinning = true;
+
+    const girarBtn = document.getElementById('girarBtn');
+    girarBtn.disabled = true;
+    girarBtn.textContent = 'Girando... 🎲';
+
+    soundSpin.loop = true;
+    if (!isMuted) soundSpin.play().catch(()=>{});
+
+    mostrarMensaje("🎯 ¡La ruleta está girando! ✨");
+
+    try {
+        // 1. Call prepare-spin (server picks the prize)
+        const res = await fetch('/api/prepare-spin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ codigoId: codigoActual, slug: slug })
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+            mostrarNotificacion(data.error || 'Error al preparar la tirada', 'error');
+            mostrarMensaje(data.error || 'Error');
+            resetearBotonGirar();
+            return;
+        }
+
+        const { prize, wheelIndex, token, recovered } = data;
+
+        // Save token for recovery
+        localStorage.setItem(`pof_token_${slug}`, JSON.stringify({ token, code: codigoActual }));
+
+        if (recovered) mostrarNotificacion('Recuperando tirada anterior...', 'success');
+
+        // 2. EXACT animation block from original
+        const opcionesCanvas = document.getElementById('opciones');
+        const currentAngle = getCurrentRotation(opcionesCanvas);
+        opcionesCanvas.classList.remove('is-idling');
+        opcionesCanvas.style.transition = 'none';
+        opcionesCanvas.style.transform = `rotate(${currentAngle}deg)`;
+
+        // Force reflow
+        opcionesCanvas.offsetWidth;
+
+        // Calculate final angle
+        const anguloPorPremio = 360 / premiosActuales.length;
+        const anguloDeGiro = (360 * 6) + (wheelIndex * anguloPorPremio) + (anguloPorPremio / 2);
+        const anguloFinalTotal = currentAngle + anguloDeGiro;
+
+        // Apply transition
+        opcionesCanvas.style.transition = "transform 5s cubic-bezier(.17,.67,.83,.67)";
+        opcionesCanvas.style.transform = `rotate(${anguloFinalTotal}deg)`;
+
+        // 3. After 5200ms, process result
+        setTimeout(async () => {
+            soundSpin.pause();
+            soundSpin.currentTime = 0;
+            if (!isMuted) soundWin.play().catch(()=>{});
+
+            opcionesCanvas.style.transition = 'none';
+
+            confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, gravity: 0.8 });
+
+            // Confirm spin
+            try {
+                const confirmRes = await fetch('/api/confirm-spin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token })
+                });
+                const confirmData = await confirmRes.json();
+                if (confirmRes.ok && confirmData.success) {
+                    tiradasRestantes = confirmData.remaining_spins;
+                }
+            } catch (e) {
+                console.error('Error confirming spin:', e);
+            }
+
+            // Clean token
+            localStorage.removeItem(`pof_token_${slug}`);
+
+            // Show result
+            const postMsg = (config.post_prize_message || '').replace(/\{nombre\}/gi, nombreUsuario);
+            mostrarPopupPremio(prize, postMsg);
+            mostrarMensaje(`🎉 ¡Felicidades ${nombreUsuario}! Ganaste: <b>${prize}</b>`);
+            agregarPremioAlHistorial(prize);
+            actualizarTiradasInfo();
+
+            // Reset button after 3s
+            setTimeout(() => {
+                resetearBotonGirar();
+            }, 3000);
+
+        }, 5200);
+
+    } catch (err) {
+        soundSpin.pause();
+        soundSpin.currentTime = 0;
+        mostrarNotificacion('Error de conexion. Tu tirada esta guardada.', 'error');
+        resetearBotonGirar();
+    }
+}
+
+// =============================================================================
+// RESET BOTON GIRAR
+// =============================================================================
+function resetearBotonGirar() {
+    isSpinning = false;
+    const btn = document.getElementById('girarBtn');
+    if (tiradasRestantes > 0) {
+        btn.disabled = false;
+        btn.textContent = '✨ Girar Ruleta ✨';
+        mostrarMensaje(`✨ ¡Tienes ${tiradasRestantes} tirada(s) más! ¡Mucha suerte!`);
+    } else {
+        btn.disabled = true;
+        btn.textContent = '😢 Sin tiradas';
+        mostrarMensaje(`🌟 ¡Gracias por participar ${nombreUsuario}! 💖`);
+    }
+}
+
+// =============================================================================
+// ACTUALIZAR TIRADAS INFO
+// =============================================================================
+function actualizarTiradasInfo() {
+    const el = document.getElementById('spins-info');
+    if (!el) return;
+    const word = tiradasRestantes === 1 ? 'tirada' : 'tiradas';
+    el.innerHTML = `Te quedan <strong>${tiradasRestantes}</strong> ${word}`;
+    el.classList.add('visible');
+}
+
+// =============================================================================
+// COUNTDOWN
+// =============================================================================
+let countdownInterval;
+function iniciarCountdown() {
+    if (!expiresAt) return;
+    clearInterval(countdownInterval);
+    function update() {
+        const diff = expiresAt - Date.now();
+        if (diff <= 0) {
+            const el = document.getElementById('spins-info');
+            if (el) el.innerHTML += ' <span class="countdown">⏰ Código expirado</span>';
+            clearInterval(countdownInterval);
+            return;
+        }
+        if (diff < 72 * 3600 * 1000) {
+            const h = Math.floor(diff / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const el = document.getElementById('spins-info');
+            const word = tiradasRestantes === 1 ? 'tirada' : 'tiradas';
+            if (el) el.innerHTML = `Te quedan <strong>${tiradasRestantes}</strong> ${word} <span class="countdown">⏰ Expira en ${h}h ${m}m</span>`;
+        }
+    }
+    update();
+    countdownInterval = setInterval(update, 60000);
+}
+
+// =============================================================================
+// POPUP
+// =============================================================================
+function mostrarPopupPremio(prize, message) {
+    document.getElementById('popup-title').textContent = '¡FELICIDADES!';
+    document.getElementById('popup-prize').textContent = prize;
+    document.getElementById('popup-message').textContent = message || '';
+    document.getElementById('popup').classList.add('show');
+}
+
+function cerrarPopup() {
+    document.getElementById('popup').classList.remove('show');
+    // Restore idling if not spinning
+    if (!isSpinning) {
+        const opcionesCanvas = document.getElementById('opciones');
+        opcionesCanvas.classList.add('is-idling');
+        opcionesCanvas.style.transition = 'none';
+        opcionesCanvas.style.transform = '';
+    }
+}
+
+// =============================================================================
+// COMPARTIR (Canvas API)
+// =============================================================================
+async function compartirPremio() {
+    const prize = document.getElementById('popup-prize').textContent;
+    const name = config?.display_name || slug;
+    const theme = currentTheme;
+    const canvas = document.createElement('canvas');
+    canvas.width = 600; canvas.height = 400;
+    const ctx = canvas.getContext('2d');
+    const grad = ctx.createLinearGradient(0, 0, 600, 400);
+    grad.addColorStop(0, theme.bgA);
+    grad.addColorStop(1, theme.bgB);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 600, 400);
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 28px Poppins, sans-serif';
+    ctx.fillText(`${theme.emoji} ${name}`, 300, 80);
+    ctx.font = 'bold 22px Poppins, sans-serif';
+    ctx.fillText('¡Gané en la ruleta!', 300, 140);
+    ctx.font = 'bold 36px Poppins, sans-serif';
+    ctx.fillStyle = theme.accent;
+    ctx.fillText(prize, 300, 220);
+    ctx.font = '16px Poppins, sans-serif';
+    ctx.fillStyle = theme.textSoft;
+    ctx.fillText('playofans.com/' + slug + '/ruleta', 300, 340);
+    canvas.toBlob(async blob => {
+        if (navigator.share && navigator.canShare) {
+            try {
+                const file = new File([blob], 'premio.png', { type: 'image/png' });
+                await navigator.share({ files: [file], text: `¡Gané "${prize}" en la ruleta de ${name}!` });
+            } catch (e) {}
+        } else {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'premio.png';
+            a.click();
+        }
+    }, 'image/png');
+}
+
+// =============================================================================
+// SONIDOS
+// =============================================================================
+function toggleMute() {
+    isMuted = !isMuted;
+    document.getElementById('btn-mute').textContent = isMuted ? '🔇' : '🔊';
+    if (isMuted) {
+        soundClick.pause(); soundClick.currentTime = 0;
+        soundSpin.pause(); soundSpin.currentTime = 0;
+        soundWin.pause(); soundWin.currentTime = 0;
+    }
+}
+
+// =============================================================================
+// PARTICULAS
+// =============================================================================
+function createParticles() {
+    const container = document.querySelector('.bg-shapes');
+    const types = ['heart', 'sparkle', 'star'];
+    const emojis = { heart: '💖', star: '✨' };
+
+    for (let i = 0; i < 15; i++) {
+        const type = types[i % types.length];
+        const el = document.createElement('div');
+        el.className = `particle ${type}`;
+        el.style.left = Math.random() * 100 + '%';
+        el.style.top = Math.random() * 100 + '%';
+        el.style.animationDelay = (Math.random() * 5) + 's';
+        if (emojis[type]) el.textContent = emojis[type];
+        container.appendChild(el);
+    }
+}
+
+// Mouse particles
+document.addEventListener('mousemove', (function() {
+    let lastTime = 0;
+    return function(e) {
+        const now = Date.now();
+        if (now - lastTime < 80) return;
+        lastTime = now;
+        const particle = document.createElement('div');
+        particle.style.cssText = `position:fixed;left:${e.clientX}px;top:${e.clientY}px;width:6px;height:6px;border-radius:50%;pointer-events:none;z-index:9999;background:var(--accent-principal);opacity:0.7;transition:all 0.6s ease-out;`;
+        document.body.appendChild(particle);
+        requestAnimationFrame(() => {
+            particle.style.transform = `translate(${(Math.random()-0.5)*40}px, ${(Math.random()-0.5)*40}px) scale(0)`;
+            particle.style.opacity = '0';
+        });
+        setTimeout(() => particle.remove(), 700);
+    };
+})());
+
+// =============================================================================
+// PANTALLA ERROR
+// =============================================================================
+function showError(msg) {
+    document.getElementById('screen-loading').style.display = 'none';
+    const screen = document.getElementById('screen-error');
+    document.getElementById('error-msg').textContent = msg;
+    screen.style.display = 'flex';
+}
+
+// =============================================================================
+// RESIZE HANDLER — redraw canvas on resize
+// =============================================================================
+window.addEventListener('resize', (function() {
+    let resizeTimer;
+    return function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            if (premiosActuales.length >= 2) {
+                dibujarRuletaCompleta();
+            }
+        }, 250);
+    };
+})());
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 </body>
 </html>
