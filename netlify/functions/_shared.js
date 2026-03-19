@@ -7,8 +7,8 @@ const supabase = createClient(
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
 };
 
 function json(statusCode, body) {
@@ -30,4 +30,22 @@ function planCanAccess(userPlan, requiredPlan) {
   return (PLAN_RANK[userPlan] ?? 0) >= (PLAN_RANK[requiredPlan] ?? 0);
 }
 
-module.exports = { supabase, CORS_HEADERS, json, handleOptions, planCanAccess, PLAN_RANK };
+// Autenticar admin: verifica JWT y devuelve { user } o { error }
+async function authenticateAdmin(event) {
+  const authHeader = event.headers.authorization || '';
+  const token = authHeader.replace(/^Bearer\s+/i, '');
+
+  if (!token) {
+    return { error: json(401, { error: 'No autenticado' }) };
+  }
+
+  const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+
+  if (authError || !user) {
+    return { error: json(401, { error: 'Sesión inválida o expirada' }) };
+  }
+
+  return { user };
+}
+
+module.exports = { supabase, CORS_HEADERS, json, handleOptions, planCanAccess, PLAN_RANK, authenticateAdmin };
