@@ -84,7 +84,7 @@ exports.handler = async (event) => {
         referral_code: 'REF-' + cleanSlug.toUpperCase(),
         subscription_expires_at: expiresAt.toISOString(),
         supabase_user_id: authData.user.id,
-        referred_by: req.referral_code || null,
+        referred_by: req.referral_code?.toUpperCase() || null,
         active: true,
       })
       .select()

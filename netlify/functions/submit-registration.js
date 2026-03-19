@@ -78,7 +78,7 @@ exports.handler = async (event) => {
         active_fans: active_fans || null,
         acquisition_channel: acquisition_channel || null,
         telegram_or_instagram: telegram_or_instagram?.trim() || null,
-        referral_code: referral_code?.trim() || null,
+        referral_code: referral_code?.trim()?.toUpperCase() || null,
         discount_code: discount_code?.trim()?.toUpperCase() || null,
       });
 
