@@ -150,8 +150,8 @@ img{max-width:100%;display:block;}
 .container{max-width:var(--max-w);margin:0 auto;padding:0 24px;}
 
 /* NAVBAR */
-.navbar{position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 0;transition:all .3s;}
-.navbar.scrolled{background:rgba(10,6,18,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border);padding:10px 0;}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 0;transition:background .4s,backdrop-filter .4s,padding .3s,box-shadow .4s;background:rgba(10,6,18,0.4);backdrop-filter:blur(6px);}
+.navbar.scrolled{background:rgba(10,6,18,0.97);backdrop-filter:blur(24px);border-bottom:1px solid var(--glass-border);padding:10px 0;box-shadow:0 2px 20px rgba(0,0,0,0.4);}
 .nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:var(--max-w);margin:0 auto;padding:0 24px;}
 .nav-logo{font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
 .nav-links{display:flex;align-items:center;gap:32px;}
@@ -181,9 +181,10 @@ img{max-width:100%;display:block;}
 .hero-glow{position:absolute;inset:-40px;background:radial-gradient(circle,rgba(255,0,102,0.2),transparent 70%);border-radius:50%;animation:pulse 3s ease-in-out infinite;}
 @keyframes pulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
 .hero-badge{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);background:var(--glass);border:1px solid var(--glass-border);border-radius:50px;padding:10px 24px;font-size:.85rem;font-weight:600;white-space:nowrap;backdrop-filter:blur(10px);}
+.hero-wheel-wrap::after{content:'';position:absolute;top:4px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-top:20px solid var(--accent);z-index:2;filter:drop-shadow(0 2px 6px rgba(255,0,102,0.6));}
 
 /* TRUST BAR */
-.trust-bar{padding:40px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
+.trust-bar{padding:28px 0;background:var(--bg3);border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border);}
 .trust-items{display:flex;justify-content:center;gap:48px;flex-wrap:wrap;}
 .trust-item{display:flex;align-items:center;gap:10px;font-size:.9rem;color:var(--text-soft);font-weight:500;}
 .trust-item .icon{font-size:1.3rem;}
@@ -197,13 +198,14 @@ section{padding:100px 0;}
 .mx-auto{margin-left:auto;margin-right:auto;}
 
 /* HOW IT WORKS */
-.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:60px;}
-.step-card{text-align:center;position:relative;padding:40px 24px;}
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:48px;margin-top:60px;position:relative;}
+.step-card{text-align:center;position:relative;padding:40px 24px;background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;transition:all .3s;}
+.step-card:hover{border-color:var(--accent2);transform:translateY(-4px);}
 .step-number{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800;margin:0 auto 24px;color:#fff;}
 .step-icon{font-size:3rem;margin-bottom:16px;}
 .step-card h3{font-size:1.15rem;font-weight:700;margin-bottom:12px;}
 .step-card p{font-size:.9rem;color:var(--text-soft);line-height:1.6;}
-.step-arrow{position:absolute;right:-28px;top:50%;transform:translateY(-50%);font-size:1.5rem;color:var(--accent2);opacity:.5;}
+.step-arrow{position:absolute;right:-32px;top:50%;transform:translateY(-50%);font-size:1.8rem;color:var(--accent2);opacity:.4;z-index:1;}
 
 /* GAMES */
 .games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;margin-top:60px;}
@@ -366,18 +368,48 @@ section{padding:100px 0;}
       <div class="hero-glow"></div>
       <svg class="hero-wheel" viewBox="0 0 300 300" aria-label="Ruleta de premios PlayOFans">
         <defs>
-          <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ff0066"/><stop offset="100%" stop-color="#b300ff"/></linearGradient>
-          <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1a1230"/><stop offset="100%" stop-color="#231540"/></linearGradient>
+          <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ff0066"/><stop offset="50%" stop-color="#ff1493"/><stop offset="100%" stop-color="#b300ff"/>
+          </linearGradient>
         </defs>
-        <circle cx="150" cy="150" r="148" fill="none" stroke="url(#g1)" stroke-width="3"/>
-        <path d="M150,150 L150,2 A148,148 0 0,1 278,75 Z" fill="url(#g1)" opacity=".9"/>
-        <path d="M150,150 L278,75 A148,148 0 0,1 278,225 Z" fill="url(#g2)" opacity=".9"/>
-        <path d="M150,150 L278,225 A148,148 0 0,1 150,298 Z" fill="url(#g1)" opacity=".7"/>
-        <path d="M150,150 L150,298 A148,148 0 0,1 22,225 Z" fill="url(#g2)" opacity=".9"/>
-        <path d="M150,150 L22,225 A148,148 0 0,1 22,75 Z" fill="url(#g1)" opacity=".8"/>
-        <path d="M150,150 L22,75 A148,148 0 0,1 150,2 Z" fill="url(#g2)" opacity=".9"/>
-        <circle cx="150" cy="150" r="30" fill="var(--bg)" stroke="url(#g1)" stroke-width="2"/>
-        <text x="150" y="158" text-anchor="middle" font-size="24">🎰</text>
+        <!-- Outer gradient ring -->
+        <circle cx="150" cy="150" r="145" fill="none" stroke="url(#rg)" stroke-width="9"/>
+        <!-- 10 colored segments -->
+        <path d="M150,150 L150,18 A132,132 0 0,1 227.6,43.2 Z" fill="#ef8c2e"/>
+        <path d="M150,150 L227.6,43.2 A132,132 0 0,1 275.5,109.2 Z" fill="#10b981"/>
+        <path d="M150,150 L275.5,109.2 A132,132 0 0,1 275.5,190.8 Z" fill="#3b82f6"/>
+        <path d="M150,150 L275.5,190.8 A132,132 0 0,1 227.6,256.8 Z" fill="#ec4899"/>
+        <path d="M150,150 L227.6,256.8 A132,132 0 0,1 150,282 Z" fill="#f472b6"/>
+        <path d="M150,150 L150,282 A132,132 0 0,1 72.4,256.8 Z" fill="#e11d48"/>
+        <path d="M150,150 L72.4,256.8 A132,132 0 0,1 24.5,190.8 Z" fill="#eab308"/>
+        <path d="M150,150 L24.5,190.8 A132,132 0 0,1 24.5,109.2 Z" fill="#8b5cf6"/>
+        <path d="M150,150 L24.5,109.2 A132,132 0 0,1 72.4,43.2 Z" fill="#14b8a6"/>
+        <path d="M150,150 L72.4,43.2 A132,132 0 0,1 150,18 Z" fill="#f97316"/>
+        <!-- Divider lines -->
+        <g stroke="rgba(255,255,255,0.25)" stroke-width="0.8">
+          <line x1="150" y1="150" x2="150" y2="18"/><line x1="150" y1="150" x2="227.6" y2="43.2"/>
+          <line x1="150" y1="150" x2="275.5" y2="109.2"/><line x1="150" y1="150" x2="275.5" y2="190.8"/>
+          <line x1="150" y1="150" x2="227.6" y2="256.8"/><line x1="150" y1="150" x2="150" y2="282"/>
+          <line x1="150" y1="150" x2="72.4" y2="256.8"/><line x1="150" y1="150" x2="24.5" y2="190.8"/>
+          <line x1="150" y1="150" x2="24.5" y2="109.2"/><line x1="150" y1="150" x2="72.4" y2="43.2"/>
+        </g>
+        <!-- Prize labels -->
+        <g font-family="Poppins,sans-serif" font-weight="700" fill="white" stroke="rgba(0,0,0,0.35)" stroke-width="0.4" paint-order="stroke" font-size="7" text-anchor="middle" letter-spacing="0.5">
+          <text transform="translate(150,150) rotate(18)"><tspan x="0" y="-92">FOTO</tspan><tspan x="0" y="-80">EXCLUSIVA</tspan></text>
+          <text transform="translate(150,150) rotate(54)"><tspan x="0" y="-92">30%</tspan><tspan x="0" y="-80">DESCUENTO</tspan></text>
+          <text transform="translate(150,150) rotate(90)"><tspan x="0" y="-92">AUDIO</tspan><tspan x="0" y="-80">EXCLUSIVO</tspan></text>
+          <text transform="translate(150,150) rotate(126)"><tspan x="0" y="-92">VIDEO</tspan><tspan x="0" y="-80">EXCLUSIVO</tspan></text>
+          <text transform="translate(150,150) rotate(162)"><tspan x="0" y="-92">SEXTING</tspan><tspan x="0" y="-80">15 MIN</tspan></text>
+          <text transform="translate(150,150) rotate(198)"><tspan x="0" y="-92">PACK</tspan><tspan x="0" y="-80">FOTOS HOT</tspan></text>
+          <text transform="translate(150,150) rotate(234)"><tspan x="0" y="-92">PACK</tspan><tspan x="0" y="-80">VIDEOS</tspan></text>
+          <text transform="translate(150,150) rotate(270)"><tspan x="0" y="-92">PREMIO</tspan><tspan x="0" y="-80">SORPRESA</tspan></text>
+          <text transform="translate(150,150) rotate(306)"><tspan x="0" y="-92">VIDEOLLAMADA</tspan><tspan x="0" y="-80">5 MIN</tspan></text>
+          <text transform="translate(150,150) rotate(342)"><tspan x="0" y="-92">UNA CENA</tspan><tspan x="0" y="-80">CONMIGO</tspan></text>
+        </g>
+        <!-- Center hub -->
+        <circle cx="150" cy="150" r="24" fill="#0a0612" stroke="url(#rg)" stroke-width="3"/>
+        <circle cx="150" cy="150" r="13" fill="url(#rg)" opacity=".85"/>
+        <circle cx="150" cy="150" r="5" fill="white" opacity=".9"/>
       </svg>
       <div class="hero-badge">✨ 10 temas · Personalizable · Tu marca</div>
     </div>
