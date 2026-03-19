@@ -1204,17 +1204,16 @@ banner.style.display = 'none';
 // =============================================================================
 // FUNCIONES DEL HISTORIAL DE PREMIOS
 // =============================================================================
-function inicializarHistorial() {
-const historialGuardado = localStorage.getItem(`pof_historial_${SLUG}_${codigoActual}`);
-if (historialGuardado) {
-try {
-historialPremios = JSON.parse(historialGuardado);
+function inicializarHistorial(spinHistoryFromServer) {
+if (spinHistoryFromServer && spinHistoryFromServer.length > 0) {
+historialPremios = spinHistoryFromServer.map((s, i) => ({
+  id: spinHistoryFromServer.length - i,
+  nombre: s.nombre,
+  fecha: s.fecha,
+  timestamp: s.timestamp
+}));
 contadorPremios = historialPremios.length;
 actualizarHistorialVisual();
-} catch (error) {
-historialPremios = [];
-contadorPremios = 0;
-}
 } else {
 historialPremios = [];
 contadorPremios = 0;
@@ -1242,9 +1241,7 @@ timestamp: Date.now()
 
 historialPremios.unshift(nuevoPremio);
 
-try {
-localStorage.setItem(`pof_historial_${SLUG}_${codigoActual}`, JSON.stringify(historialPremios));
-} catch (error) {}
+// Historial se persiste en la BD via confirm-spin, no en localStorage
 
 actualizarHistorialVisual();
 mostrarHistorial();
@@ -1705,8 +1702,8 @@ codigoInput.style.borderColor = '#10ac84';
 validarBtn.style.background = 'linear-gradient(45deg, #10ac84, #00d2d3)';
 validarBtn.textContent = '✅ Código Válido';
 
-// Inicializar historial y mostrar contador de tiradas
-inicializarHistorial();
+// Inicializar historial desde BD y mostrar contador de tiradas
+inicializarHistorial(result.spin_history || []);
 mostrarInfoTiradas(tiradasRestantes, expiresAt);
 
 } catch (error) {

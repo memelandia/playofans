@@ -32,8 +32,6 @@ exports.handler = async (event) => {
 
     const body = JSON.parse(event.body || '{}');
     const { slug, codigoId, fanName } = body;
-    console.log('Body recibido:', JSON.stringify(body));
-    console.log('Buscando código:', codigoId, 'en slug:', slug);
 
     if (!slug || !codigoId) {
       return json(400, { error: 'Faltan datos obligatorios' });
@@ -46,9 +44,6 @@ exports.handler = async (event) => {
       .eq('slug', slug)
       .single();
 
-    console.log('Resultado model:', JSON.stringify(model));
-    console.log('Error model:', JSON.stringify(modelError));
-
     if (modelError || !model) return json(404, { error: 'Modelo no encontrado' });
 
     // Verificar cuenta activa o en grace
@@ -60,7 +55,6 @@ exports.handler = async (event) => {
 
     // Buscar código
     const codeUpperCase = codigoId.toUpperCase();
-    console.log('Query codes: model_id=', model.id, 'code=', codeUpperCase, 'deleted=false');
 
     const { data: code, error: codeError } = await supabase
       .from('codes')
@@ -69,9 +63,6 @@ exports.handler = async (event) => {
       .eq('code', codeUpperCase)
       .eq('deleted', false)
       .single();
-
-    console.log('Resultado code:', JSON.stringify(code));
-    console.log('Error code:', JSON.stringify(codeError));
 
     if (codeError || !code) {
       return json(404, { error: 'Código no encontrado o eliminado' });
@@ -94,6 +85,23 @@ exports.handler = async (event) => {
     // Premios: los del código si existen, si no los globales del modelo
     const prizes = code.prizes || model.prizes;
 
+    // Obtener historial de spins verificados para este código
+    const { data: spinsData } = await supabase
+      .from('spins')
+      .select('prize, created_at')
+      .eq('code_id', code.id)
+      .eq('verified', true)
+      .order('created_at', { ascending: false });
+
+    const spin_history = (spinsData || []).map(s => ({
+      nombre: s.prize,
+      fecha: new Date(s.created_at).toLocaleString('es-ES', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      }),
+      timestamp: new Date(s.created_at).getTime()
+    }));
+
     return json(200, {
       fan_name: code.fan_name,
       prizes,
@@ -101,6 +109,7 @@ exports.handler = async (event) => {
       total_spins: code.total_spins,
       expires_at: code.expires_at,
       welcome_message: welcomeMessage,
+      spin_history,
     });
   } catch (err) {
     console.error('Error en validate-code:', err.message, err.stack);

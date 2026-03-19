@@ -5,6 +5,10 @@
 [build.environment]
   NODE_VERSION = "18"
 
+# Scheduled function: daily cron at 9:00 AM UTC
+[functions."daily-cron"]
+  schedule = "0 9 * * *"
+
 # ============================================
 # Redirects multi-tenant
 # ============================================
