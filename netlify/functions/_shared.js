@@ -48,4 +48,17 @@ async function authenticateAdmin(event) {
   return { user };
 }
 
-module.exports = { supabase, CORS_HEADERS, json, handleOptions, planCanAccess, PLAN_RANK, authenticateAdmin };
+// Autenticar superadmin: JWT + SUPERADMIN_SECRET
+async function authenticateSuperAdmin(event) {
+  const auth = await authenticateAdmin(event);
+  if (auth.error) return auth;
+
+  const secret = event.headers['x-superadmin-secret'] || '';
+  if (!secret || secret !== process.env.SUPERADMIN_SECRET) {
+    return { error: json(403, { error: 'Acceso denegado' }) };
+  }
+
+  return { user: auth.user };
+}
+
+module.exports = { supabase, CORS_HEADERS, json, handleOptions, planCanAccess, PLAN_RANK, authenticateAdmin, authenticateSuperAdmin };

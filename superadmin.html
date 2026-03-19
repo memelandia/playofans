@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SuperAdmin — PlayOFans</title>
+<meta name="robots" content="noindex, nofollow">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+:root {
+  --bg: #0f0a18; --bg2: #1a1025; --bg3: #231535;
+  --accent: #ff0066; --accent2: #b300ff;
+  --text: #f0e6ff; --text-soft: #a89cc8;
+  --glass: rgba(30,15,50,0.9); --glass-border: rgba(179,0,255,0.25);
+  --success: #10ac84; --warning: #f8b500; --danger: #e74c3c;
+  --sidebar-w: 260px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Poppins',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+a { color:var(--accent2); text-decoration:none; }
+a:hover { text-decoration:underline; }
+
+/* LOGIN */
+.login-screen {
+  display:flex; align-items:center; justify-content:center; min-height:100vh;
+  background:linear-gradient(-45deg,#0f0a18,#1a1025,#231535,#1a1025);
+  background-size:400% 400%; animation:gradBg 10s ease-in-out infinite;
+}
+@keyframes gradBg { 0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%} }
+.login-card {
+  background:var(--glass); border:1px solid var(--glass-border); border-radius:24px;
+  padding:40px; width:380px; max-width:90vw; text-align:center; backdrop-filter:blur(20px);
+}
+.login-card h1 { font-size:2rem; margin-bottom:8px; background:linear-gradient(135deg,var(--accent),var(--accent2)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+.login-card p { color:var(--text-soft); font-size:.9rem; margin-bottom:24px; }
+.form-group { margin-bottom:16px; text-align:left; }
+.form-group label { display:block; font-size:.85rem; color:var(--text-soft); margin-bottom:6px; font-weight:500; }
+.form-input {
+  width:100%; padding:12px 16px; border-radius:12px; border:1px solid var(--glass-border);
+  background:rgba(255,255,255,0.05); color:var(--text); font-family:inherit; font-size:.95rem;
+  transition:border-color .3s;
+}
+.form-input:focus { outline:none; border-color:var(--accent); }
+.btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:12px 24px; border-radius:12px; border:none; font-family:inherit;
+  font-weight:600; font-size:.95rem; cursor:pointer; transition:all .2s;
+}
+.btn:disabled { opacity:.5; cursor:not-allowed; }
+.btn-primary { background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; width:100%; }
+.btn-primary:hover:not(:disabled) { filter:brightness(1.1); transform:translateY(-1px); }
+.btn-sm { padding:6px 14px; font-size:.8rem; border-radius:8px; }
+.btn-outline { background:transparent; border:1px solid var(--glass-border); color:var(--text); }
+.btn-outline:hover:not(:disabled) { border-color:var(--accent); color:var(--accent); }
+.btn-success { background:var(--success); color:#fff; }
+.btn-danger { background:var(--danger); color:#fff; }
+.btn-warning { background:var(--warning); color:#000; }
+.btn-icon { width:32px; height:32px; padding:0; border-radius:8px; font-size:1rem; }
+.login-error { color:var(--danger); font-size:.85rem; margin-top:12px; min-height:20px; }
+
+/* LAYOUT */
+.admin-wrap { display:flex; min-height:100vh; }
+.sidebar {
+  width:var(--sidebar-w); background:var(--bg2); border-right:1px solid var(--glass-border);
+  display:flex; flex-direction:column; position:fixed; top:0; left:0; bottom:0; z-index:100;
+  transition:transform .3s;
+}
+.sidebar-header { padding:24px 20px 16px; border-bottom:1px solid var(--glass-border); }
+.sidebar-header h2 { font-size:1.1rem; font-weight:700; }
+.sidebar-header .slug { font-size:.8rem; color:var(--text-soft); }
+.sidebar-nav { flex:1; padding:12px 0; overflow-y:auto; }
+.nav-item {
+  display:flex; align-items:center; gap:12px; padding:12px 20px; cursor:pointer;
+  font-size:.9rem; font-weight:500; color:var(--text-soft); transition:all .2s;
+  border-left:3px solid transparent;
+}
+.nav-item:hover { color:var(--text); background:rgba(255,255,255,0.03); }
+.nav-item.active { color:var(--accent); background:rgba(255,0,102,0.08); border-left-color:var(--accent); }
+.nav-item .icon { font-size:1.1rem; width:24px; text-align:center; }
+.sidebar-footer { padding:16px 20px; border-top:1px solid var(--glass-border); }
+.main { margin-left:var(--sidebar-w); flex:1; padding:28px; min-height:100vh; }
+.page-title { font-size:1.5rem; font-weight:700; margin-bottom:24px; }
+.hamburger {
+  display:none; position:fixed; top:16px; left:16px; z-index:200;
+  width:40px; height:40px; border-radius:10px; background:var(--bg2);
+  border:1px solid var(--glass-border); color:var(--text); font-size:1.2rem;
+  cursor:pointer; align-items:center; justify-content:center;
+}
+.overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:90; }
+
+/* STATS */
+.stats-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; margin-bottom:24px; }
+.stat-card {
+  background:var(--glass); border:1px solid var(--glass-border); border-radius:16px;
+  padding:20px; backdrop-filter:blur(10px);
+}
+.stat-card .label { font-size:.8rem; color:var(--text-soft); font-weight:500; margin-bottom:4px; }
+.stat-card .value { font-size:1.8rem; font-weight:700; }
+.stat-card .value.accent { color:var(--accent); }
+.stat-card .value.success { color:var(--success); }
+.stat-card .value.warning { color:var(--warning); }
+.stat-card .value.danger { color:var(--danger); }
+
+/* ALERTS */
+.alert-banner {
+  background:linear-gradient(135deg,rgba(248,181,0,.15),rgba(231,76,60,.15));
+  border:1px solid rgba(248,181,0,.4); border-radius:12px; padding:16px 20px;
+  margin-bottom:16px; font-size:.9rem; display:flex; align-items:center; gap:12px;
+}
+.alert-banner .icon { font-size:1.5rem; }
+.alert-banner.danger { border-color:rgba(231,76,60,.4); background:linear-gradient(135deg,rgba(231,76,60,.15),rgba(231,76,60,.1)); }
+
+/* TABLE */
+.table-wrap { overflow-x:auto; border-radius:12px; border:1px solid var(--glass-border); background:var(--glass); margin-bottom:20px; }
+.table { width:100%; border-collapse:collapse; font-size:.85rem; }
+.table th { text-align:left; padding:12px 16px; font-weight:600; color:var(--text-soft); border-bottom:1px solid var(--glass-border); white-space:nowrap; }
+.table td { padding:10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; }
+.table tr:last-child td { border-bottom:none; }
+.table tr:hover td { background:rgba(255,255,255,0.02); }
+.badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:.75rem; font-weight:600; }
+.badge-active { background:rgba(16,172,132,.15); color:var(--success); }
+.badge-grace { background:rgba(248,181,0,.15); color:var(--warning); }
+.badge-expired { background:rgba(231,76,60,.15); color:var(--danger); }
+.badge-suspended { background:rgba(255,255,255,.08); color:var(--text-soft); }
+.badge-pending { background:rgba(179,0,255,.15); color:var(--accent2); }
+.badge-approved { background:rgba(16,172,132,.15); color:var(--success); }
+.badge-rejected { background:rgba(231,76,60,.15); color:var(--danger); }
+.actions-cell { display:flex; gap:6px; flex-wrap:wrap; }
+.status-dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; }
+.status-dot.active { background:var(--success); }
+.status-dot.grace { background:var(--warning); }
+.status-dot.expired { background:var(--danger); }
+.status-dot.suspended { background:var(--text-soft); }
+
+/* CARDS */
+.card {
+  background:var(--glass); border:1px solid var(--glass-border); border-radius:16px;
+  padding:24px; margin-bottom:20px; backdrop-filter:blur(10px);
+}
+.card-title { font-size:1rem; font-weight:600; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+.form-group.full { grid-column:1/-1; }
+.char-counter { font-size:.75rem; color:var(--text-soft); text-align:right; margin-top:4px; }
+
+/* NOTES */
+.notes-area {
+  width:100%; min-height:60px; resize:vertical; padding:8px 12px; border-radius:8px;
+  border:1px solid var(--glass-border); background:rgba(255,255,255,0.05); color:var(--text);
+  font-family:inherit; font-size:.85rem; transition:border-color .3s;
+}
+.notes-area:focus { outline:none; border-color:var(--accent); }
+
+/* MODAL */
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(6px);
+  display:none; align-items:center; justify-content:center; z-index:500;
+}
+.modal-overlay.show { display:flex; }
+.modal {
+  background:var(--bg2); border:1px solid var(--glass-border); border-radius:20px;
+  padding:28px; width:560px; max-width:92vw; max-height:85vh; overflow-y:auto;
+  animation:modalIn .3s; position:relative;
+}
+@keyframes modalIn { from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)} }
+.modal h3 { font-size:1.1rem; font-weight:700; margin-bottom:16px; }
+.modal-close { position:absolute; top:12px; right:16px; font-size:1.2rem; cursor:pointer; color:var(--text-soft); background:none; border:none; }
+
+/* TOAST */
+.toast {
+  position:fixed; bottom:24px; right:24px; background:var(--bg3); border:1px solid var(--glass-border);
+  color:var(--text); padding:12px 20px; border-radius:12px; font-size:.9rem;
+  z-index:9999; animation:toastIn .3s; display:flex; gap:8px; align-items:center;
+}
+.toast.success { border-color:var(--success); }
+.toast.error { border-color:var(--danger); }
+@keyframes toastIn { from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)} }
+
+/* TABS */
+.tab-bar { display:flex; gap:4px; margin-bottom:20px; border-bottom:1px solid var(--glass-border); padding-bottom:0; }
+.tab-btn {
+  padding:10px 20px; font-size:.85rem; font-weight:600; cursor:pointer;
+  color:var(--text-soft); background:none; border:none; border-bottom:2px solid transparent;
+  transition:all .2s; font-family:inherit;
+}
+.tab-btn:hover { color:var(--text); }
+.tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
+
+/* RESPONSIVE */
+@media (max-width:768px) {
+  .hamburger { display:flex; }
+  .sidebar { transform:translateX(-100%); }
+  .sidebar.open { transform:translateX(0); }
+  .overlay.show { display:block; }
+  .main { margin-left:0; padding:20px; padding-top:64px; }
+  .stats-grid { grid-template-columns:repeat(2,1fr); }
+  .form-row { grid-template-columns:1fr; }
+}
+@media (max-width:480px) {
+  .stats-grid { grid-template-columns:1fr; }
+  .modal { padding:20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="login-screen" id="login-screen">
+<div class="login-card">
+  <h1>🔐 SuperAdmin</h1>
+  <p>PlayOFans — Panel de Control</p>
+  <div class="form-group">
+    <label>Email</label>
+    <input type="email" id="login-email" class="form-input" placeholder="tu@email.com" autocomplete="email">
+  </div>
+  <div class="form-group">
+    <label>Contraseña</label>
+    <input type="password" id="login-pass" class="form-input" placeholder="••••••••" autocomplete="current-password">
+  </div>
+  <div class="form-group">
+    <label>Clave SuperAdmin</label>
+    <input type="password" id="login-secret" class="form-input" placeholder="••••••••">
+  </div>
+  <button class="btn btn-primary" id="login-btn">Acceder</button>
+  <div class="login-error" id="login-error"></div>
+</div>
+</div>
+
+<!-- MAIN APP -->
+<div class="admin-wrap" id="admin-wrap" style="display:none;">
+  <button class="hamburger" id="hamburger">☰</button>
+  <div class="overlay" id="overlay"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2>🔐 SuperAdmin</h2>
+      <div class="slug">PlayOFans.com</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-page="dashboard"><span class="icon">📊</span>Dashboard</div>
+      <div class="nav-item" data-page="clients"><span class="icon">👥</span>Clientes</div>
+      <div class="nav-item" data-page="registrations"><span class="icon">📋</span>Solicitudes</div>
+      <div class="nav-item" data-page="discounts"><span class="icon">🏷️</span>Descuentos</div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn btn-outline btn-sm" style="width:100%" onclick="logout()">Cerrar Sesión</button>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- DASHBOARD PAGE -->
+    <section id="page-dashboard">
+      <h1 class="page-title">📊 Dashboard</h1>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="label">MRR Estimado</div><div class="value accent" id="stat-mrr">—</div></div>
+        <div class="stat-card"><div class="label">Cuentas Activas</div><div class="value success" id="stat-active">—</div></div>
+        <div class="stat-card"><div class="label">Total Cuentas</div><div class="value" id="stat-total">—</div></div>
+        <div class="stat-card"><div class="label">Giros Hoy</div><div class="value" id="stat-spins-today">—</div></div>
+        <div class="stat-card"><div class="label">Giros Este Mes</div><div class="value" id="stat-spins-month">—</div></div>
+        <div class="stat-card"><div class="label">Solicitudes Pendientes</div><div class="value warning" id="stat-pending">—</div></div>
+      </div>
+      <div id="dashboard-alerts"></div>
+    </section>
+
+    <!-- CLIENTS PAGE -->
+    <section id="page-clients" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+        <h1 class="page-title" style="margin-bottom:0;">👥 Clientes</h1>
+        <button class="btn btn-primary btn-sm" onclick="openCreateModel()">➕ Crear Cuenta</button>
+      </div>
+      <div class="table-wrap">
+        <table class="table" id="clients-table">
+          <thead>
+            <tr>
+              <th>Estado</th>
+              <th>Slug</th>
+              <th>Plan</th>
+              <th>Expira</th>
+              <th>Códigos/Mes</th>
+              <th>Spins</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="clients-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- REGISTRATIONS PAGE -->
+    <section id="page-registrations" style="display:none;">
+      <h1 class="page-title">📋 Solicitudes de Registro</h1>
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="pending" onclick="loadRegistrations('pending',this)">Pendientes</button>
+        <button class="tab-btn" data-tab="approved" onclick="loadRegistrations('approved',this)">Aprobadas</button>
+        <button class="tab-btn" data-tab="rejected" onclick="loadRegistrations('rejected',this)">Rechazadas</button>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Slug</th>
+              <th>Plan</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="registrations-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- DISCOUNTS PAGE -->
+    <section id="page-discounts" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+        <h1 class="page-title" style="margin-bottom:0;">🏷️ Códigos de Descuento</h1>
+        <button class="btn btn-primary btn-sm" onclick="openCreateDiscount()">➕ Crear Descuento</button>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Descuento</th>
+              <th>Usos</th>
+              <th>Válido Hasta</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="discounts-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- MODAL: CREAR CUENTA -->
+<div class="modal-overlay" id="modal-create-model">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('modal-create-model')">&times;</button>
+  <h3>➕ Crear Cuenta de Modelo</h3>
+  <div class="form-row">
+    <div class="form-group"><label>Email</label><input type="email" id="cm-email" class="form-input" placeholder="modelo@email.com"></div>
+    <div class="form-group"><label>Nombre</label><input type="text" id="cm-name" class="form-input" placeholder="Nombre artístico"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>Slug</label><input type="text" id="cm-slug" class="form-input" placeholder="nombremodelo" pattern="[a-z0-9_-]+"></div>
+    <div class="form-group">
+      <label>Plan</label>
+      <select id="cm-plan" class="form-input"><option value="solo">Solo (49€)</option><option value="pro">Pro (89€)</option><option value="agency">Agency (349€)</option></select>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>Meses de suscripción</label><input type="number" id="cm-months" class="form-input" value="1" min="1" max="12"></div>
+    <div class="form-group" style="display:flex;align-items:flex-end;"><button class="btn btn-primary" id="cm-submit" onclick="createModel()">Crear Cuenta</button></div>
+  </div>
+  <div id="cm-result" style="margin-top:16px;"></div>
+</div>
+</div>
+
+<!-- MODAL: ACCIONES MODELO -->
+<div class="modal-overlay" id="modal-model-actions">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('modal-model-actions')">&times;</button>
+  <h3 id="ma-title">Gestionar Modelo</h3>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-title">📌 Información</div>
+    <div id="ma-info"></div>
+  </div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-title">🔄 Renovar Suscripción</div>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <input type="number" id="ma-renew-months" class="form-input" value="1" min="1" max="12" style="width:100px;">
+      <span style="font-size:.85rem;color:var(--text-soft);">meses</span>
+      <button class="btn btn-success btn-sm" onclick="modelAction('renew')">Renovar</button>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-title">📦 Cambiar Plan</div>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <select id="ma-plan" class="form-input" style="width:200px;"><option value="solo">Solo</option><option value="pro">Pro</option><option value="agency">Agency</option></select>
+      <button class="btn btn-warning btn-sm" onclick="modelAction('change_plan')">Cambiar</button>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-title">⚡ Estado</div>
+    <div style="display:flex;gap:12px;">
+      <button class="btn btn-success btn-sm" onclick="modelAction('activate')">Activar</button>
+      <button class="btn btn-danger btn-sm" onclick="modelAction('deactivate')">Desactivar</button>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-title">📝 Notas</div>
+    <textarea class="notes-area" id="ma-notes" placeholder="Notas internas sobre este modelo..."></textarea>
+    <div style="margin-top:8px;"><button class="btn btn-outline btn-sm" onclick="modelAction('update_notes')">Guardar Notas</button></div>
+  </div>
+  <div style="text-align:center;margin-top:12px;">
+    <a id="ma-admin-link" href="#" target="_blank" style="font-size:.85rem;">Abrir panel admin →</a>
+  </div>
+</div>
+</div>
+
+<!-- MODAL: VER SOLICITUD -->
+<div class="modal-overlay" id="modal-registration">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('modal-registration')">&times;</button>
+  <h3>📋 Solicitud de Registro</h3>
+  <div id="reg-detail"></div>
+  <div id="reg-actions" style="margin-top:16px;display:flex;gap:12px;"></div>
+  <div id="reg-result" style="margin-top:12px;"></div>
+</div>
+</div>
+
+<!-- MODAL: CREAR DESCUENTO -->
+<div class="modal-overlay" id="modal-create-discount">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('modal-create-discount')">&times;</button>
+  <h3>🏷️ Crear Descuento</h3>
+  <div class="form-row">
+    <div class="form-group"><label>Código</label><input type="text" id="cd-code" class="form-input" placeholder="VERANO20" style="text-transform:uppercase;"></div>
+    <div class="form-group"><label>Descuento (%)</label><input type="number" id="cd-pct" class="form-input" value="20" min="1" max="100"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>Máximo de usos (vacío = ilimitado)</label><input type="number" id="cd-max" class="form-input" placeholder="Ilimitado"></div>
+    <div class="form-group"><label>Válido hasta (opcional)</label><input type="date" id="cd-until" class="form-input"></div>
+  </div>
+  <button class="btn btn-primary" onclick="createDiscount()">Crear Descuento</button>
+</div>
+</div>
+
+<script>
+// ============================
+// STATE
+// ============================
+let sb = null;
+let saSecret = '';
+let currentUser = null;
+let modelsCache = [];
+let selectedModelId = null;
+
+const API = '/api';
+
+// ============================
+// INIT
+// ============================
+async function init() {
+  try {
+    const res = await fetch(API + '/auth-init');
+    const cfg = await res.json();
+    sb = window.supabase.createClient(cfg.url, cfg.anonKey);
+  } catch {
+    document.getElementById('login-error').textContent = 'Error al conectar con el servicio';
+    return;
+  }
+  // Check existing session
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    // Need secret from localStorage
+    const saved = localStorage.getItem('sa_verified');
+    if (saved) {
+      saSecret = saved;
+      currentUser = session.user;
+      showApp();
+    }
+  }
+}
+
+// ============================
+// AUTH
+// ============================
+document.getElementById('login-btn').addEventListener('click', doLogin);
+document.getElementById('login-email').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+document.getElementById('login-secret').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const secret = document.getElementById('login-secret').value;
+  const errEl = document.getElementById('login-error');
+  const btn = document.getElementById('login-btn');
+
+  if (!email || !pass || !secret) { errEl.textContent = 'Todos los campos son obligatorios'; return; }
+  btn.disabled = true; errEl.textContent = '';
+
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+    if (error) { errEl.textContent = 'Credenciales incorrectas'; btn.disabled = false; return; }
+
+    // Validate secret by making a test API call
+    const testRes = await apiFetch('/sa-dashboard', 'GET', null, secret);
+    if (testRes.error) {
+      await sb.auth.signOut();
+      errEl.textContent = 'Clave SuperAdmin incorrecta';
+      btn.disabled = false;
+      return;
+    }
+
+    saSecret = secret;
+    localStorage.setItem('sa_verified', secret);
+    currentUser = data.user;
+    showApp();
+  } catch {
+    errEl.textContent = 'Error al iniciar sesión';
+    btn.disabled = false;
+  }
+}
+
+function logout() {
+  sb.auth.signOut();
+  localStorage.removeItem('sa_verified');
+  saSecret = '';
+  currentUser = null;
+  document.getElementById('admin-wrap').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+// ============================
+// API HELPER
+// ============================
+async function apiFetch(path, method = 'GET', body = null, secretOverride = null) {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { logout(); return { error: 'No session' }; }
+
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + session.access_token,
+    'X-Superadmin-Secret': secretOverride || saSecret,
+  };
+
+  const opts = { method, headers };
+  if (body) opts.body = JSON.stringify(body);
+
+  const res = await fetch(API + path, opts);
+  return await res.json();
+}
+
+// ============================
+// APP INIT
+// ============================
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('admin-wrap').style.display = 'flex';
+  loadDashboard();
+}
+
+// ============================
+// NAVIGATION
+// ============================
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    item.classList.add('active');
+    const page = item.dataset.page;
+    document.querySelectorAll('[id^="page-"]').forEach(p => p.style.display = 'none');
+    document.getElementById('page-' + page).style.display = 'block';
+    closeSidebar();
+    if (page === 'dashboard') loadDashboard();
+    if (page === 'clients') loadClients();
+    if (page === 'registrations') loadRegistrations('pending');
+    if (page === 'discounts') loadDiscounts();
+  });
+});
+
+// Hamburger
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+});
+document.getElementById('overlay').addEventListener('click', closeSidebar);
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+// ============================
+// DASHBOARD
+// ============================
+async function loadDashboard() {
+  const data = await apiFetch('/sa-dashboard');
+  if (data.error) return;
+
+  document.getElementById('stat-mrr').textContent = data.mrr + '€';
+  document.getElementById('stat-active').textContent = data.active_accounts;
+  document.getElementById('stat-total').textContent = data.total_accounts;
+  document.getElementById('stat-spins-today').textContent = data.spins_today;
+  document.getElementById('stat-spins-month').textContent = data.spins_month;
+  document.getElementById('stat-pending').textContent = data.pending_registrations;
+
+  // Alerts
+  const alertsEl = document.getElementById('dashboard-alerts');
+  alertsEl.innerHTML = '';
+  if (data.expiring_soon > 0) {
+    alertsEl.innerHTML += `<div class="alert-banner"><span class="icon">⚠️</span>${data.expiring_soon} cuenta(s) vencen en los próximos 7 días</div>`;
+  }
+  if (data.in_grace_period > 0) {
+    alertsEl.innerHTML += `<div class="alert-banner danger"><span class="icon">🔴</span>${data.in_grace_period} cuenta(s) en período de gracia</div>`;
+  }
+  if (data.pending_registrations > 0) {
+    alertsEl.innerHTML += `<div class="alert-banner"><span class="icon">📋</span>${data.pending_registrations} solicitud(es) pendiente(s) de revisión</div>`;
+  }
+}
+
+// ============================
+// CLIENTS
+// ============================
+async function loadClients() {
+  const data = await apiFetch('/sa-list-models');
+  if (data.error) return;
+
+  modelsCache = data.models || [];
+  const tbody = document.getElementById('clients-tbody');
+  if (modelsCache.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-soft);">No hay clientes todavía</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = modelsCache.map(m => {
+    const expiresDate = m.subscription_expires_at ? new Date(m.subscription_expires_at).toLocaleDateString('es-ES') : '—';
+    return `<tr>
+      <td><span class="status-dot ${m.status}"></span><span class="badge badge-${m.status}">${statusLabel(m.status)}</span></td>
+      <td><strong>${esc(m.slug)}</strong><br><span style="font-size:.75rem;color:var(--text-soft);">${esc(m.display_name)}</span></td>
+      <td style="text-transform:uppercase;">${esc(m.plan)}</td>
+      <td>${expiresDate}</td>
+      <td>${m.codes_created_this_month}${m.plan === 'solo' ? '/100' : ''}</td>
+      <td>${m.total_spins}</td>
+      <td class="actions-cell">
+        <button class="btn btn-outline btn-sm" onclick="openModelActions('${m.id}')" title="Gestionar">⚙️</button>
+        <a href="/${esc(m.slug)}/admin" target="_blank" class="btn btn-outline btn-sm" title="Ver panel">👁️</a>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function statusLabel(s) {
+  const map = { active: 'Activo', grace: 'Grace', expired: 'Expirado', suspended: 'Suspendido' };
+  return map[s] || s;
+}
+
+function openModelActions(id) {
+  const m = modelsCache.find(x => x.id === id);
+  if (!m) return;
+  selectedModelId = id;
+
+  document.getElementById('ma-title').textContent = '⚙️ ' + m.display_name;
+  document.getElementById('ma-plan').value = m.plan;
+  document.getElementById('ma-notes').value = m.admin_notes || '';
+  document.getElementById('ma-admin-link').href = '/' + m.slug + '/admin';
+
+  const expiresDate = m.subscription_expires_at ? new Date(m.subscription_expires_at).toLocaleDateString('es-ES') : '—';
+  document.getElementById('ma-info').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.85rem;">
+      <div><span style="color:var(--text-soft);">Slug:</span> ${esc(m.slug)}</div>
+      <div><span style="color:var(--text-soft);">Email:</span> ${esc(m.email)}</div>
+      <div><span style="color:var(--text-soft);">Plan:</span> ${m.plan.toUpperCase()}</div>
+      <div><span style="color:var(--text-soft);">Expira:</span> ${expiresDate}</div>
+      <div><span style="color:var(--text-soft);">Estado:</span> <span class="badge badge-${m.status}">${statusLabel(m.status)}</span></div>
+      <div><span style="color:var(--text-soft);">Spins:</span> ${m.total_spins}</div>
+    </div>
+  `;
+
+  openModal('modal-model-actions');
+}
+
+async function modelAction(action) {
+  if (!selectedModelId) return;
+
+  let body = { model_id: selectedModelId, action };
+  if (action === 'renew') body.months = parseInt(document.getElementById('ma-renew-months').value) || 1;
+  if (action === 'change_plan') body.plan = document.getElementById('ma-plan').value;
+  if (action === 'update_notes') body.notes = document.getElementById('ma-notes').value;
+
+  const data = await apiFetch('/sa-update-model', 'POST', body);
+  if (data.error) { toast(data.error, 'error'); return; }
+
+  toast('Acción completada', 'success');
+  closeModal('modal-model-actions');
+  loadClients();
+}
+
+// ============================
+// CREATE MODEL
+// ============================
+function openCreateModel() {
+  document.getElementById('cm-email').value = '';
+  document.getElementById('cm-name').value = '';
+  document.getElementById('cm-slug').value = '';
+  document.getElementById('cm-plan').value = 'solo';
+  document.getElementById('cm-months').value = '1';
+  document.getElementById('cm-result').innerHTML = '';
+  openModal('modal-create-model');
+}
+
+async function createModel() {
+  const btn = document.getElementById('cm-submit');
+  btn.disabled = true;
+
+  const body = {
+    email: document.getElementById('cm-email').value.trim(),
+    display_name: document.getElementById('cm-name').value.trim(),
+    slug: document.getElementById('cm-slug').value.trim().toLowerCase(),
+    plan: document.getElementById('cm-plan').value,
+    subscription_months: parseInt(document.getElementById('cm-months').value) || 1,
+  };
+
+  if (!body.email || !body.display_name || !body.slug) {
+    document.getElementById('cm-result').innerHTML = '<div style="color:var(--danger);font-size:.85rem;">Todos los campos son obligatorios</div>';
+    btn.disabled = false;
+    return;
+  }
+
+  const data = await apiFetch('/sa-create-model', 'POST', body);
+  btn.disabled = false;
+
+  if (data.error) {
+    document.getElementById('cm-result').innerHTML = `<div style="color:var(--danger);font-size:.85rem;">${esc(data.error)}</div>`;
+    return;
+  }
+
+  document.getElementById('cm-result').innerHTML = `
+    <div class="card" style="border-color:var(--success);">
+      <div class="card-title" style="color:var(--success);">✅ Cuenta creada</div>
+      <div style="font-size:.85rem;">
+        <p><strong>Email:</strong> ${esc(data.credentials.email)}</p>
+        <p><strong>Contraseña temporal:</strong> <code style="background:rgba(255,255,255,.1);padding:2px 8px;border-radius:4px;user-select:all;">${esc(data.credentials.password)}</code></p>
+        <p><strong>Panel admin:</strong> <a href="${esc(data.credentials.admin_url)}" target="_blank">${esc(data.credentials.admin_url)}</a></p>
+      </div>
+    </div>
+  `;
+
+  loadClients();
+}
+
+// ============================
+// REGISTRATIONS
+// ============================
+async function loadRegistrations(status, tabBtn) {
+  if (tabBtn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    tabBtn.classList.add('active');
+  }
+
+  const data = await apiFetch('/sa-list-registrations?status=' + status);
+  if (data.error) return;
+
+  const tbody = document.getElementById('registrations-tbody');
+  const regs = data.registrations || [];
+
+  if (regs.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-soft);">No hay solicitudes ${status === 'pending' ? 'pendientes' : ''}</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = regs.map(r => {
+    const date = new Date(r.created_at).toLocaleDateString('es-ES');
+    return `<tr>
+      <td>${date}</td>
+      <td>${esc(r.display_name || r.artistic_name || '—')}</td>
+      <td>${esc(r.email)}</td>
+      <td>${esc(r.slug)}</td>
+      <td style="text-transform:uppercase;">${esc(r.plan)}</td>
+      <td><span class="badge badge-${r.status}">${r.status === 'pending' ? 'Pendiente' : r.status === 'approved' ? 'Aprobada' : 'Rechazada'}</span></td>
+      <td><button class="btn btn-outline btn-sm" onclick='openRegistration(${JSON.stringify(r).replace(/'/g, "&#39;")})'>Ver</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function openRegistration(r) {
+  document.getElementById('reg-result').innerHTML = '';
+
+  const fields = [
+    ['Nombre', r.display_name],
+    ['Email', r.email],
+    ['Slug solicitado', r.slug],
+    ['País', r.country],
+    ['Plan', r.plan?.toUpperCase()],
+    ['Ingresos mensuales', r.monthly_revenue],
+    ['Tiene agencia', r.has_agency],
+    ['Fans activos', r.active_fans],
+    ['Cómo nos conoció', r.acquisition_channel],
+    ['Telegram/Instagram', r.telegram_or_instagram],
+    ['Código referido', r.referral_code],
+    ['Código descuento', r.discount_code],
+    ['Notas', r.notes],
+  ];
+
+  document.getElementById('reg-detail').innerHTML = `
+    <div style="font-size:.85rem;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      ${fields.filter(([,v]) => v).map(([k,v]) => `<div><span style="color:var(--text-soft);">${k}:</span> ${esc(String(v))}</div>`).join('')}
+    </div>
+  `;
+
+  const actionsEl = document.getElementById('reg-actions');
+  if (r.status === 'pending') {
+    actionsEl.innerHTML = `
+      <button class="btn btn-success btn-sm" onclick="reviewRegistration('${r.id}','approve')">✅ Aprobar</button>
+      <button class="btn btn-danger btn-sm" onclick="reviewRegistration('${r.id}','reject')">❌ Rechazar</button>
+    `;
+  } else {
+    actionsEl.innerHTML = `<span class="badge badge-${r.status}">${r.status === 'approved' ? 'Aprobada' : 'Rechazada'}</span>`;
+  }
+
+  openModal('modal-registration');
+}
+
+async function reviewRegistration(id, action) {
+  const data = await apiFetch('/sa-review-registration', 'POST', { request_id: id, action });
+  const resultEl = document.getElementById('reg-result');
+
+  if (data.error) {
+    resultEl.innerHTML = `<div style="color:var(--danger);font-size:.85rem;">${esc(data.error)}</div>`;
+    return;
+  }
+
+  if (action === 'approve' && data.credentials) {
+    resultEl.innerHTML = `
+      <div class="card" style="border-color:var(--success);">
+        <div class="card-title" style="color:var(--success);">✅ Cuenta creada</div>
+        <div style="font-size:.85rem;">
+          <p><strong>Email:</strong> ${esc(data.credentials.email)}</p>
+          <p><strong>Contraseña temporal:</strong> <code style="background:rgba(255,255,255,.1);padding:2px 8px;border-radius:4px;user-select:all;">${esc(data.credentials.password)}</code></p>
+          <p><strong>Panel:</strong> <a href="${esc(data.credentials.admin_url)}" target="_blank">${esc(data.credentials.admin_url)}</a></p>
+        </div>
+      </div>
+    `;
+  } else {
+    resultEl.innerHTML = `<div style="color:var(--success);font-size:.85rem;">✅ ${data.message}</div>`;
+  }
+
+  document.getElementById('reg-actions').innerHTML = '';
+  loadRegistrations('pending');
+}
+
+// ============================
+// DISCOUNTS
+// ============================
+async function loadDiscounts() {
+  const data = await apiFetch('/sa-list-discounts');
+  if (data.error) return;
+
+  const tbody = document.getElementById('discounts-tbody');
+  const discounts = data.discounts || [];
+
+  if (discounts.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-soft);">No hay descuentos creados</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = discounts.map(d => {
+    const validUntil = d.valid_until ? new Date(d.valid_until).toLocaleDateString('es-ES') : 'Sin límite';
+    const usesText = d.max_uses ? `${d.times_used}/${d.max_uses}` : `${d.times_used}`;
+    return `<tr>
+      <td><strong>${esc(d.code)}</strong></td>
+      <td>${d.discount_pct}%</td>
+      <td>${usesText}</td>
+      <td>${validUntil}</td>
+      <td><span class="badge ${d.active ? 'badge-active' : 'badge-suspended'}">${d.active ? 'Activo' : 'Inactivo'}</span></td>
+      <td class="actions-cell">
+        <button class="btn btn-outline btn-sm" onclick="toggleDiscount('${d.id}',${!d.active})" title="${d.active ? 'Desactivar' : 'Activar'}">${d.active ? '⏸️' : '▶️'}</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteDiscount('${d.id}')" title="Eliminar">🗑️</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openCreateDiscount() {
+  document.getElementById('cd-code').value = '';
+  document.getElementById('cd-pct').value = '20';
+  document.getElementById('cd-max').value = '';
+  document.getElementById('cd-until').value = '';
+  openModal('modal-create-discount');
+}
+
+async function createDiscount() {
+  const body = {
+    code: document.getElementById('cd-code').value.trim(),
+    discount_pct: parseFloat(document.getElementById('cd-pct').value),
+    max_uses: document.getElementById('cd-max').value || null,
+    valid_until: document.getElementById('cd-until').value || null,
+  };
+
+  if (!body.code) { toast('El código es obligatorio', 'error'); return; }
+
+  const data = await apiFetch('/sa-create-discount', 'POST', body);
+  if (data.error) { toast(data.error, 'error'); return; }
+
+  toast('Descuento creado', 'success');
+  closeModal('modal-create-discount');
+  loadDiscounts();
+}
+
+async function toggleDiscount(id, active) {
+  const data = await apiFetch('/sa-update-discount', 'POST', { discount_id: id, active });
+  if (data.error) { toast(data.error, 'error'); return; }
+  toast(active ? 'Descuento activado' : 'Descuento desactivado', 'success');
+  loadDiscounts();
+}
+
+async function deleteDiscount(id) {
+  if (!confirm('¿Eliminar este descuento permanentemente?')) return;
+  const data = await apiFetch('/sa-delete-discount', 'POST', { discount_id: id });
+  if (data.error) { toast(data.error, 'error'); return; }
+  toast('Descuento eliminado', 'success');
+  loadDiscounts();
+}
+
+// ============================
+// UTILS
+// ============================
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+function esc(str) {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function toast(msg, type = 'success') {
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.innerHTML = (type === 'success' ? '✅ ' : '❌ ') + esc(msg);
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('show');
+  });
+});
+
+// Close modals on Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.show').forEach(m => m.classList.remove('show'));
+  }
+});
+
+// Boot
+init();
+</script>
+</body>
+</html>
