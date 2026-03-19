@@ -1388,11 +1388,11 @@ async function loadAfiliados() {
 
     // Commissions
     const { data: comms } = await sb.from('affiliate_commissions')
-      .select('period, month_number, origin_amount, amount, status, created_at, referred_model_id')
+      .select('period, month_number, base_amount, commission_amount, status, created_at, referred_model_id')
       .eq('affiliate_model_id', myModel.id)
       .order('created_at', { ascending: false });
 
-    const pendingTotal = (comms || []).filter(c => c.status === 'pending').reduce((s, c) => s + Number(c.amount), 0);
+    const pendingTotal = (comms || []).filter(c => c.status === 'pending').reduce((s, c) => s + Number(c.commission_amount), 0);
     const discountPct = refCount >= 3 ? 20 : refCount === 2 ? 15 : refCount === 1 ? 10 : 0;
 
     document.getElementById('af-total-earned').textContent = '€' + totalEarned.toFixed(2).replace('.', ',');
@@ -1420,8 +1420,8 @@ async function loadAfiliados() {
           <td>${esc(c.period)}</td>
           <td>${esc(ref.name)}</td>
           <td>${esc(ref.plan?.toUpperCase())}</td>
-          <td>€${Number(c.origin_amount).toFixed(2)}</td>
-          <td>€${Number(c.amount).toFixed(2)}</td>
+          <td>€${Number(c.base_amount).toFixed(2)}</td>
+          <td>€${Number(c.commission_amount).toFixed(2)}</td>
           <td>${badge}</td>
         </tr>`;
       }).join('');

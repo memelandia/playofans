@@ -23,8 +23,8 @@ exports.handler = async (event) => {
   const all = data || [];
   const now = new Date().toISOString().slice(0, 7);
   const totals = {
-    pending: all.filter(c => c.status === 'pending').reduce((s, c) => s + Number(c.amount), 0),
-    paid_this_month: all.filter(c => c.status === 'paid' && c.paid_at && c.paid_at.slice(0, 7) === now).reduce((s, c) => s + Number(c.amount), 0),
+    pending: all.filter(c => c.status === 'pending').reduce((s, c) => s + Number(c.commission_amount), 0),
+    paid_this_month: all.filter(c => c.status === 'paid' && c.paid_at && c.paid_at.slice(0, 7) === now).reduce((s, c) => s + Number(c.commission_amount), 0),
   };
 
   return json(200, { commissions: all, totals });

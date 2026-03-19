@@ -38,11 +38,11 @@ exports.handler = async (event) => {
     ].map(escCsv).join(',') + '\n';
   });
 
-  csv += '\nTipo,Período,Afiliado,Modelo Referida,Mes Nº,Pago Origen,Comisión,Estado,Fecha Pago\n';
+  csv += '\nTipo,Período,Afiliado,Modelo Referida,Mes Nº,Monto Base,Comisión,Estado,Fecha Pago\n';
   (commData || []).forEach(c => {
     csv += [
       'Comisión', c.period, c.affiliate?.display_name, c.referred?.display_name,
-      c.month_number, c.origin_amount, c.amount, c.status, c.paid_at
+      c.month_number, c.base_amount, c.commission_amount, c.status, c.paid_at
     ].map(escCsv).join(',') + '\n';
   });
 

@@ -1030,13 +1030,6 @@ async function deleteDiscount(id) {
 // ============================
 // BILLING — COBROS DEL MES
 // ============================
-const PRICES = {
-  solo: { monthly: 49, annual: 399 },
-  pro: { monthly: 89, annual: 699 },
-  agency: { monthly: 349, annual: 2800 },
-};
-const ANNUAL_EQUIV = { solo: 588, pro: 1068, agency: 4188 };
-
 function switchBillingTab(tab, btn) {
   document.querySelectorAll('#billing-tabs .tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -1076,11 +1069,9 @@ async function loadBillingCharges() {
     const plan = r.plan || 'solo';
     const cycle = r.billing_cycle || 'monthly';
     const cycleLabel = cycle === 'annual' ? 'Anual' : 'Mensual';
-    const annualSave = cycle === 'annual' ? (ANNUAL_EQUIV[plan] || 0) - (PRICES[plan]?.annual || 0) : 0;
-    const annualPct = cycle === 'annual' && ANNUAL_EQUIV[plan] ? Math.round((annualSave / ANNUAL_EQUIV[plan]) * 100) : 0;
-    const annualCol = cycle === 'annual' ? `${annualPct}% (-€${annualSave})` : '—';
+    const annualCol = r.annual_discount_pct > 0 ? `${Number(r.annual_discount_pct).toFixed(0)}% (-€${Number(r.annual_discount_amount).toFixed(0)})` : '—';
     const refCol = r.referral_discount_pct > 0 ? `${r.referral_discount_pct}% (-€${Number(r.referral_discount_amount).toFixed(2)})` : '—';
-    const due = r.due_date ? new Date(r.due_date).toLocaleDateString('es-ES') : '—';
+    const due = r.period_start ? new Date(r.period_start).toLocaleDateString('es-ES') : '—';
     const badge = r.status === 'paid' ? '<span class="badge badge-active">Pagado</span>'
       : r.status === 'overdue' ? '<span class="badge badge-expired">Vencido</span>'
       : '<span class="badge badge-pending">Pendiente</span>';
@@ -1185,8 +1176,8 @@ async function loadBillingCommissions() {
       <td>${esc(c.affiliate?.display_name || '—')}</td>
       <td>${esc(c.referred?.display_name || '—')}</td>
       <td>${c.month_number}/12</td>
-      <td>€${Number(c.origin_amount).toFixed(2)}</td>
-      <td>€${Number(c.amount).toFixed(2)}</td>
+      <td>€${Number(c.base_amount).toFixed(2)}</td>
+      <td>€${Number(c.commission_amount).toFixed(2)}</td>
       <td>${badge}</td>
       <td>${action}</td>
     </tr>`;
@@ -1252,7 +1243,7 @@ async function loadHistory() {
         <td>${esc(c.period)}</td>
         <td>${esc(c.affiliate?.display_name || '—')}</td>
         <td>Ref: ${esc(c.referred?.display_name || '—')} (Mes ${c.month_number}/12)</td>
-        <td>€${Number(c.amount).toFixed(2)}</td>
+        <td>€${Number(c.commission_amount).toFixed(2)}</td>
         <td>${badge}</td>
       </tr>` });
     });
