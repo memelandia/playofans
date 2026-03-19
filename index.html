@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- PRIMARY SEO -->
+<title>PlayOFans — Ruleta de Premios y Juegos Interactivos para Modelos de OnlyFans</title>
+<meta name="description" content="Engancha a tus fans con juegos interactivos. Ruleta de premios personalizable, 10 temas visuales, panel de administración y analíticas. La herramienta #1 para modelos de OnlyFans, Fansly y plataformas de contenido.">
+<meta name="keywords" content="ruleta onlyfans, juegos para onlyfans, ruleta de premios fans, juegos interactivos onlyfans, herramientas onlyfans, engagement onlyfans, fidelizar fans onlyfans, marketing onlyfans, spin wheel onlyfans, onlyfans games, onlyfans fan engagement, ruleta creadores contenido, gamificación fans, juegos para creadores de contenido, aumentar ingresos onlyfans, retener suscriptores onlyfans, onlyfans tools, ruleta premios personalizada, juegos fansly, herramientas creadores contenido">
+<link rel="canonical" href="https://playofans.com/">
+
+<!-- OPEN GRAPH -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://playofans.com/">
+<meta property="og:title" content="PlayOFans — Juegos Interactivos para tus Fans">
+<meta property="og:description" content="Haz girar la ruleta, sorprende a tus fans con premios exclusivos y multiplica tu engagement. La herramienta #1 para modelos de OnlyFans.">
+<meta property="og:site_name" content="PlayOFans">
+<meta property="og:locale" content="es_ES">
+
+<!-- TWITTER CARD -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PlayOFans — Juegos Interactivos para tus Fans">
+<meta name="twitter:description" content="Ruleta de premios personalizable para modelos de OnlyFans. 10 temas, analíticas y panel admin.">
+
+<!-- STRUCTURED DATA -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "PlayOFans",
+  "url": "https://playofans.com",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "description": "Plataforma de juegos interactivos para modelos de OnlyFans. Ruleta de premios personalizable con temas visuales, panel de administración y analíticas en tiempo real.",
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Solo",
+      "price": "49",
+      "priceCurrency": "EUR",
+      "billingDuration": "P1M",
+      "description": "Para modelos independientes. 100 códigos/mes, 5 temas."
+    },
+    {
+      "@type": "Offer",
+      "name": "Pro",
+      "price": "89",
+      "priceCurrency": "EUR",
+      "billingDuration": "P1M",
+      "description": "Para modelos top. Códigos ilimitados, 10 temas."
+    },
+    {
+      "@type": "Offer",
+      "name": "Agency",
+      "price": "349",
+      "priceCurrency": "EUR",
+      "billingDuration": "P1M",
+      "description": "Para agencias. Hasta 8 modelos, panel unificado."
+    }
+  ],
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "ratingCount": "1",
+    "bestRating": "5"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "¿Qué es PlayOFans?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "PlayOFans es una plataforma de juegos interactivos para modelos de OnlyFans, Fansly y otras plataformas de contenido. Permite crear ruletas de premios personalizadas para sorprender y fidelizar a tus fans."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Cómo funciona la ruleta de premios?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Configuras tu ruleta con los premios que quieras (fotos, vídeos, descuentos...), generas un código único para cada fan, y le envías el enlace. El fan gira la ruleta y gana un premio al azar."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Cuánto cuesta PlayOFans?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Hay 3 planes: Solo (49€/mes), Pro (89€/mes) y Agency (349€/mes). Cada plan incluye diferentes funcionalidades y límites de códigos."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Puedo personalizar la ruleta con mi marca?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sí. Puedes elegir entre 10 temas visuales, personalizar mensajes de bienvenida, premios y tener tu propia URL personalizada tipo playofans.com/tunombre/ruleta."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Funciona con otras plataformas además de OnlyFans?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sí. PlayOFans funciona con cualquier plataforma de contenido: OnlyFans, Fansly, MYM, Fanvue, y cualquier otra. Solo necesitas compartir el enlace con tus fans."
+      }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "PlayOFans",
+  "url": "https://playofans.com",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "email": "hola@playofans.com",
+    "contactType": "customer service",
+    "availableLanguage": "Spanish"
+  }
+}
+</script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+:root {
+  --bg: #0a0612; --bg2: #120e1f; --bg3: #1a1230;
+  --accent: #ff0066; --accent2: #b300ff; --accent3: #7c3aed;
+  --text: #f0e6ff; --text-soft: #a89cc8; --text-muted: #6b5f80;
+  --glass: rgba(20,12,40,0.85); --glass-border: rgba(179,0,255,0.2);
+  --success: #10ac84; --warning: #f8b500;
+  --gold: #ffd700; --hot-pink: #ff1493;
+  --max-w: 1200px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
+a{color:var(--accent2);text-decoration:none;transition:color .2s;}
+a:hover{color:var(--accent);}
+img{max-width:100%;display:block;}
+.container{max-width:var(--max-w);margin:0 auto;padding:0 24px;}
+
+/* NAVBAR */
+.navbar{position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 0;transition:all .3s;}
+.navbar.scrolled{background:rgba(10,6,18,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border);padding:10px 0;}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:var(--max-w);margin:0 auto;padding:0 24px;}
+.nav-logo{font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-links{display:flex;align-items:center;gap:32px;}
+.nav-links a{color:var(--text-soft);font-size:.9rem;font-weight:500;transition:color .2s;}
+.nav-links a:hover{color:var(--text);text-decoration:none;}
+.nav-cta{padding:10px 24px;border-radius:50px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff!important;font-weight:600;font-size:.85rem;border:none;cursor:pointer;transition:all .3s;}
+.nav-cta:hover{filter:brightness(1.15);transform:translateY(-1px);text-decoration:none;}
+.nav-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.5rem;cursor:pointer;}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding:120px 0 80px;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(179,0,255,0.15),transparent 60%),radial-gradient(ellipse at 70% 80%,rgba(255,0,102,0.1),transparent 60%);pointer-events:none;}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;position:relative;z-index:1;}
+.hero-text h1{font-size:3.5rem;font-weight:900;line-height:1.1;margin-bottom:24px;}
+.hero-text h1 .gradient{background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.hero-text p{font-size:1.15rem;color:var(--text-soft);line-height:1.7;margin-bottom:36px;max-width:520px;}
+.hero-buttons{display:flex;gap:16px;flex-wrap:wrap;}
+.btn-hero{padding:16px 36px;border-radius:50px;font-family:inherit;font-weight:700;font-size:1rem;cursor:pointer;transition:all .3s;border:none;display:inline-flex;align-items:center;gap:10px;}
+.btn-hero-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 8px 30px rgba(255,0,102,0.3);}
+.btn-hero-primary:hover{filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 12px 40px rgba(255,0,102,0.4);text-decoration:none;color:#fff;}
+.btn-hero-outline{background:transparent;border:2px solid var(--glass-border);color:var(--text);backdrop-filter:blur(10px);}
+.btn-hero-outline:hover{border-color:var(--accent2);color:var(--accent2);text-decoration:none;}
+.hero-visual{display:flex;justify-content:center;align-items:center;position:relative;}
+.hero-wheel-wrap{width:400px;height:400px;position:relative;}
+.hero-wheel{width:100%;height:100%;animation:heroSpin 30s linear infinite;}
+@keyframes heroSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.hero-glow{position:absolute;inset:-40px;background:radial-gradient(circle,rgba(255,0,102,0.2),transparent 70%);border-radius:50%;animation:pulse 3s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+.hero-badge{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);background:var(--glass);border:1px solid var(--glass-border);border-radius:50px;padding:10px 24px;font-size:.85rem;font-weight:600;white-space:nowrap;backdrop-filter:blur(10px);}
+
+/* TRUST BAR */
+.trust-bar{padding:40px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
+.trust-items{display:flex;justify-content:center;gap:48px;flex-wrap:wrap;}
+.trust-item{display:flex;align-items:center;gap:10px;font-size:.9rem;color:var(--text-soft);font-weight:500;}
+.trust-item .icon{font-size:1.3rem;}
+
+/* SECTION STYLES */
+section{padding:100px 0;}
+.section-tag{display:inline-block;padding:6px 16px;border-radius:50px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;background:rgba(179,0,255,0.1);color:var(--accent2);border:1px solid rgba(179,0,255,0.2);}
+.section-title{font-size:2.5rem;font-weight:800;margin-bottom:16px;line-height:1.2;}
+.section-subtitle{font-size:1.1rem;color:var(--text-soft);max-width:640px;line-height:1.7;}
+.text-center{text-align:center;}
+.mx-auto{margin-left:auto;margin-right:auto;}
+
+/* HOW IT WORKS */
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:60px;}
+.step-card{text-align:center;position:relative;padding:40px 24px;}
+.step-number{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800;margin:0 auto 24px;color:#fff;}
+.step-icon{font-size:3rem;margin-bottom:16px;}
+.step-card h3{font-size:1.15rem;font-weight:700;margin-bottom:12px;}
+.step-card p{font-size:.9rem;color:var(--text-soft);line-height:1.6;}
+.step-arrow{position:absolute;right:-28px;top:50%;transform:translateY(-50%);font-size:1.5rem;color:var(--accent2);opacity:.5;}
+
+/* GAMES */
+.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;margin-top:60px;}
+.game-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:32px;text-align:center;transition:all .3s;position:relative;overflow:hidden;}
+.game-card:hover{border-color:var(--accent2);transform:translateY(-4px);}
+.game-card.active{border-color:var(--accent);box-shadow:0 0 40px rgba(255,0,102,0.15);}
+.game-card .emoji{font-size:3.5rem;margin-bottom:16px;}
+.game-card h3{font-size:1.2rem;font-weight:700;margin-bottom:8px;}
+.game-card p{font-size:.85rem;color:var(--text-soft);line-height:1.6;margin-bottom:16px;}
+.game-badge{display:inline-block;padding:4px 14px;border-radius:50px;font-size:.7rem;font-weight:700;text-transform:uppercase;}
+.game-badge.live{background:rgba(16,172,132,0.15);color:var(--success);}
+.game-badge.soon{background:rgba(255,255,255,0.06);color:var(--text-muted);}
+
+/* AUDIENCE */
+.audience-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:60px;}
+.audience-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:36px;transition:all .3s;}
+.audience-card:hover{border-color:var(--accent2);transform:translateY(-4px);}
+.audience-card .icon-big{font-size:2.5rem;margin-bottom:16px;}
+.audience-card h3{font-size:1.1rem;font-weight:700;margin-bottom:12px;}
+.audience-card p{font-size:.85rem;color:var(--text-soft);line-height:1.6;}
+.audience-card ul{list-style:none;margin-top:16px;}
+.audience-card ul li{font-size:.85rem;color:var(--text-soft);padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;gap:8px;}
+.audience-card ul li::before{content:'✓';color:var(--success);font-weight:700;font-size:.8rem;}
+
+/* PRICING */
+#precios{background:var(--bg2);}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:60px;}
+.price-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:24px;padding:36px;text-align:center;transition:all .3s;position:relative;}
+.price-card:hover{transform:translateY(-4px);}
+.price-card.featured{border-color:var(--accent);box-shadow:0 0 60px rgba(255,0,102,0.15);}
+.price-card.featured::before{content:'⭐ POPULAR';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:4px 20px;border-radius:50px;font-size:.7rem;font-weight:700;letter-spacing:1px;}
+.price-card .plan-name{font-size:1.1rem;font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;}
+.price-card .plan-price{font-size:3rem;font-weight:900;margin-bottom:4px;}
+.price-card .plan-price span{font-size:1rem;font-weight:400;color:var(--text-soft);}
+.price-card .plan-desc{font-size:.85rem;color:var(--text-soft);margin-bottom:24px;}
+.price-card ul{list-style:none;text-align:left;margin-bottom:28px;}
+.price-card ul li{font-size:.85rem;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;gap:10px;}
+.price-card ul li .check{color:var(--success);font-weight:700;}
+.price-card ul li .cross{color:var(--text-muted);}
+.btn-price{display:block;width:100%;padding:14px;border-radius:50px;font-family:inherit;font-weight:700;font-size:.95rem;cursor:pointer;transition:all .3s;text-align:center;border:none;}
+.btn-price.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;}
+.btn-price.primary:hover{filter:brightness(1.1);text-decoration:none;color:#fff;}
+.btn-price.outline{background:transparent;border:2px solid var(--glass-border);color:var(--text);}
+.btn-price.outline:hover{border-color:var(--accent2);color:var(--accent2);text-decoration:none;}
+
+/* TESTIMONIALS */
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:60px;}
+.testimonial-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:28px;transition:all .3s;}
+.testimonial-card:hover{border-color:var(--accent2);}
+.testimonial-stars{color:var(--gold);font-size:.9rem;margin-bottom:12px;letter-spacing:2px;}
+.testimonial-text{font-size:.9rem;color:var(--text-soft);line-height:1.7;margin-bottom:16px;font-style:italic;}
+.testimonial-author{font-size:.85rem;font-weight:600;}
+.testimonial-role{font-size:.75rem;color:var(--text-muted);}
+
+/* FAQ */
+.faq-list{max-width:800px;margin:60px auto 0;}
+.faq-item{border-bottom:1px solid var(--glass-border);padding:0;}
+.faq-question{width:100%;background:none;border:none;color:var(--text);font-family:inherit;font-size:1rem;font-weight:600;padding:24px 0;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:color .2s;}
+.faq-question:hover{color:var(--accent);}
+.faq-question .arrow{font-size:1.2rem;transition:transform .3s;color:var(--text-soft);}
+.faq-item.open .faq-question .arrow{transform:rotate(180deg);color:var(--accent);}
+.faq-answer{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .4s ease;}
+.faq-item.open .faq-answer{max-height:300px;padding-bottom:24px;}
+.faq-answer p{font-size:.9rem;color:var(--text-soft);line-height:1.7;}
+
+/* CTA FINAL */
+.cta-section{text-align:center;padding:100px 0;position:relative;overflow:hidden;}
+.cta-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(255,0,102,0.1),transparent 70%);pointer-events:none;}
+.cta-title{font-size:2.8rem;font-weight:900;margin-bottom:16px;}
+.cta-subtitle{font-size:1.1rem;color:var(--text-soft);margin-bottom:36px;}
+.cta-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+
+/* FOOTER */
+.footer{background:var(--bg2);border-top:1px solid var(--glass-border);padding:60px 0 30px;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
+.footer-brand h3{font-size:1.3rem;font-weight:800;margin-bottom:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.footer-brand p{font-size:.85rem;color:var(--text-soft);line-height:1.6;}
+.footer-col h4{font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;color:var(--text-soft);}
+.footer-col a{display:block;font-size:.85rem;color:var(--text-muted);padding:4px 0;transition:color .2s;}
+.footer-col a:hover{color:var(--text);text-decoration:none;}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.04);padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:.8rem;color:var(--text-muted);}
+
+/* FLOAT PARTICLES */
+.particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.particle{position:absolute;border-radius:50%;opacity:.08;animation:float linear infinite;}
+@keyframes float{0%{transform:translateY(100vh) rotate(0)}100%{transform:translateY(-100px) rotate(360deg)}}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .hero-text h1{font-size:2.8rem;}
+  .hero-wheel-wrap{width:320px;height:320px;}
+  .pricing-grid,.audience-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:768px){
+  .nav-links{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(10,6,18,0.98);flex-direction:column;justify-content:center;gap:24px;z-index:999;}
+  .nav-links.open{display:flex;}
+  .nav-toggle{display:block;z-index:1001;}
+  .hero-grid{grid-template-columns:1fr;text-align:center;}
+  .hero-text p{margin-left:auto;margin-right:auto;}
+  .hero-buttons{justify-content:center;}
+  .hero-visual{order:-1;margin-bottom:20px;}
+  .hero-wheel-wrap{width:260px;height:260px;}
+  .hero-text h1{font-size:2.2rem;}
+  .how-grid{grid-template-columns:1fr;max-width:400px;margin-left:auto;margin-right:auto;}
+  .step-arrow{display:none;}
+  .pricing-grid,.audience-grid,.testimonials-grid{grid-template-columns:1fr;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+  .section-title{font-size:2rem;}
+  .cta-title{font-size:2rem;}
+}
+@media(max-width:480px){
+  .hero-text h1{font-size:1.8rem;}
+  .btn-hero{padding:14px 28px;font-size:.9rem;}
+  .footer-grid{grid-template-columns:1fr;}
+  .trust-items{gap:24px;}
+}
+</style>
+</head>
+<body>
+
+<!-- PARTICLES BG -->
+<div class="particles" aria-hidden="true">
+  <div class="particle" style="width:6px;height:6px;background:var(--accent);left:10%;animation-duration:18s;animation-delay:0s;"></div>
+  <div class="particle" style="width:4px;height:4px;background:var(--accent2);left:25%;animation-duration:22s;animation-delay:3s;"></div>
+  <div class="particle" style="width:8px;height:8px;background:var(--accent);left:45%;animation-duration:25s;animation-delay:1s;"></div>
+  <div class="particle" style="width:5px;height:5px;background:var(--accent2);left:65%;animation-duration:20s;animation-delay:5s;"></div>
+  <div class="particle" style="width:3px;height:3px;background:var(--accent3);left:80%;animation-duration:28s;animation-delay:2s;"></div>
+  <div class="particle" style="width:6px;height:6px;background:var(--accent);left:90%;animation-duration:16s;animation-delay:4s;"></div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+<div class="nav-inner">
+  <a href="/" class="nav-logo">🎰 PlayOFans</a>
+  <div class="nav-links" id="nav-links">
+    <a href="#como-funciona">Cómo Funciona</a>
+    <a href="#juegos">Juegos</a>
+    <a href="#precios">Precios</a>
+    <a href="#faq">FAQ</a>
+    <a href="/demo" class="nav-cta">Ver Demo</a>
+  </div>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú">☰</button>
+</div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<header class="hero" id="hero">
+<div class="container">
+<div class="hero-grid">
+  <div class="hero-text">
+    <h1>Convierte tus fans en <span class="gradient">adictos a tu contenido</span></h1>
+    <p>Crea juegos interactivos como la <strong>ruleta de premios</strong> para sorprender a tus fans, aumentar tu engagement y generar más ingresos en OnlyFans, Fansly y más.</p>
+    <div class="hero-buttons">
+      <a href="/registro" class="btn-hero btn-hero-primary">Quiero Empezar 🚀</a>
+      <a href="/demo" class="btn-hero btn-hero-outline">Ver Demo 🎰</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-wheel-wrap">
+      <div class="hero-glow"></div>
+      <svg class="hero-wheel" viewBox="0 0 300 300" aria-label="Ruleta de premios PlayOFans">
+        <defs>
+          <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ff0066"/><stop offset="100%" stop-color="#b300ff"/></linearGradient>
+          <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1a1230"/><stop offset="100%" stop-color="#231540"/></linearGradient>
+        </defs>
+        <circle cx="150" cy="150" r="148" fill="none" stroke="url(#g1)" stroke-width="3"/>
+        <path d="M150,150 L150,2 A148,148 0 0,1 278,75 Z" fill="url(#g1)" opacity=".9"/>
+        <path d="M150,150 L278,75 A148,148 0 0,1 278,225 Z" fill="url(#g2)" opacity=".9"/>
+        <path d="M150,150 L278,225 A148,148 0 0,1 150,298 Z" fill="url(#g1)" opacity=".7"/>
+        <path d="M150,150 L150,298 A148,148 0 0,1 22,225 Z" fill="url(#g2)" opacity=".9"/>
+        <path d="M150,150 L22,225 A148,148 0 0,1 22,75 Z" fill="url(#g1)" opacity=".8"/>
+        <path d="M150,150 L22,75 A148,148 0 0,1 150,2 Z" fill="url(#g2)" opacity=".9"/>
+        <circle cx="150" cy="150" r="30" fill="var(--bg)" stroke="url(#g1)" stroke-width="2"/>
+        <text x="150" y="158" text-anchor="middle" font-size="24">🎰</text>
+      </svg>
+      <div class="hero-badge">✨ 10 temas · Personalizable · Tu marca</div>
+    </div>
+  </div>
+</div>
+</div>
+</header>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+<div class="container">
+<div class="trust-items">
+  <div class="trust-item"><span class="icon">🔒</span> Premios seguros en servidor</div>
+  <div class="trust-item"><span class="icon">⚡</span> Setup en 5 minutos</div>
+  <div class="trust-item"><span class="icon">📱</span> Mobile-first</div>
+  <div class="trust-item"><span class="icon">🎨</span> 10 temas visuales</div>
+  <div class="trust-item"><span class="icon">📊</span> Analíticas en tiempo real</div>
+</div>
+</div>
+</div>
+
+<!-- ===== CÓMO FUNCIONA ===== -->
+<section id="como-funciona">
+<div class="container">
+  <div class="text-center">
+    <span class="section-tag">Cómo funciona</span>
+    <h2 class="section-title">Engancha a tus fans en 3 pasos</h2>
+    <p class="section-subtitle mx-auto">Sin código, sin complicaciones. Configura tu ruleta de premios en minutos y empieza a sorprender a tus fans hoy mismo.</p>
+  </div>
+  <div class="how-grid">
+    <div class="step-card">
+      <div class="step-number">1</div>
+      <div class="step-icon">🎨</div>
+      <h3>Configura tu ruleta</h3>
+      <p>Elige un tema visual, añade tus premios personalizados (fotos, vídeos, descuentos, sexting...) y personaliza los mensajes.</p>
+      <span class="step-arrow">→</span>
+    </div>
+    <div class="step-card">
+      <div class="step-number">2</div>
+      <div class="step-icon">🔗</div>
+      <h3>Genera un código para tu fan</h3>
+      <p>Crea un código único con el nombre del fan y el número de tiradas. Se genera un enlace y QR listos para enviar por chat.</p>
+      <span class="step-arrow">→</span>
+    </div>
+    <div class="step-card">
+      <div class="step-number">3</div>
+      <div class="step-icon">🎰</div>
+      <h3>Tu fan gira y gana</h3>
+      <p>El fan abre el enlace, gira la ruleta y descubre su premio. Tú ves todo en tiempo real desde tu panel de administración.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ===== JUEGOS ===== -->
+<section id="juegos" style="background:var(--bg2);">
+<div class="container">
+  <div class="text-center">
+    <span class="section-tag">Juegos disponibles</span>
+    <h2 class="section-title">Tu arsenal de engagement</h2>
+    <p class="section-subtitle mx-auto">Empezamos con la ruleta de premios y vamos añadiendo más juegos interactivos para que nunca te quedes sin ideas.</p>
+  </div>
+  <div class="games-grid">
+    <article class="game-card active">
+      <div class="emoji">🎰</div>
+      <h3>Ruleta de Premios</h3>
+      <p>La ruleta clásica personalizable. Hasta 10 premios, mensajes personalizados con el nombre del fan, 10 temas visuales, sonidos y animaciones.</p>
+      <span class="game-badge live">Disponible ahora</span>
+    </article>
+    <article class="game-card">
+      <div class="emoji">🃏</div>
+      <h3>Rasca y Gana</h3>
+      <p>Tarjetas con efecto scratch que revelan premios sorpresa. Perfecto para promos especiales y fechas señaladas.</p>
+      <span class="game-badge soon">Próximamente</span>
+    </article>
+    <article class="game-card">
+      <div class="emoji">🎯</div>
+      <h3>Ruleta de la Verdad</h3>
+      <p>Un giro diferente: preguntas atrevidas o retos. Ideal para streams y contenido interactivo con tus fans.</p>
+      <span class="game-badge soon">Próximamente</span>
+    </article>
+  </div>
+</div>
+</section>
+
+<!-- ===== PARA QUIÉN ===== -->
+<section id="para-quien">
+<div class="container">
+  <div class="text-center">
+    <span class="section-tag">¿Para quién es?</span>
+    <h2 class="section-title">Creado para creadores de contenido</h2>
+    <p class="section-subtitle mx-auto">Ya seas modelo independiente, parte de una agencia o manager, PlayOFans se adapta a ti.</p>
+  </div>
+  <div class="audience-grid">
+    <article class="audience-card">
+      <div class="icon-big">💃</div>
+      <h3>Modelos Independientes</h3>
+      <p>Si tienes tu propia cuenta de OnlyFans, Fansly o similar y quieres diferenciarte de la competencia.</p>
+      <ul>
+        <li>Aumenta tu tasa de retención</li>
+        <li>Sube en el ranking de la plataforma</li>
+        <li>Genera más propinas y PPV</li>
+        <li>Destaca sobre otras creadoras</li>
+      </ul>
+    </article>
+    <article class="audience-card">
+      <div class="icon-big">🏢</div>
+      <h3>Agencias de Modelos</h3>
+      <p>Gestiona las ruletas de todas tus modelos desde un solo panel. Ahorra tiempo y escala tu operación.</p>
+      <ul>
+        <li>Panel unificado hasta 8 modelos</li>
+        <li>Analíticas consolidadas</li>
+        <li>Gestión centralizada de códigos</li>
+        <li>Precio preferente por modelo</li>
+      </ul>
+    </article>
+    <article class="audience-card">
+      <div class="icon-big">📋</div>
+      <h3>Managers & Chatters</h3>
+      <p>Herramienta perfecta para chatters que gestionan cuentas. Envía códigos directamente desde el chat.</p>
+      <ul>
+        <li>Plantillas de mensaje copiables</li>
+        <li>Links pre-generados para WhatsApp</li>
+        <li>QR para compartir en redes</li>
+        <li>Todo desde el móvil</li>
+      </ul>
+    </article>
+  </div>
+</div>
+</section>
+
+<!-- ===== PRECIOS ===== -->
+<section id="precios">
+<div class="container">
+  <div class="text-center">
+    <span class="section-tag">Precios</span>
+    <h2 class="section-title">Planes para cada nivel</h2>
+    <p class="section-subtitle mx-auto">Empieza con el plan Solo y escala cuando lo necesites. Sin permanencia, cancela cuando quieras.</p>
+  </div>
+  <div class="pricing-grid">
+    <!-- SOLO -->
+    <div class="price-card">
+      <div class="plan-name">Solo</div>
+      <div class="plan-price">49€ <span>/mes</span></div>
+      <div class="plan-desc">Para modelos independientes</div>
+      <ul>
+        <li><span class="check">✓</span> 100 códigos por mes</li>
+        <li><span class="check">✓</span> 5 temas visuales</li>
+        <li><span class="check">✓</span> Panel de administración</li>
+        <li><span class="check">✓</span> Analíticas en tiempo real</li>
+        <li><span class="check">✓</span> Mensajes personalizados</li>
+        <li><span class="check">✓</span> QR y enlace compartible</li>
+        <li><span class="check">✓</span> Plantillas de mensaje</li>
+        <li><span class="cross">—</span> <span style="color:var(--text-muted);">Temas exclusivos (5 más)</span></li>
+        <li><span class="cross">—</span> <span style="color:var(--text-muted);">Múltiples modelos</span></li>
+      </ul>
+      <a href="/registro?plan=solo" class="btn-price outline">Empezar</a>
+    </div>
+    <!-- PRO -->
+    <div class="price-card featured">
+      <div class="plan-name">Pro</div>
+      <div class="plan-price">89€ <span>/mes</span></div>
+      <div class="plan-desc">Para modelos top</div>
+      <ul>
+        <li><span class="check">✓</span> Códigos ilimitados</li>
+        <li><span class="check">✓</span> 10 temas visuales</li>
+        <li><span class="check">✓</span> Panel de administración</li>
+        <li><span class="check">✓</span> Analíticas en tiempo real</li>
+        <li><span class="check">✓</span> Mensajes personalizados</li>
+        <li><span class="check">✓</span> QR y enlace compartible</li>
+        <li><span class="check">✓</span> Plantillas de mensaje</li>
+        <li><span class="check">✓</span> Temas exclusivos (Halloween, Navidad...)</li>
+        <li><span class="cross">—</span> <span style="color:var(--text-muted);">Múltiples modelos</span></li>
+      </ul>
+      <a href="/registro?plan=pro" class="btn-price primary">Empezar Ahora</a>
+    </div>
+    <!-- AGENCY -->
+    <div class="price-card">
+      <div class="plan-name">Agency</div>
+      <div class="plan-price">349€ <span>/mes</span></div>
+      <div class="plan-desc">Para agencias y managers</div>
+      <ul>
+        <li><span class="check">✓</span> Códigos ilimitados</li>
+        <li><span class="check">✓</span> 10 temas visuales</li>
+        <li><span class="check">✓</span> Panel de administración</li>
+        <li><span class="check">✓</span> Analíticas en tiempo real</li>
+        <li><span class="check">✓</span> Mensajes personalizados</li>
+        <li><span class="check">✓</span> QR y enlace compartible</li>
+        <li><span class="check">✓</span> Plantillas de mensaje</li>
+        <li><span class="check">✓</span> Temas exclusivos</li>
+        <li><span class="check">✓</span> Hasta 8 modelos</li>
+      </ul>
+      <a href="/registro?plan=agency" class="btn-price outline">Contactar</a>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ===== TESTIMONIOS ===== -->
+<section id="testimonios">
+<div class="container">
+  <div class="text-center">
+    <span class="section-tag">Lo que dicen</span>
+    <h2 class="section-title">Modelos que ya usan PlayOFans</h2>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">"Mis fans se vuelven locos con la ruleta. Cada vez que mando un código, las propinas suben un 40%. Es la mejor inversión que he hecho."</p>
+      <div class="testimonial-author">@modelo_ejemplo</div>
+      <div class="testimonial-role">Top 1% OnlyFans</div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">"Lo configuras en 5 minutos y listo. Los temas son preciosos y la personalización hace que parezca algo 100% tuyo. Mis fans lo adoran."</p>
+      <div class="testimonial-author">@creadora_top</div>
+      <div class="testimonial-role">Modelo Fansly</div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">"Como agencia manejamos 6 modelos con PlayOFans. El panel unificado nos ahorra horas cada día. Era justo lo que necesitábamos."</p>
+      <div class="testimonial-author">@agencia_mgmt</div>
+      <div class="testimonial-role">Agencia de modelos</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section id="faq" style="background:var(--bg2);">
+<div class="container">
+  <div class="text-center">
+    <span class="section-tag">Preguntas frecuentes</span>
+    <h2 class="section-title">¿Tienes dudas?</h2>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false">
+        <span>¿Qué es PlayOFans y cómo funciona?</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="faq-answer">
+        <p>PlayOFans es una plataforma de juegos interactivos diseñada para modelos de OnlyFans, Fansly y otras plataformas de contenido para adultos. Te permite crear una ruleta de premios personalizada con tu propia URL (playofans.com/tunombre/ruleta). Generas códigos únicos para cada fan, les envías el enlace, y ellos giran la ruleta para ganar premios que tú eliges: fotos exclusivas, vídeos, descuentos, sexting, videollamadas... lo que quieras.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false">
+        <span>¿Pueden mis fans hacer trampa con la ruleta?</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="faq-answer">
+        <p>No. A diferencia de otras ruletas que funcionan en el navegador, en PlayOFans el premio se elige en nuestro servidor de forma aleatoria y segura. El fan no puede inspeccionar, manipular ni predecir el resultado. Cada tirada se valida con un token único y se registra en nuestra base de datos.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false">
+        <span>¿Puedo personalizar los premios y el diseño?</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="faq-answer">
+        <p>Sí. Puedes elegir entre 10 temas visuales (dark luxury, rose gold, neon cyber, gold VIP...), configurar hasta 10 premios diferentes, personalizar el mensaje de bienvenida con el nombre del fan, y el mensaje que aparece cuando gana un premio. Tu ruleta tiene tu propia URL personalizada.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false">
+        <span>¿Funciona con otras plataformas además de OnlyFans?</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="faq-answer">
+        <p>Por supuesto. PlayOFans es independiente de la plataforma. Funciona con OnlyFans, Fansly, MYM, Fanvue, LoyalFans, y cualquier otra. Solo necesitas compartir el enlace de tu ruleta con tus fans por el chat de la plataforma, WhatsApp, Telegram o la red social que prefieras.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false">
+        <span>¿Hay permanencia o compromiso?</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="faq-answer">
+        <p>No. PlayOFans funciona con suscripción mensual sin permanencia. Puedes cancelar cuando quieras. Mientras tu suscripción esté activa, tu ruleta funciona. Si decides cancelar, tu ruleta se desactiva al terminar el período pagado, pero tus datos se conservan por si quieres volver.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ===== CTA FINAL ===== -->
+<section class="cta-section">
+<div class="container" style="position:relative;z-index:1;">
+  <h2 class="cta-title">¿Lista para enganchar a tus fans?</h2>
+  <p class="cta-subtitle">Únete a las modelos que ya están usando juegos interactivos para multiplicar su engagement e ingresos.</p>
+  <div class="cta-buttons">
+    <a href="/registro" class="btn-hero btn-hero-primary">Crear mi cuenta gratis 🚀</a>
+    <a href="/contacto" class="btn-hero btn-hero-outline">Contactar</a>
+  </div>
+</div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+<div class="container">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <h3>🎰 PlayOFans</h3>
+      <p>La plataforma de juegos interactivos para creadores de contenido. Ruleta de premios, engagement y mucho más. Hecha para modelos de OnlyFans, Fansly y similares.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Producto</h4>
+      <a href="#juegos">Juegos</a>
+      <a href="#precios">Precios</a>
+      <a href="/demo">Demo</a>
+      <a href="/guia">Guía de uso</a>
+    </div>
+    <div class="footer-col">
+      <h4>Recursos</h4>
+      <a href="#faq">FAQ</a>
+      <a href="/contacto">Contacto</a>
+      <a href="/registro">Registro</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contacto</h4>
+      <a href="mailto:hola@playofans.com">hola@playofans.com</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2025 PlayOFans. Todos los derechos reservados.</span>
+    <span>Hecho con 💜 para creadores de contenido</span>
+  </div>
+</div>
+</footer>
+
+<script>
+// Navbar scroll effect
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 50);
+}, { passive: true });
+
+// Mobile menu toggle
+const navToggle = document.getElementById('nav-toggle');
+const navLinks = document.getElementById('nav-links');
+navToggle.addEventListener('click', () => {
+  const isOpen = navLinks.classList.toggle('open');
+  navToggle.textContent = isOpen ? '✕' : '☰';
+});
+navLinks.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    navToggle.textContent = '☰';
+  });
+});
+
+// FAQ accordion
+document.querySelectorAll('.faq-question').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.parentElement;
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+    btn.setAttribute('aria-expanded', !wasOpen);
+  });
+});
+
+// Save referral code
+const urlParams = new URLSearchParams(window.location.search);
+const ref = urlParams.get('ref');
+if (ref) localStorage.setItem('playofans_ref', ref);
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+</body>
+</html>
