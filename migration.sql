@@ -79,9 +79,10 @@ create table if not exists affiliates (
   id uuid primary key default uuid_generate_v4(),
   model_id uuid not null references models(id) on delete cascade,
   referral_code text unique not null,
-  commission_pct numeric not null default 20,
+  commission_pct numeric not null default 10,
   total_earned numeric not null default 0,
-  months_remaining int not null default 12,
+  credit_balance numeric not null default 0,
+  months_remaining int not null default 6,
   active boolean not null default true,
   created_at timestamptz not null default now()
 );
@@ -311,6 +312,7 @@ create table if not exists billing_records (
   annual_discount_amount numeric not null default 0,
   referral_discount_pct numeric not null default 0,
   referral_discount_amount numeric not null default 0,
+  credit_applied numeric not null default 0,
   total_amount numeric not null,
   status text not null default 'pending'
     check (status in ('pending', 'paid', 'overdue', 'cancelled')),
@@ -329,12 +331,12 @@ create table if not exists affiliate_commissions (
   referred_model_id uuid not null references models(id) on delete cascade,
   billing_record_id uuid references billing_records(id) on delete set null,
   period text not null,
-  commission_pct numeric not null default 20,
+  commission_pct numeric not null default 10,
   base_amount numeric not null,
   commission_amount numeric not null,
   month_number int not null,
-  status text not null default 'pending'
-    check (status in ('pending', 'paid', 'cancelled')),
+  status text not null default 'credited'
+    check (status in ('credited', 'pending', 'paid', 'cancelled')),
   paid_at timestamptz,
   created_at timestamptz not null default now()
 );
@@ -412,9 +414,9 @@ begin
   else v_ann_amt := 0; v_ann_pct := 0; end if;
   select count(*) into v_ref_count from models
   where referred_by = v_model.referral_code and active = true
-  and created_at > now() - interval '12 months';
-  v_ref_pct := case when v_ref_count >= 3 then 20 when v_ref_count = 2 then 15
-    when v_ref_count = 1 then 10 else 0 end;
+  and created_at > now() - interval '6 months';
+  v_ref_pct := case when v_ref_count >= 3 then 15 when v_ref_count = 2 then 10
+    when v_ref_count = 1 then 5 else 0 end;
   v_ref_amt := round(v_base * v_ref_pct / 100, 2);
   return query select v_base, v_model.billing_cycle, v_ann_pct, round(v_ann_amt, 2),
     v_ref_pct, v_ref_amt, v_base - v_ref_amt, v_ref_count;
@@ -428,6 +430,7 @@ declare
   v_model record; v_price record;
   v_period_start date; v_period_end date; v_period text;
   v_created int := 0;
+  v_credit numeric; v_credit_used numeric; v_final numeric;
 begin
   for v_model in
     select * from models where active = true
@@ -441,12 +444,21 @@ begin
     v_period := to_char(v_period_start, 'YYYY-MM');
     if not exists (select 1 from billing_records where model_id=v_model.id and period_start=v_period_start) then
       select * into v_price from calculate_model_price(v_model.id);
+      -- Aplicar saldo a favor
+      v_final := v_price.final_price;
+      v_credit_used := 0;
+      select coalesce(credit_balance, 0) into v_credit from affiliates where model_id=v_model.id;
+      if v_credit > 0 then
+        v_credit_used := least(v_credit, v_final);
+        v_final := v_final - v_credit_used;
+        update affiliates set credit_balance=credit_balance-v_credit_used where model_id=v_model.id;
+      end if;
       insert into billing_records (model_id, period, period_start, period_end, billing_cycle, plan,
         base_price, annual_discount_pct, annual_discount_amount,
-        referral_discount_pct, referral_discount_amount, total_amount)
+        referral_discount_pct, referral_discount_amount, credit_applied, total_amount)
       values (v_model.id, v_period, v_period_start, v_period_end, v_model.billing_cycle, v_model.plan,
         v_price.base_price, v_price.annual_discount_pct, v_price.annual_discount_amount,
-        v_price.referral_discount_pct, v_price.referral_discount_amount, v_price.final_price);
+        v_price.referral_discount_pct, v_price.referral_discount_amount, v_credit_used, v_final);
       v_created := v_created + 1;
     end if;
   end loop;
@@ -472,17 +484,18 @@ begin
   where id=v_billing.model_id;
   if v_model.referred_by is not null then
     select * into v_affiliate from models where referral_code=v_model.referred_by and active=true;
-    if found and v_model.created_at > now() - interval '12 months' then
+    if found and v_model.created_at > now() - interval '6 months' then
       select count(*) into v_months_elapsed from affiliate_commissions
       where referred_model_id=v_model.id and affiliate_model_id=v_affiliate.id;
-      if v_months_elapsed < 12 then
-        v_commission_amount := round(v_billing.total_amount * 0.20, 2);
+      if v_months_elapsed < 6 then
+        v_commission_amount := round((v_billing.base_price - v_billing.annual_discount_amount) * 0.10, 2);
         insert into affiliate_commissions (affiliate_model_id, referred_model_id, billing_record_id,
           period, commission_pct, base_amount, commission_amount, month_number, status)
         values (v_affiliate.id, v_model.id, p_billing_id, v_billing.period,
-          20, v_billing.total_amount, v_commission_amount, v_months_elapsed+1, 'pending');
+          10, v_billing.base_price - v_billing.annual_discount_amount, v_commission_amount, v_months_elapsed+1, 'credited');
         update affiliates set total_earned=total_earned+v_commission_amount,
-          months_remaining=greatest(0, 12-(v_months_elapsed+1)) where model_id=v_affiliate.id;
+          credit_balance=credit_balance+v_commission_amount,
+          months_remaining=greatest(0, 6-(v_months_elapsed+1)) where model_id=v_affiliate.id;
       end if;
     end if;
   end if;

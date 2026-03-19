@@ -512,13 +512,13 @@ textarea.form-input { min-height: 100px; resize: vertical; }
         <button class="btn btn-outline btn-sm" onclick="copyText(document.getElementById('af-reflink').textContent)">📋 Copiar link</button>
       </div>
     </div>
-    <p style="font-size:.85rem;color:var(--text-soft);margin-top:16px">Comparte este link. Por cada modelo que se registre ganarás 20% de sus pagos durante 12 meses.</p>
+    <p style="font-size:.85rem;color:var(--text-soft);margin-top:16px">Comparte este link. Por cada modelo que se registre ganarás un 10% de sus pagos como saldo a favor durante 6 meses.</p>
   </div>
 
   <div class="stats-grid" id="af-stats">
-    <div class="stat-card"><div class="label">Total ganado</div><div class="value success" id="af-total-earned">€0,00</div></div>
+    <div class="stat-card"><div class="label">Total acumulado</div><div class="value success" id="af-total-earned">€0,00</div></div>
     <div class="stat-card"><div class="label">Referidas activas</div><div class="value accent" id="af-referrals">0</div></div>
-    <div class="stat-card"><div class="label">Comisiones pendientes</div><div class="value warning" id="af-pending">€0,00</div></div>
+    <div class="stat-card"><div class="label">Saldo a favor</div><div class="value warning" id="af-pending">€0,00</div></div>
     <div class="stat-card"><div class="label">Tu descuento actual</div><div class="value accent2" id="af-discount">0%</div></div>
   </div>
 
@@ -532,7 +532,7 @@ textarea.form-input { min-height: 100px; resize: vertical; }
             <th>Modelo referida</th>
             <th>Plan</th>
             <th>Pago de la modelo</th>
-            <th>Tu comisión (20%)</th>
+            <th>Tu comisión (10%)</th>
             <th>Estado</th>
           </tr>
         </thead>
@@ -545,12 +545,12 @@ textarea.form-input { min-height: 100px; resize: vertical; }
   <div class="card">
     <div class="card-title">ℹ️ Cómo funciona</div>
     <div style="font-size:.9rem;color:var(--text-soft);line-height:1.7">
-      <div>• 1 referida activa → <strong style="color:var(--text)">10% descuento</strong> en tu plan</div>
-      <div>• 2 referidas activas → <strong style="color:var(--text)">15% descuento</strong> en tu plan</div>
-      <div>• 3+ referidas activas → <strong style="color:var(--text)">20% descuento</strong> en tu plan</div>
-      <div style="margin-top:12px">• 20% de comisión por cada pago de tus referidas</div>
-      <div>• Durante los primeros 12 meses de cada referida</div>
-      <div>• Los descuentos se aplican automáticamente cada mes</div>
+      <div>• 1 referida activa → <strong style="color:var(--text)">5% descuento</strong> en tu plan</div>
+      <div>• 2 referidas activas → <strong style="color:var(--text)">10% descuento</strong> en tu plan</div>
+      <div>• 3+ referidas activas → <strong style="color:var(--text)">15% descuento</strong> en tu plan</div>
+      <div style="margin-top:12px">• 10% de comisión acumulada como saldo a favor</div>
+      <div>• Se descuenta automáticamente de tu próximo cobro</div>
+      <div>• Durante los primeros 6 meses de cada referida</div>
     </div>
   </div>
 </section>
@@ -1379,12 +1379,13 @@ async function loadAfiliados() {
       .select('id, display_name, plan, created_at')
       .eq('referred_by', refCode)
       .eq('active', true);
-    const activeRefs = (referrals || []).filter(r => new Date(r.created_at) > new Date(Date.now() - 365.25*24*60*60*1000));
+    const activeRefs = (referrals || []).filter(r => new Date(r.created_at) > new Date(Date.now() - 183*24*60*60*1000));
     const refCount = activeRefs.length;
 
     // Affiliate record
-    const { data: aff } = await sb.from('affiliates').select('total_earned').eq('model_id', myModel.id).single();
+    const { data: aff } = await sb.from('affiliates').select('total_earned, credit_balance').eq('model_id', myModel.id).single();
     const totalEarned = aff ? Number(aff.total_earned) : 0;
+    const creditBalance = aff ? Number(aff.credit_balance) : 0;
 
     // Commissions
     const { data: comms } = await sb.from('affiliate_commissions')
@@ -1392,8 +1393,8 @@ async function loadAfiliados() {
       .eq('affiliate_model_id', myModel.id)
       .order('created_at', { ascending: false });
 
-    const pendingTotal = (comms || []).filter(c => c.status === 'pending').reduce((s, c) => s + Number(c.commission_amount), 0);
-    const discountPct = refCount >= 3 ? 20 : refCount === 2 ? 15 : refCount === 1 ? 10 : 0;
+    const pendingTotal = creditBalance;
+    const discountPct = refCount >= 3 ? 15 : refCount === 2 ? 10 : refCount === 1 ? 5 : 0;
 
     document.getElementById('af-total-earned').textContent = '€' + totalEarned.toFixed(2).replace('.', ',');
     document.getElementById('af-referrals').textContent = refCount;
@@ -1415,7 +1416,7 @@ async function loadAfiliados() {
         const ref = refMap[c.referred_model_id] || { name: '—', plan: '—' };
         const badge = c.status === 'paid'
           ? '<span class="badge badge-active">Cobrada ✅</span>'
-          : '<span class="badge badge-used">Pendiente 🟡</span>';
+          : '<span class="badge badge-used">Acreditada ✅</span>';
         return `<tr>
           <td>${esc(c.period)}</td>
           <td>${esc(ref.name)}</td>

@@ -371,7 +371,7 @@ a:hover { text-decoration:underline; }
             <thead>
               <tr>
                 <th>Modelo</th><th>Plan</th><th>Ciclo</th><th>Precio Base</th>
-                <th>Desc. Anual</th><th>Desc. Referidos</th><th>Total</th>
+                <th>Desc. Anual</th><th>Desc. Referidos</th><th>Saldo Aplicado</th><th>Total</th>
                 <th>Vence</th><th>Estado</th><th>Acciones</th>
               </tr>
             </thead>
@@ -383,15 +383,15 @@ a:hover { text-decoration:underline; }
       <!-- SUB 2: COMISIONES A PAGAR -->
       <div id="billing-commissions" style="display:none">
         <div class="stats-grid">
-          <div class="stat-card"><div class="label">Comisiones pendientes</div><div class="value warning" id="bc-pending">€0</div></div>
-          <div class="stat-card"><div class="label">Pagado este mes</div><div class="value success" id="bc-paid">€0</div></div>
+          <div class="stat-card"><div class="label">Créditos acumulados</div><div class="value warning" id="bc-pending">€0</div></div>
+          <div class="stat-card"><div class="label">Aplicado este mes</div><div class="value success" id="bc-paid">€0</div></div>
         </div>
         <div class="table-wrap">
           <table class="table">
             <thead>
               <tr>
                 <th>Afiliado</th><th>Modelo Referida</th><th>Mes Nº</th>
-                <th>Pago Origen</th><th>Comisión (20%)</th><th>Estado</th><th>Acción</th>
+                <th>Pago Origen</th><th>Comisión (10%)</th><th>Estado</th><th>Saldo</th>
               </tr>
             </thead>
             <tbody id="commissions-tbody"></tbody>
@@ -1061,7 +1061,7 @@ async function loadBillingCharges() {
   const tbody = document.getElementById('billing-tbody');
   const records = data.records || [];
   if (records.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--text-soft);padding:32px">No hay registros para este período</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:var(--text-soft);padding:32px">No hay registros para este período</td></tr>';
     return;
   }
 
@@ -1071,6 +1071,7 @@ async function loadBillingCharges() {
     const cycleLabel = cycle === 'annual' ? 'Anual' : 'Mensual';
     const annualCol = r.annual_discount_pct > 0 ? `${Number(r.annual_discount_pct).toFixed(0)}% (-€${Number(r.annual_discount_amount).toFixed(0)})` : '—';
     const refCol = r.referral_discount_pct > 0 ? `${r.referral_discount_pct}% (-€${Number(r.referral_discount_amount).toFixed(2)})` : '—';
+    const creditCol = Number(r.credit_applied) > 0 ? `-€${Number(r.credit_applied).toFixed(2)}` : '—';
     const due = r.period_start ? new Date(r.period_start).toLocaleDateString('es-ES') : '—';
     const badge = r.status === 'paid' ? '<span class="badge badge-active">Pagado</span>'
       : r.status === 'overdue' ? '<span class="badge badge-expired">Vencido</span>'
@@ -1089,6 +1090,7 @@ async function loadBillingCharges() {
       <td>€${Number(r.base_price).toFixed(2)}</td>
       <td>${annualCol}</td>
       <td>${refCol}</td>
+      <td>${creditCol}</td>
       <td><strong>€${Number(r.total_amount).toFixed(2)}</strong></td>
       <td>${due}</td>
       <td>${badge}</td>
@@ -1156,7 +1158,7 @@ async function loadBillingCommissions() {
   if (data.error) { toast(data.error, 'error'); return; }
 
   document.getElementById('bc-pending').textContent = '€' + (data.totals?.pending || 0).toFixed(2);
-  document.getElementById('bc-paid').textContent = '€' + (data.totals?.paid_this_month || 0).toFixed(2);
+  document.getElementById('bc-paid').textContent = '€' + (data.totals?.credited || 0).toFixed(2);
 
   const tbody = document.getElementById('commissions-tbody');
   const comms = data.commissions || [];
@@ -1166,20 +1168,19 @@ async function loadBillingCommissions() {
   }
 
   tbody.innerHTML = comms.map(c => {
-    const badge = c.status === 'paid'
+    const badge = c.status === 'credited'
+      ? '<span class="badge badge-active">Acreditada ✅</span>'
+      : c.status === 'paid'
       ? '<span class="badge badge-active">Pagada ✅</span>'
       : '<span class="badge badge-pending">Pendiente 🟡</span>';
-    const action = c.status !== 'paid'
-      ? `<button class="btn btn-success btn-sm" onclick="payCommission('${c.id}')">Marcar pagada</button>`
-      : '—';
     return `<tr>
       <td>${esc(c.affiliate?.display_name || '—')}</td>
       <td>${esc(c.referred?.display_name || '—')}</td>
-      <td>${c.month_number}/12</td>
+      <td>${c.month_number}/6</td>
       <td>€${Number(c.base_amount).toFixed(2)}</td>
       <td>€${Number(c.commission_amount).toFixed(2)}</td>
       <td>${badge}</td>
-      <td>${action}</td>
+      <td>✅ Saldo a favor</td>
     </tr>`;
   }).join('');
 }
@@ -1235,14 +1236,16 @@ async function loadHistory() {
     (commRes.commissions || []).forEach(c => {
       if (month && c.period !== month) return;
       if (status && c.status !== status) return;
-      const badge = c.status === 'paid'
+      const badge = c.status === 'credited'
+        ? '<span class="badge badge-active">Acreditada</span>'
+        : c.status === 'paid'
         ? '<span class="badge badge-active">Pagada</span>'
         : '<span class="badge badge-pending">Pendiente</span>';
       rows.push({ date: c.created_at, html: `<tr>
         <td>Comisión</td>
         <td>${esc(c.period)}</td>
         <td>${esc(c.affiliate?.display_name || '—')}</td>
-        <td>Ref: ${esc(c.referred?.display_name || '—')} (Mes ${c.month_number}/12)</td>
+        <td>Ref: ${esc(c.referred?.display_name || '—')} (Mes ${c.month_number}/6)</td>
         <td>€${Number(c.commission_amount).toFixed(2)}</td>
         <td>${badge}</td>
       </tr>` });

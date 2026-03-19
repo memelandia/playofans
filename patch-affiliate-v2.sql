@@ -1,140 +1,36 @@
 -- ============================================
--- PATCH: Reemplazar esquema billing del otro Claude
--- con la versión mergeada (columnas corregidas)
--- Seguro ejecutar si las tablas no tienen datos.
+-- PATCH: Migrar sistema de afiliados a v2
+-- Comisión: 20% → 10%
+-- Duración: 12 meses → 6 meses
+-- Pago: efectivo → saldo a favor (crédito)
+-- Base comisión: sobre precio después de dto anual, antes de dto referidos
 -- ============================================
 
--- 1. Borrar tablas viejas (cascade borra indexes, triggers, policies)
-drop table if exists affiliate_commissions cascade;
-drop table if exists billing_records cascade;
+-- 1. Añadir columna credit_balance a affiliates
+alter table affiliates add column if not exists credit_balance numeric not null default 0;
 
--- 2. Borrar funciones viejas
-drop function if exists calculate_model_price(uuid);
-drop function if exists generate_monthly_billing();
-drop function if exists mark_billing_paid(uuid, text, text);
-drop function if exists create_affiliate_record() cascade;
+-- 2. Actualizar defaults de affiliates
+alter table affiliates alter column commission_pct set default 10;
+alter table affiliates alter column months_remaining set default 6;
 
--- 3. Limpiar columnas redundantes que el otro Claude añadió a models
--- (base_price, annual_discount_pct, referral_discount_pct ya se calculan dinámicamente)
-alter table models drop column if exists base_price;
-alter table models drop column if exists annual_discount_pct;
-alter table models drop column if exists referral_discount_pct;
+-- 3. Añadir columna credit_applied a billing_records
+alter table billing_records add column if not exists credit_applied numeric not null default 0;
 
--- 4. Añadir columnas correctas a models (si no existen)
-do $$ begin
-  if not exists (select 1 from information_schema.columns where table_name='models' and column_name='billing_cycle') then
-    alter table models add column billing_cycle text not null default 'monthly' check (billing_cycle in ('monthly', 'annual'));
-  end if;
-  if not exists (select 1 from information_schema.columns where table_name='models' and column_name='next_billing_date') then
-    alter table models add column next_billing_date date;
-  end if;
-  if not exists (select 1 from information_schema.columns where table_name='models' and column_name='billing_notes') then
-    alter table models add column billing_notes text;
-  end if;
-end $$;
+-- 4. Actualizar constraint de status en affiliate_commissions para incluir 'credited'
+alter table affiliate_commissions drop constraint if exists affiliate_commissions_status_check;
+alter table affiliate_commissions add constraint affiliate_commissions_status_check
+  check (status in ('credited', 'pending', 'paid', 'cancelled'));
+alter table affiliate_commissions alter column status set default 'credited';
 
--- 5. Crear billing_records con esquema mergeado
-create table billing_records (
-  id uuid primary key default uuid_generate_v4(),
-  model_id uuid not null references models(id) on delete cascade,
-  period text not null,
-  period_start date not null,
-  period_end date not null,
-  billing_cycle text not null check (billing_cycle in ('monthly', 'annual')),
-  plan text not null,
-  base_price numeric not null,
-  annual_discount_pct numeric not null default 0,
-  annual_discount_amount numeric not null default 0,
-  referral_discount_pct numeric not null default 0,
-  referral_discount_amount numeric not null default 0,
-  credit_applied numeric not null default 0,
-  total_amount numeric not null,
-  status text not null default 'pending'
-    check (status in ('pending', 'paid', 'overdue', 'cancelled')),
-  payment_method text,
-  payment_reference text,
-  notes text,
-  paid_at timestamptz,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
+-- 5. Actualizar default de commission_pct en affiliate_commissions
+alter table affiliate_commissions alter column commission_pct set default 10;
 
--- 6. Crear affiliate_commissions con esquema mergeado
-create table affiliate_commissions (
-  id uuid primary key default uuid_generate_v4(),
-  affiliate_model_id uuid not null references models(id) on delete cascade,
-  referred_model_id uuid not null references models(id) on delete cascade,
-  billing_record_id uuid references billing_records(id) on delete set null,
-  period text not null,
-  commission_pct numeric not null default 10,
-  base_amount numeric not null,
-  commission_amount numeric not null,
-  month_number int not null,
-  status text not null default 'credited'
-    check (status in ('credited', 'pending', 'paid', 'cancelled')),
-  paid_at timestamptz,
-  created_at timestamptz not null default now()
-);
+-- 6. Actualizar registros existentes de afiliados a nuevos valores
+update affiliates set commission_pct = 10 where commission_pct = 20;
 
--- 7. Índices (drop primero por si existen en models u otros)
-drop index if exists idx_billing_model;
-drop index if exists idx_billing_period;
-drop index if exists idx_billing_status;
-drop index if exists idx_billing_period_start;
-drop index if exists idx_billing_next;
-drop index if exists idx_commissions_affiliate;
-drop index if exists idx_commissions_referred;
-drop index if exists idx_commissions_status;
-drop index if exists idx_commissions_period;
+-- 7. Recalcular funciones
 
-create index idx_billing_model on billing_records(model_id);
-create index idx_billing_period on billing_records(period);
-create index idx_billing_status on billing_records(status);
-create index idx_billing_period_start on billing_records(period_start);
-create index idx_billing_next on models(next_billing_date);
-create index idx_commissions_affiliate on affiliate_commissions(affiliate_model_id);
-create index idx_commissions_referred on affiliate_commissions(referred_model_id);
-create index idx_commissions_status on affiliate_commissions(status);
-create index idx_commissions_period on affiliate_commissions(period);
-
--- 8. Trigger updated_at
-create trigger trg_billing_updated
-  before update on billing_records
-  for each row execute function update_updated_at();
-
--- 9. RLS
-alter table billing_records enable row level security;
-alter table affiliate_commissions enable row level security;
-
-create policy "billing_model_read" on billing_records
-  for select using (
-    model_id in (select id from models where supabase_user_id = auth.uid())
-  );
-
-create policy "commissions_affiliate_read" on affiliate_commissions
-  for select using (
-    affiliate_model_id in (select id from models where supabase_user_id = auth.uid())
-  );
-
--- 10. Funciones
-
--- Auto-crear registro de afiliado
-create or replace function create_affiliate_record()
-returns trigger as $$
-begin
-  insert into affiliates (model_id, referral_code)
-  values (new.id, new.referral_code)
-  on conflict do nothing;
-  return new;
-end;
-$$ language plpgsql security definer;
-
-drop trigger if exists trg_models_create_affiliate on models;
-create trigger trg_models_create_affiliate
-  after insert on models
-  for each row execute function create_affiliate_record();
-
--- Calcular precio de una modelo
+-- calculate_model_price: 6 meses, nuevos tiers (1=5%, 2=10%, 3+=15%)
 create or replace function calculate_model_price(p_model_id uuid)
 returns table (
   base_price numeric, billing_cycle text,
@@ -167,7 +63,7 @@ begin
 end;
 $$ language plpgsql security definer;
 
--- Generar cobros mensuales
+-- generate_monthly_billing: aplica saldo a favor
 create or replace function generate_monthly_billing()
 returns json as $$
 declare
@@ -210,7 +106,7 @@ begin
 end;
 $$ language plpgsql security definer;
 
--- Marcar cobro como pagado + renovar + comisión
+-- mark_billing_paid: 10% comisión, 6 meses, base sin dto referidos, crédito en vez de pago
 create or replace function mark_billing_paid(
   p_billing_id uuid, p_payment_method text default null, p_payment_reference text default null
 ) returns json as $$
@@ -247,4 +143,4 @@ begin
 end;
 $$ language plpgsql security definer;
 
--- ✅ Patch completado
+-- ✅ Patch v2 completado
