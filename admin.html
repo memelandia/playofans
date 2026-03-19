@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — PlayOFans</title>
+<meta name="robots" content="noindex, nofollow">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+:root {
+  --bg: #0f0a18; --bg2: #1a1025; --bg3: #231535;
+  --accent: #ff0066; --accent2: #b300ff;
+  --text: #f0e6ff; --text-soft: #a89cc8;
+  --glass: rgba(30,15,50,0.9); --glass-border: rgba(179,0,255,0.25);
+  --success: #10ac84; --warning: #f8b500; --danger: #e74c3c;
+  --sidebar-w: 260px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+a { color: var(--accent2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== LOGIN ===== */
+.login-screen {
+  display: flex; align-items: center; justify-content: center; min-height: 100vh;
+  background: linear-gradient(-45deg, #0f0a18, #1a1025, #231535, #1a1025);
+  background-size: 400% 400%; animation: gradBg 10s ease-in-out infinite;
+}
+@keyframes gradBg { 0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%} }
+.login-card {
+  background: var(--glass); border: 1px solid var(--glass-border); border-radius: 24px;
+  padding: 40px; width: 380px; max-width: 90vw; text-align: center; backdrop-filter: blur(20px);
+}
+.login-card h1 { font-size: 2rem; margin-bottom: 8px; background: linear-gradient(135deg,var(--accent),var(--accent2)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.login-card p { color: var(--text-soft); font-size: .9rem; margin-bottom: 24px; }
+.form-group { margin-bottom: 16px; text-align: left; }
+.form-group label { display: block; font-size: .85rem; color: var(--text-soft); margin-bottom: 6px; font-weight: 500; }
+.form-input {
+  width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--glass-border);
+  background: rgba(255,255,255,0.05); color: var(--text); font-family: inherit; font-size: .95rem;
+  transition: border-color .3s;
+}
+.form-input:focus { outline: none; border-color: var(--accent); }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 24px; border-radius: 12px; border: none; font-family: inherit;
+  font-weight: 600; font-size: .95rem; cursor: pointer; transition: all .2s;
+}
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn-primary { background: linear-gradient(135deg,var(--accent),var(--accent2)); color: #fff; width: 100%; }
+.btn-primary:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-sm { padding: 6px 14px; font-size: .8rem; border-radius: 8px; }
+.btn-outline { background: transparent; border: 1px solid var(--glass-border); color: var(--text); }
+.btn-outline:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.btn-success { background: var(--success); color: #fff; }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-warning { background: var(--warning); color: #000; }
+.btn-icon { width: 32px; height: 32px; padding: 0; border-radius: 8px; font-size: 1rem; }
+.login-forgot { display: block; margin-top: 16px; font-size: .85rem; color: var(--text-soft); cursor: pointer; }
+.login-forgot:hover { color: var(--accent); }
+.login-error { color: var(--danger); font-size: .85rem; margin-top: 12px; min-height: 20px; }
+
+/* ===== LAYOUT ===== */
+.admin-wrap { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w); background: var(--bg2); border-right: 1px solid var(--glass-border);
+  display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+  transition: transform .3s;
+}
+.sidebar-header { padding: 24px 20px 16px; border-bottom: 1px solid var(--glass-border); }
+.sidebar-header h2 { font-size: 1.1rem; font-weight: 700; }
+.sidebar-header .slug { font-size: .8rem; color: var(--text-soft); }
+.sidebar-nav { flex: 1; padding: 12px 0; overflow-y: auto; }
+.nav-item {
+  display: flex; align-items: center; gap: 12px; padding: 12px 20px; cursor: pointer;
+  font-size: .9rem; font-weight: 500; color: var(--text-soft); transition: all .2s;
+  border-left: 3px solid transparent;
+}
+.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+.nav-item.active { color: var(--accent); background: rgba(255,0,102,0.08); border-left-color: var(--accent); }
+.nav-item .icon { font-size: 1.1rem; width: 24px; text-align: center; }
+.sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--glass-border); }
+.main { margin-left: var(--sidebar-w); flex: 1; padding: 28px; min-height: 100vh; }
+.page-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; }
+.hamburger {
+  display: none; position: fixed; top: 16px; left: 16px; z-index: 200;
+  width: 40px; height: 40px; border-radius: 10px; background: var(--bg2);
+  border: 1px solid var(--glass-border); color: var(--text); font-size: 1.2rem;
+  cursor: pointer; align-items: center; justify-content: center;
+}
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 90; }
+
+/* ===== CARDS & STATS ===== */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.stat-card {
+  background: var(--glass); border: 1px solid var(--glass-border); border-radius: 16px;
+  padding: 20px; backdrop-filter: blur(10px);
+}
+.stat-card .label { font-size: .8rem; color: var(--text-soft); font-weight: 500; margin-bottom: 4px; }
+.stat-card .value { font-size: 1.8rem; font-weight: 700; }
+.stat-card .value.accent { color: var(--accent); }
+.stat-card .value.accent2 { color: var(--accent2); }
+.stat-card .value.success { color: var(--success); }
+.stat-card .value.warning { color: var(--warning); }
+.stat-card .value.danger { color: var(--danger); }
+
+.progress-bar { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-top: 8px; }
+.progress-fill { height: 100%; background: linear-gradient(90deg,var(--accent),var(--accent2)); border-radius: 4px; transition: width .5s; }
+.grace-banner {
+  background: linear-gradient(135deg, rgba(248,181,0,.15), rgba(231,76,60,.15));
+  border: 1px solid rgba(248,181,0,.4); border-radius: 12px; padding: 16px 20px;
+  margin-bottom: 24px; font-size: .9rem; display: flex; align-items: center; gap: 12px;
+}
+.grace-banner .icon { font-size: 1.5rem; }
+
+/* ===== TABLE ===== */
+.table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--glass); }
+.table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+.table th { text-align: left; padding: 12px 16px; font-weight: 600; color: var(--text-soft); border-bottom: 1px solid var(--glass-border); white-space: nowrap; }
+.table td { padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+.table tr:last-child td { border-bottom: none; }
+.table tr:hover td { background: rgba(255,255,255,0.02); }
+.badge {
+  display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: .75rem; font-weight: 600;
+}
+.badge-active { background: rgba(16,172,132,.15); color: var(--success); }
+.badge-used { background: rgba(248,181,0,.15); color: var(--warning); }
+.badge-expired { background: rgba(231,76,60,.15); color: var(--danger); }
+.badge-deleted { background: rgba(255,255,255,.08); color: var(--text-soft); }
+.actions-cell { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* ===== FORMS & CONFIG ===== */
+.card {
+  background: var(--glass); border: 1px solid var(--glass-border); border-radius: 16px;
+  padding: 24px; margin-bottom: 20px; backdrop-filter: blur(10px);
+}
+.card-title { font-size: 1rem; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.form-group.full { grid-column: 1 / -1; }
+textarea.form-input { min-height: 100px; resize: vertical; }
+.char-counter { font-size: .75rem; color: var(--text-soft); text-align: right; margin-top: 4px; }
+.char-counter.over { color: var(--danger); }
+
+/* Theme selector */
+.themes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.theme-card {
+  border: 2px solid var(--glass-border); border-radius: 12px; padding: 12px; cursor: pointer;
+  transition: all .2s; text-align: center; position: relative;
+}
+.theme-card:hover { border-color: var(--accent2); }
+.theme-card.active { border-color: var(--accent); box-shadow: 0 0 20px rgba(255,0,102,.2); }
+.theme-card.locked { opacity: .5; cursor: not-allowed; }
+.theme-card .lock { position: absolute; top: 8px; right: 8px; font-size: .9rem; }
+.theme-preview { display: flex; gap: 4px; margin-bottom: 8px; justify-content: center; }
+.theme-dot { width: 20px; height: 20px; border-radius: 50%; border: 1px solid rgba(255,255,255,.2); }
+.theme-name { font-size: .75rem; font-weight: 600; }
+.theme-emoji { font-size: 1.5rem; margin-bottom: 4px; }
+
+/* Preview ruleta */
+.preview-wrap { display: flex; justify-content: center; padding: 20px; }
+.preview-canvas-wrap {
+  width: 250px; height: 250px; border-radius: 50%;
+  border: 6px solid var(--accent); overflow: hidden; position: relative;
+}
+#preview-canvas { width: 100%; height: 100%; animation: slowSpin 20s linear infinite; }
+@keyframes slowSpin { from{transform:rotate(0)}to{transform:rotate(360deg)} }
+
+/* Toggle switch */
+.toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; }
+.toggle-label { font-size: .9rem; }
+.toggle { position: relative; width: 48px; height: 26px; cursor: pointer; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle .slider {
+  position: absolute; inset: 0; background: rgba(255,255,255,.15); border-radius: 13px; transition: .3s;
+}
+.toggle .slider::before {
+  content: ''; position: absolute; width: 20px; height: 20px; border-radius: 50%;
+  left: 3px; bottom: 3px; background: #fff; transition: .3s;
+}
+.toggle input:checked + .slider { background: var(--accent); }
+.toggle input:checked + .slider::before { transform: translateX(22px); }
+
+/* ===== MODALS ===== */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.6); backdrop-filter: blur(6px);
+  display: none; align-items: center; justify-content: center; z-index: 500;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: var(--bg2); border: 1px solid var(--glass-border); border-radius: 20px;
+  padding: 28px; width: 520px; max-width: 92vw; max-height: 85vh; overflow-y: auto;
+  animation: modalIn .3s;
+}
+@keyframes modalIn { from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)} }
+.modal h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; }
+.modal-close { position: absolute; top: 12px; right: 16px; font-size: 1.2rem; cursor: pointer; color: var(--text-soft); background: none; border: none; }
+.template-box {
+  background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border);
+  border-radius: 10px; padding: 14px; margin-bottom: 12px; position: relative;
+  font-size: .85rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word;
+}
+.template-box .copy-btn {
+  position: absolute; top: 8px; right: 8px;
+}
+.qr-img { display: block; margin: 16px auto; max-width: 300px; border-radius: 12px; background: #fff; padding: 12px; }
+
+/* ===== SETTINGS ===== */
+.info-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: .9rem; }
+.info-row:last-child { border-bottom: none; }
+.info-label { color: var(--text-soft); }
+.copyable { display: flex; align-items: center; gap: 8px; }
+.copyable code { background: rgba(255,255,255,0.06); padding: 4px 10px; border-radius: 6px; font-size: .85rem; font-family: monospace; }
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; background: var(--bg3); border: 1px solid var(--glass-border);
+  color: var(--text); padding: 12px 20px; border-radius: 12px; font-size: .9rem;
+  z-index: 9999; animation: toastIn .3s; display: flex; gap: 8px; align-items: center;
+}
+.toast.success { border-color: var(--success); }
+.toast.error { border-color: var(--danger); }
+@keyframes toastIn { from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)} }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .hamburger { display: flex; }
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .overlay.show { display: block; }
+  .main { margin-left: 0; padding: 20px; padding-top: 64px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .form-row { grid-template-columns: 1fr; }
+  .themes-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr; }
+  .modal { padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div class="login-screen" id="login-screen">
+<div class="login-card">
+  <h1>🎰 PlayOFans</h1>
+  <p>Panel de Administración</p>
+  <div class="form-group">
+    <label>Email</label>
+    <input type="email" id="login-email" class="form-input" placeholder="tu@email.com" autocomplete="email">
+  </div>
+  <div class="form-group">
+    <label>Contraseña</label>
+    <input type="password" id="login-pass" class="form-input" placeholder="••••••••" autocomplete="current-password">
+  </div>
+  <button class="btn btn-primary" id="login-btn">Iniciar Sesión</button>
+  <div class="login-error" id="login-error"></div>
+  <span class="login-forgot" id="forgot-btn">¿Olvidaste tu contraseña?</span>
+</div>
+</div>
+
+<!-- ===== ADMIN PANEL ===== -->
+<div class="admin-wrap" id="admin-panel" style="display:none">
+
+<!-- Hamburger -->
+<button class="hamburger" id="hamburger-btn">☰</button>
+<div class="overlay" id="overlay"></div>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2 id="sidebar-name">PlayOFans</h2>
+    <div class="slug" id="sidebar-slug"></div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-item active" data-section="dashboard"><span class="icon">📊</span> Dashboard</div>
+    <div class="nav-item" data-section="codes"><span class="icon">🎰</span> Códigos</div>
+    <div class="nav-item" data-section="config"><span class="icon">⚙️</span> Configuración</div>
+    <div class="nav-item" data-section="settings"><span class="icon">🔧</span> Ajustes</div>
+  </div>
+  <div class="sidebar-footer">
+    <button class="btn btn-outline btn-sm" id="logout-btn" style="width:100%">🚪 Cerrar sesión</button>
+  </div>
+</nav>
+
+<!-- Main content -->
+<div class="main">
+
+<!-- ===== DASHBOARD ===== -->
+<section id="section-dashboard">
+  <div class="page-title">📊 Dashboard</div>
+  <div id="grace-banner" class="grace-banner" style="display:none">
+    <span class="icon">⚠️</span>
+    <span>Tu suscripción ha expirado. Estás en periodo de gracia. <strong>Renueva para no perder el acceso.</strong></span>
+  </div>
+  <div class="stats-grid" id="spins-stats">
+    <div class="stat-card"><div class="label">Giros hoy</div><div class="value accent" id="st-today">—</div></div>
+    <div class="stat-card"><div class="label">Esta semana</div><div class="value accent2" id="st-week">—</div></div>
+    <div class="stat-card"><div class="label">Este mes</div><div class="value" id="st-month">—</div></div>
+    <div class="stat-card"><div class="label">Total histórico</div><div class="value" id="st-total">—</div></div>
+  </div>
+  <div class="stats-grid" id="codes-stats">
+    <div class="stat-card"><div class="label">Códigos activos</div><div class="value success" id="st-active">—</div></div>
+    <div class="stat-card"><div class="label">Agotados</div><div class="value warning" id="st-used">—</div></div>
+    <div class="stat-card"><div class="label">Expirados</div><div class="value danger" id="st-expired">—</div></div>
+    <div class="stat-card">
+      <div class="label">Códigos del mes</div>
+      <div class="value" id="st-month-codes">—</div>
+      <div id="codes-limit-bar" style="display:none">
+        <div class="progress-bar"><div class="progress-fill" id="codes-progress"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">🔴 Últimos giros en vivo</div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Fan</th><th>Código</th><th>Premio</th><th>Fecha</th></tr></thead>
+        <tbody id="live-spins"><tr><td colspan="4" style="text-align:center;color:var(--text-soft)">Cargando...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CÓDIGOS ===== -->
+<section id="section-codes" style="display:none">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+    <div class="page-title" style="margin-bottom:0">🎰 Códigos</div>
+    <button class="btn btn-primary btn-sm" id="open-create-btn">+ Crear código</button>
+  </div>
+  <div class="card" style="margin-bottom:16px">
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <select id="filter-status" class="form-input" style="width:auto;min-width:150px">
+        <option value="all">Todos</option>
+        <option value="active">Activos</option>
+        <option value="used">Agotados</option>
+        <option value="deleted">Eliminados</option>
+      </select>
+      <input type="text" id="filter-search" class="form-input" placeholder="Buscar código o fan..." style="width:auto;flex:1;min-width:200px">
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Código</th><th>Fan</th><th>Tiradas</th><th>Expira</th><th>Estado</th><th>Acciones</th></tr></thead>
+      <tbody id="codes-body"><tr><td colspan="6" style="text-align:center;color:var(--text-soft)">Cargando...</td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===== CONFIGURACIÓN ===== -->
+<section id="section-config" style="display:none">
+  <div class="page-title">⚙️ Configuración de la Ruleta</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
+    <div>
+      <div class="card">
+        <div class="card-title">🎁 Premios globales</div>
+        <div class="form-group">
+          <textarea id="cfg-prizes" class="form-input" placeholder="Un premio por línea (mín 2, máx 10)" rows="6"></textarea>
+          <div class="char-counter"><span id="prizes-count">0</span>/10 premios</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">💬 Mensajes personalizados</div>
+        <div class="form-group">
+          <label>Mensaje de bienvenida</label>
+          <input type="text" id="cfg-welcome" class="form-input" placeholder="¡Hola {nombre}! Gira la ruleta 🎰" maxlength="80">
+          <div class="char-counter"><span id="welcome-count">0</span>/80</div>
+        </div>
+        <div class="form-group" style="margin-top:12px">
+          <label>Mensaje post-premio</label>
+          <input type="text" id="cfg-postprize" class="form-input" placeholder="¡Felicidades {nombre}! 🎉" maxlength="100">
+          <div class="char-counter"><span id="postprize-count">0</span>/100</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🔧 Opciones</div>
+        <div class="form-group">
+          <label>Tiradas por código (1-10)</label>
+          <input type="number" id="cfg-spins" class="form-input" min="1" max="10" value="3" style="width:100px">
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">🔊 Sonido activado por defecto</span>
+          <label class="toggle"><input type="checkbox" id="cfg-sound" checked><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">🌙 Forzar modo oscuro</span>
+          <label class="toggle"><input type="checkbox" id="cfg-dark"><span class="slider"></span></label>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="save-config-btn" style="width:100%">💾 Guardar cambios</button>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-title">🎨 Tema visual</div>
+        <div class="themes-grid" id="themes-grid"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">👁️ Vista previa</div>
+        <div class="preview-wrap">
+          <div class="preview-canvas-wrap">
+            <canvas id="preview-canvas" width="250" height="250"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== AJUSTES ===== -->
+<section id="section-settings" style="display:none">
+  <div class="page-title">🔧 Ajustes de la cuenta</div>
+  <div class="card">
+    <div class="card-title">📋 Información</div>
+    <div class="info-row"><span class="info-label">Slug</span><span id="set-slug"></span></div>
+    <div class="info-row"><span class="info-label">Plan</span><span id="set-plan"></span></div>
+    <div class="info-row"><span class="info-label">Expiración</span><span id="set-expires"></span></div>
+    <div class="info-row"><span class="info-label">Códigos este mes</span><span id="set-codes-month"></span></div>
+  </div>
+  <div class="card">
+    <div class="card-title">🔗 Programa de referidos</div>
+    <div class="form-group">
+      <label>Tu código de referido</label>
+      <div class="copyable">
+        <code id="set-refcode"></code>
+        <button class="btn btn-outline btn-sm" onclick="copyText(document.getElementById('set-refcode').textContent)">📋 Copiar</button>
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:12px">
+      <label>Link de referido</label>
+      <div class="copyable">
+        <code id="set-reflink"></code>
+        <button class="btn btn-outline btn-sm" onclick="copyText(document.getElementById('set-reflink').textContent)">📋 Copiar</button>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">🔑 Cambiar contraseña</div>
+    <div class="form-group">
+      <label>Nueva contraseña</label>
+      <input type="password" id="new-pass" class="form-input" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+    </div>
+    <button class="btn btn-primary btn-sm" id="change-pass-btn" style="margin-top:12px">Actualizar contraseña</button>
+  </div>
+</section>
+
+</div><!-- /main -->
+</div><!-- /admin-wrap -->
+
+<!-- ===== MODAL: Crear Código ===== -->
+<div class="modal-overlay" id="modal-create">
+<div class="modal">
+  <h3>➕ Crear nuevo código</h3>
+  <div class="form-group">
+    <label>Nombre del fan *</label>
+    <input type="text" id="create-fan" class="form-input" placeholder="Nombre del fan" maxlength="50">
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label>Tiradas</label>
+      <input type="number" id="create-spins" class="form-input" min="1" max="10" value="3">
+    </div>
+    <div class="form-group">
+      <label>Expira (opcional)</label>
+      <input type="date" id="create-expires" class="form-input">
+    </div>
+  </div>
+  <div class="form-group">
+    <label>Premios (dejar vacío para usar globales)</label>
+    <textarea id="create-prizes" class="form-input" placeholder="Un premio por línea" rows="4"></textarea>
+  </div>
+  <div style="display:flex;gap:12px;margin-top:16px">
+    <button class="btn btn-primary" id="create-code-btn" style="flex:1">✨ Crear código</button>
+    <button class="btn btn-outline" onclick="closeModal('modal-create')">Cancelar</button>
+  </div>
+</div>
+</div>
+
+<!-- ===== MODAL: Post-creación ===== -->
+<div class="modal-overlay" id="modal-created">
+<div class="modal" style="text-align:center">
+  <h3>✅ ¡Código creado!</h3>
+  <div style="font-size:2rem;font-weight:700;color:var(--accent);margin:16px 0" id="created-code"></div>
+  <div style="font-size:.9rem;color:var(--text-soft);margin-bottom:8px">Link directo:</div>
+  <div class="copyable" style="justify-content:center;margin-bottom:16px">
+    <code id="created-link" style="font-size:.8rem"></code>
+    <button class="btn btn-outline btn-sm" onclick="copyText(document.getElementById('created-link').textContent)">📋</button>
+  </div>
+  <div id="created-qr" style="margin-bottom:16px"></div>
+  <div style="text-align:left">
+    <div style="font-weight:600;margin-bottom:8px">📱 Plantillas de mensaje</div>
+    <div class="template-box" id="tpl-whatsapp"></div>
+    <div class="template-box" id="tpl-telegram"></div>
+    <div class="template-box" id="tpl-of"></div>
+  </div>
+  <button class="btn btn-primary btn-sm" onclick="closeModal('modal-created')" style="margin-top:16px">Cerrar</button>
+</div>
+</div>
+
+<!-- ===== MODAL: QR ===== -->
+<div class="modal-overlay" id="modal-qr">
+<div class="modal" style="text-align:center">
+  <h3>📱 Código QR</h3>
+  <img id="qr-image" class="qr-img" alt="QR">
+  <div class="copyable" style="justify-content:center;margin-top:12px">
+    <code id="qr-link"></code>
+    <button class="btn btn-outline btn-sm" onclick="copyText(document.getElementById('qr-link').textContent)">📋</button>
+  </div>
+  <button class="btn btn-outline btn-sm" onclick="closeModal('modal-qr')" style="margin-top:16px">Cerrar</button>
+</div>
+</div>
+
+<!-- ===== MODAL: Plantillas ===== -->
+<div class="modal-overlay" id="modal-templates">
+<div class="modal">
+  <h3>📱 Plantillas de mensaje</h3>
+  <div style="font-weight:600;margin-bottom:6px">WhatsApp</div>
+  <div class="template-box" id="mtpl-whatsapp"><span class="tpl-text"></span><button class="btn btn-outline btn-sm btn-icon copy-btn" onclick="copyText(this.parentElement.dataset.text)">📋</button></div>
+  <div style="font-weight:600;margin-bottom:6px">Telegram</div>
+  <div class="template-box" id="mtpl-telegram"><span class="tpl-text"></span><button class="btn btn-outline btn-sm btn-icon copy-btn" onclick="copyText(this.parentElement.dataset.text)">📋</button></div>
+  <div style="font-weight:600;margin-bottom:6px">OnlyFans</div>
+  <div class="template-box" id="mtpl-of"><span class="tpl-text"></span><button class="btn btn-outline btn-sm btn-icon copy-btn" onclick="copyText(this.parentElement.dataset.text)">📋</button></div>
+  <button class="btn btn-outline btn-sm" onclick="closeModal('modal-templates')" style="margin-top:16px">Cerrar</button>
+</div>
+</div>
+
+<script>
+// =============================================================================
+// ESTADO
+// =============================================================================
+let sb; // Supabase client
+let SLUG = '';
+let session = null;
+let modelConfig = null;
+let allCodes = [];
+let pollInterval = null;
+
+const THEMES = {
+  dark_luxury:  { name:'Dark Luxury',   emoji:'💎',   plan:'solo', colors:['#ff0066','#b300ff','#1a0a1e'] },
+  rose_gold:    { name:'Rose Gold',     emoji:'🌹',   plan:'solo', colors:['#ff69b4','#ffd700','#1a0a10'] },
+  neon_cyber:   { name:'Neon Cyber',    emoji:'⚡',   plan:'solo', colors:['#00f5ff','#7700ff','#000814'] },
+  gold_vip:     { name:'Gold VIP',      emoji:'👑',   plan:'solo', colors:['#ffd700','#ff8c00','#0d0d00'] },
+  red_hot:      { name:'Red Hot',       emoji:'🔥',   plan:'solo', colors:['#ff2200','#ff6600','#1a0000'] },
+  halloween:    { name:'Halloween',     emoji:'🎃',   plan:'pro',  colors:['#ff6600','#8b00ff','#0a0510'] },
+  navidad:      { name:'Navidad',       emoji:'❄️',   plan:'pro',  colors:['#ff0000','#00aa00','#0a1a0a'] },
+  san_valentin: { name:'San Valentín',  emoji:'❤️‍🔥', plan:'pro',  colors:['#ff1493','#ff69b4','#1a0510'] },
+  summer:       { name:'Summer',        emoji:'🌴',   plan:'pro',  colors:['#00d4aa','#ff8c00','#001a1a'] },
+  galaxy:       { name:'Galaxy',        emoji:'🌙',   plan:'pro',  colors:['#7c4dff','#00e5ff','#0a0020'] },
+};
+
+// =============================================================================
+// INIT
+// =============================================================================
+window.addEventListener('load', async () => {
+  const parts = window.location.pathname.split('/').filter(Boolean);
+  SLUG = parts[0] || '';
+  if (!SLUG) { document.body.innerHTML = '<div style="padding:40px;text-align:center;color:#aaa">Modelo no encontrado</div>'; return; }
+
+  try {
+    const initRes = await fetch('/api/auth-init');
+    const initData = await initRes.json();
+    if (!initRes.ok) throw new Error(initData.error);
+    sb = supabase.createClient(initData.url, initData.anonKey);
+  } catch(e) {
+    document.body.innerHTML = '<div style="padding:40px;text-align:center;color:#e74c3c">Error al conectar con el servicio de autenticación</div>';
+    return;
+  }
+
+  // Check session
+  const { data: { session: s } } = await sb.auth.getSession();
+  if (s) {
+    session = s;
+    await initPanel();
+  }
+
+  // Auth state change
+  sb.auth.onAuthStateChange((_event, s) => { session = s; });
+
+  registerLoginEvents();
+});
+
+// =============================================================================
+// AUTH
+// =============================================================================
+function registerLoginEvents() {
+  document.getElementById('login-btn').addEventListener('click', doLogin);
+  document.getElementById('login-pass').addEventListener('keypress', e => { if (e.key === 'Enter') doLogin(); });
+  document.getElementById('forgot-btn').addEventListener('click', doForgot);
+  document.getElementById('logout-btn').addEventListener('click', doLogout);
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-error');
+  const btn = document.getElementById('login-btn');
+  err.textContent = '';
+  if (!email || !pass) { err.textContent = 'Completa todos los campos'; return; }
+  btn.disabled = true; btn.textContent = 'Entrando...';
+
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  if (error) { err.textContent = error.message || 'Credenciales incorrectas'; btn.disabled = false; btn.textContent = 'Iniciar Sesión'; return; }
+
+  session = data.session;
+  await initPanel();
+}
+
+async function doForgot() {
+  const email = document.getElementById('login-email').value.trim();
+  if (!email) { document.getElementById('login-error').textContent = 'Ingresa tu email primero'; return; }
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.href });
+  if (error) { document.getElementById('login-error').textContent = error.message; return; }
+  toast('Se envió un email para restablecer tu contraseña', 'success');
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  session = null;
+  if (pollInterval) clearInterval(pollInterval);
+  document.getElementById('admin-panel').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+// =============================================================================
+// PANEL INIT
+// =============================================================================
+async function initPanel() {
+  // Fetch config to verify access
+  try {
+    const cfgRes = await apiFetch('/api/tenant-config?slug=' + SLUG);
+    modelConfig = cfgRes;
+  } catch(e) {
+    document.getElementById('login-error').textContent = 'No tienes acceso a este modelo';
+    return;
+  }
+
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('admin-panel').style.display = 'flex';
+  document.getElementById('sidebar-name').textContent = modelConfig.display_name || SLUG;
+  document.getElementById('sidebar-slug').textContent = '/' + SLUG;
+
+  // Nav
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => switchSection(item.dataset.section));
+  });
+
+  // Mobile menu
+  document.getElementById('hamburger-btn').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('show');
+  });
+  document.getElementById('overlay').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('show');
+  });
+
+  // Load dashboard
+  await loadDashboard();
+
+  // Polling cada 30s
+  pollInterval = setInterval(loadLiveSpins, 30000);
+
+  // Register all events
+  registerCodeEvents();
+  registerConfigEvents();
+  registerSettingsEvents();
+}
+
+// =============================================================================
+// NAVIGATION
+// =============================================================================
+function switchSection(name) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelector(`.nav-item[data-section="${name}"]`).classList.add('active');
+  ['dashboard','codes','config','settings'].forEach(s => {
+    document.getElementById('section-' + s).style.display = s === name ? '' : 'none';
+  });
+  if (name === 'codes') loadCodes();
+  if (name === 'config') loadConfig();
+  if (name === 'settings') loadSettings();
+  // Close mobile menu
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+// =============================================================================
+// API HELPER
+// =============================================================================
+async function apiFetch(url, opts = {}) {
+  const token = session?.access_token;
+  const headers = { ...(opts.headers || {}) };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  if (opts.body) headers['Content-Type'] = 'application/json';
+
+  const res = await fetch(url, { ...opts, headers });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Error ' + res.status);
+  return data;
+}
+
+// =============================================================================
+// DASHBOARD
+// =============================================================================
+async function loadDashboard() {
+  try {
+    const data = await apiFetch('/api/admin-get-analytics?slug=' + SLUG);
+    document.getElementById('st-today').textContent = data.spins.today;
+    document.getElementById('st-week').textContent = data.spins.week;
+    document.getElementById('st-month').textContent = data.spins.month;
+    document.getElementById('st-total').textContent = data.spins.total;
+    document.getElementById('st-active').textContent = data.codes.active;
+    document.getElementById('st-used').textContent = data.codes.used;
+    document.getElementById('st-expired').textContent = data.codes.expired;
+    document.getElementById('st-month-codes').textContent = data.codes.created_this_month + (data.codes.limit ? '/' + data.codes.limit : '');
+    if (data.codes.limit) {
+      document.getElementById('codes-limit-bar').style.display = '';
+      document.getElementById('codes-progress').style.width = Math.min(100, (data.codes.created_this_month / data.codes.limit) * 100) + '%';
+    }
+    if (modelConfig.grace) document.getElementById('grace-banner').style.display = '';
+  } catch(e) { console.error('Dashboard error:', e); }
+
+  await loadLiveSpins();
+}
+
+async function loadLiveSpins() {
+  try {
+    const data = await apiFetch('/api/admin-get-spins-live?slug=' + SLUG);
+    const tbody = document.getElementById('live-spins');
+    if (!data.spins || data.spins.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-soft)">Sin giros todavía</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.spins.map(s => {
+      const date = new Date(s.created_at).toLocaleString('es-ES', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
+      return `<tr><td>${esc(s.fan_name)}</td><td>${esc(s.code)}</td><td>${esc(s.prize)}</td><td>${date}</td></tr>`;
+    }).join('');
+  } catch(e) {}
+}
+
+// =============================================================================
+// CÓDIGOS
+// =============================================================================
+function registerCodeEvents() {
+  document.getElementById('open-create-btn').addEventListener('click', () => openModal('modal-create'));
+  document.getElementById('create-code-btn').addEventListener('click', doCreateCode);
+  document.getElementById('filter-status').addEventListener('change', renderCodes);
+  document.getElementById('filter-search').addEventListener('input', renderCodes);
+}
+
+async function loadCodes() {
+  try {
+    const data = await apiFetch('/api/admin-get-codes?slug=' + SLUG);
+    allCodes = data.codes || [];
+    renderCodes();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function renderCodes() {
+  const statusFilter = document.getElementById('filter-status').value;
+  const search = document.getElementById('filter-search').value.toLowerCase();
+  let filtered = allCodes;
+
+  if (statusFilter !== 'all') {
+    filtered = filtered.filter(c => {
+      if (statusFilter === 'active') return !c.deleted && !c.used && c.remaining_spins > 0;
+      if (statusFilter === 'used') return !c.deleted && (c.used || c.remaining_spins === 0);
+      if (statusFilter === 'deleted') return c.deleted;
+      return true;
+    });
+  }
+  if (search) {
+    filtered = filtered.filter(c => c.code.toLowerCase().includes(search) || c.fan_name.toLowerCase().includes(search));
+  }
+
+  const tbody = document.getElementById('codes-body');
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-soft)">No hay códigos</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(c => {
+    const status = getCodeStatus(c);
+    const expires = c.expires_at ? new Date(c.expires_at).toLocaleDateString('es-ES') : '—';
+    const spinsText = `${c.total_spins - c.remaining_spins}/${c.total_spins}`;
+    return `<tr>
+      <td><strong>${esc(c.code)}</strong></td>
+      <td>${esc(c.fan_name)}</td>
+      <td>${spinsText}</td>
+      <td>${expires}</td>
+      <td><span class="badge badge-${status.cls}">${status.label}</span></td>
+      <td><div class="actions-cell">
+        <button class="btn btn-outline btn-sm" onclick="copyLink('${esc(c.code)}')" title="Copiar link">🔗</button>
+        <button class="btn btn-outline btn-sm" onclick="showQR('${esc(c.code)}')" title="QR">📱</button>
+        <button class="btn btn-outline btn-sm" onclick="showTemplates('${esc(c.code)}','${esc(c.fan_name)}')" title="Plantillas">💬</button>
+        ${!c.deleted ? `<button class="btn btn-outline btn-sm" onclick="deleteCode('${c.id}')" title="Eliminar">🗑️</button>` : ''}
+        ${c.deleted || c.used || c.remaining_spins === 0 ? `<button class="btn btn-outline btn-sm" onclick="reactivateCode('${c.id}')" title="Reactivar">♻️</button>` : ''}
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function getCodeStatus(c) {
+  if (c.deleted) return { cls: 'deleted', label: 'Eliminado' };
+  if (c.expires_at && new Date(c.expires_at) < new Date()) return { cls: 'expired', label: 'Expirado' };
+  if (c.used || c.remaining_spins === 0) return { cls: 'used', label: 'Agotado' };
+  return { cls: 'active', label: 'Activo' };
+}
+
+async function doCreateCode() {
+  const fanName = document.getElementById('create-fan').value.trim();
+  if (!fanName) { toast('El nombre del fan es obligatorio', 'error'); return; }
+  const spins = parseInt(document.getElementById('create-spins').value) || 3;
+  const expiresVal = document.getElementById('create-expires').value;
+  const prizesText = document.getElementById('create-prizes').value.trim();
+  const prizes = prizesText ? prizesText.split('\n').map(p => p.trim()).filter(Boolean) : null;
+
+  if (prizes && (prizes.length < 2 || prizes.length > 10)) {
+    toast('Los premios deben ser entre 2 y 10', 'error'); return;
+  }
+
+  const btn = document.getElementById('create-code-btn');
+  btn.disabled = true; btn.textContent = 'Creando...';
+
+  try {
+    const body = { slug: SLUG, fan_name: fanName, total_spins: spins };
+    if (prizes) body.prizes = prizes;
+    if (expiresVal) body.expires_at = new Date(expiresVal).toISOString();
+
+    const data = await apiFetch('/api/admin-create-code', { method: 'POST', body: JSON.stringify(body) });
+
+    // Show post-creation modal
+    document.getElementById('created-code').textContent = data.code.code;
+    document.getElementById('created-link').textContent = data.link;
+
+    // QR
+    try {
+      const qrData = await apiFetch(`/api/admin-get-qr?slug=${SLUG}&code=${data.code.code}`);
+      document.getElementById('created-qr').innerHTML = `<img src="${qrData.qr}" class="qr-img" alt="QR">`;
+    } catch(e) { document.getElementById('created-qr').innerHTML = ''; }
+
+    // Templates
+    const link = data.link;
+    setTemplate('tpl-whatsapp', `¡Hola ${fanName}! 🎰✨\n\nTe tengo una sorpresa especial... ¡Tu ruleta de premios exclusivos está lista!\n\n👉 ${link}\n\n¡Mucha suerte! 💋`);
+    setTemplate('tpl-telegram', `🎰 ¡${fanName}, tu ruleta te espera!\n\nEntra aquí y gira para ganar premios exclusivos:\n${link}\n\n¡Suerte! ✨`);
+    setTemplate('tpl-of', `Hey ${fanName}! 💕\n\nI have a special surprise for you... Your exclusive prize wheel is ready! 🎰\n\n${link}\n\nGood luck! 😘`);
+
+    closeModal('modal-create');
+    openModal('modal-created');
+
+    // Reset form
+    document.getElementById('create-fan').value = '';
+    document.getElementById('create-prizes').value = '';
+    document.getElementById('create-expires').value = '';
+    document.getElementById('create-spins').value = modelConfig.spins_per_code || 3;
+
+    // Reload codes
+    await loadCodes();
+    toast('Código creado exitosamente', 'success');
+
+  } catch(e) { toast(e.message, 'error'); }
+  btn.disabled = false; btn.textContent = '✨ Crear código';
+}
+
+async function deleteCode(codeId) {
+  if (!confirm('¿Eliminar este código? (se puede reactivar después)')) return;
+  try {
+    await apiFetch('/api/admin-delete-code', { method: 'POST', body: JSON.stringify({ slug: SLUG, codeId }) });
+    toast('Código eliminado', 'success');
+    await loadCodes();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function reactivateCode(codeId) {
+  const spins = prompt('¿Cuántas tiradas restaurar? (1-10)', '3');
+  if (!spins) return;
+  try {
+    await apiFetch('/api/admin-reactivate-code', { method: 'POST', body: JSON.stringify({ slug: SLUG, codeId, total_spins: parseInt(spins) }) });
+    toast('Código reactivado', 'success');
+    await loadCodes();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function copyLink(code) {
+  copyText(`https://playofans.com/${SLUG}/ruleta?c=${code}`);
+}
+
+async function showQR(code) {
+  try {
+    const data = await apiFetch(`/api/admin-get-qr?slug=${SLUG}&code=${code}`);
+    document.getElementById('qr-image').src = data.qr;
+    document.getElementById('qr-link').textContent = data.url;
+    openModal('modal-qr');
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function showTemplates(code, fanName) {
+  const link = `https://playofans.com/${SLUG}/ruleta?c=${code}`;
+  const wa = `¡Hola ${fanName}! 🎰✨\n\nTe tengo una sorpresa especial... ¡Tu ruleta de premios exclusivos está lista!\n\n👉 ${link}\n\n¡Mucha suerte! 💋`;
+  const tg = `🎰 ¡${fanName}, tu ruleta te espera!\n\nEntra aquí y gira para ganar premios exclusivos:\n${link}\n\n¡Suerte! ✨`;
+  const of = `Hey ${fanName}! 💕\n\nI have a special surprise for you... Your exclusive prize wheel is ready! 🎰\n\n${link}\n\nGood luck! 😘`;
+
+  const waEl = document.getElementById('mtpl-whatsapp');
+  const tgEl = document.getElementById('mtpl-telegram');
+  const ofEl = document.getElementById('mtpl-of');
+  waEl.dataset.text = wa;
+  tgEl.dataset.text = tg;
+  ofEl.dataset.text = of;
+  waEl.querySelector('.tpl-text').textContent = wa;
+  tgEl.querySelector('.tpl-text').textContent = tg;
+  ofEl.querySelector('.tpl-text').textContent = of;
+  openModal('modal-templates');
+}
+
+// =============================================================================
+// CONFIGURACIÓN
+// =============================================================================
+function registerConfigEvents() {
+  document.getElementById('cfg-prizes').addEventListener('input', function() {
+    const lines = this.value.split('\n').filter(l => l.trim()).length;
+    document.getElementById('prizes-count').textContent = lines;
+    document.getElementById('prizes-count').parentElement.classList.toggle('over', lines > 10);
+    drawPreview();
+  });
+  document.getElementById('cfg-welcome').addEventListener('input', function() {
+    document.getElementById('welcome-count').textContent = this.value.length;
+    document.getElementById('welcome-count').parentElement.classList.toggle('over', this.value.length > 80);
+  });
+  document.getElementById('cfg-postprize').addEventListener('input', function() {
+    document.getElementById('postprize-count').textContent = this.value.length;
+    document.getElementById('postprize-count').parentElement.classList.toggle('over', this.value.length > 100);
+  });
+  document.getElementById('save-config-btn').addEventListener('click', doSaveConfig);
+}
+
+function loadConfig() {
+  if (!modelConfig) return;
+  const prizes = Array.isArray(modelConfig.prizes) ? modelConfig.prizes.join('\n') : '';
+  document.getElementById('cfg-prizes').value = prizes;
+  document.getElementById('prizes-count').textContent = (prizes.match(/\n/g) || []).length + (prizes.trim() ? 1 : 0);
+  document.getElementById('cfg-welcome').value = modelConfig.welcome_message || '';
+  document.getElementById('welcome-count').textContent = (modelConfig.welcome_message || '').length;
+  document.getElementById('cfg-postprize').value = modelConfig.post_prize_message || '';
+  document.getElementById('postprize-count').textContent = (modelConfig.post_prize_message || '').length;
+  document.getElementById('cfg-spins').value = modelConfig.spins_per_code || 3;
+  document.getElementById('cfg-sound').checked = modelConfig.sound_enabled_default !== false;
+  document.getElementById('cfg-dark').checked = modelConfig.force_dark_mode === true;
+
+  renderThemeGrid();
+  drawPreview();
+}
+
+function renderThemeGrid() {
+  const grid = document.getElementById('themes-grid');
+  const plan = modelConfig.plan || 'solo';
+  const current = modelConfig.theme || 'dark_luxury';
+  const soloThemes = ['dark_luxury','rose_gold','neon_cyber','gold_vip','red_hot'];
+
+  grid.innerHTML = Object.entries(THEMES).map(([id, t]) => {
+    const locked = plan === 'solo' && !soloThemes.includes(id);
+    const active = id === current;
+    return `<div class="theme-card ${active ? 'active' : ''} ${locked ? 'locked' : ''}" data-theme="${id}" ${locked ? '' : `onclick="selectTheme('${id}')"`}>
+      ${locked ? '<span class="lock">🔒</span>' : ''}
+      <div class="theme-emoji">${t.emoji}</div>
+      <div class="theme-preview">${t.colors.map(c => `<div class="theme-dot" style="background:${c}"></div>`).join('')}</div>
+      <div class="theme-name">${t.name}</div>
+    </div>`;
+  }).join('');
+}
+
+function selectTheme(id) {
+  document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
+  document.querySelector(`.theme-card[data-theme="${id}"]`)?.classList.add('active');
+  drawPreview();
+}
+
+async function doSaveConfig() {
+  const btn = document.getElementById('save-config-btn');
+  btn.disabled = true; btn.textContent = 'Guardando...';
+
+  const prizesText = document.getElementById('cfg-prizes').value.trim();
+  const prizes = prizesText.split('\n').map(p => p.trim()).filter(Boolean);
+  const selectedTheme = document.querySelector('.theme-card.active')?.dataset.theme;
+
+  const body = {
+    slug: SLUG,
+    prizes,
+    welcome_message: document.getElementById('cfg-welcome').value,
+    post_prize_message: document.getElementById('cfg-postprize').value,
+    spins_per_code: parseInt(document.getElementById('cfg-spins').value) || 3,
+    sound_enabled_default: document.getElementById('cfg-sound').checked,
+    force_dark_mode: document.getElementById('cfg-dark').checked,
+  };
+  if (selectedTheme) body.theme = selectedTheme;
+
+  try {
+    await apiFetch('/api/admin-update-config', { method: 'POST', body: JSON.stringify(body) });
+    // Refresh config
+    const cfgRes = await apiFetch('/api/tenant-config?slug=' + SLUG);
+    modelConfig = cfgRes;
+    toast('Configuración guardada', 'success');
+  } catch(e) { toast(e.message, 'error'); }
+  btn.disabled = false; btn.textContent = '💾 Guardar cambios';
+}
+
+// =============================================================================
+// PREVIEW CANVAS
+// =============================================================================
+function drawPreview() {
+  const canvas = document.getElementById('preview-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const prizesText = document.getElementById('cfg-prizes').value.trim();
+  const prizes = prizesText ? prizesText.split('\n').map(p => p.trim()).filter(Boolean) : ['Premio 1', 'Premio 2'];
+  const themeId = document.querySelector('.theme-card.active')?.dataset.theme || 'dark_luxury';
+  const theme = THEMES[themeId];
+  const total = prizes.length;
+  const radio = 120;
+  const cx = 125, cy = 125;
+
+  const sliceColorSets = {
+    dark_luxury: ['#ff6b9d','#c44569','#f8b500','#ff9ff3','#54a0ff','#5f27cd','#ff9f43','#10ac84','#ee5a24','#0abde3'],
+    rose_gold: ['#ff69b4','#ffd700','#ff85a2','#ffcc00','#ff1493','#ffa500','#ff77aa','#ffb300','#ff4499','#ff8c00'],
+    neon_cyber: ['#00f5ff','#7700ff','#0099ff','#ff00ff','#00ccff','#3300ff','#00ffcc','#ff0066','#0066ff','#ff3399'],
+    gold_vip: ['#ffd700','#ff8c00','#ffcc00','#ff6600','#ffb300','#ff4500','#ffa500','#ff3300','#ffaa00','#ff2200'],
+    red_hot: ['#ff0000','#cc0000','#ff3300','#990000','#ff6600','#cc3300','#ff2200','#aa0000','#ff4400','#880000'],
+    halloween: ['#ff6600','#8b00ff','#ff8800','#6a0dad','#ffaa00','#4b0082','#ff9933','#7722aa','#cc5500','#9933ff'],
+    navidad: ['#ff0000','#00aa00','#ffd700','#cc0000','#008800','#ffcc00','#ee0000','#006600','#ffb800','#dd0000'],
+    san_valentin: ['#ff1493','#ff69b4','#ff007f','#ff85a2','#ff3385','#ff5599','#e6005c','#ff4d94','#cc0066','#ff77aa'],
+    summer: ['#00d4aa','#ff8c00','#00bfa5','#ff6347','#20b2aa','#ffa500','#48d1cc','#ff7f50','#00ced1','#ffb347'],
+    galaxy: ['#7c4dff','#00e5ff','#e040fb','#18ffff','#b388ff','#84ffff','#ea80fc','#a7ffeb','#d500f9','#1de9b6'],
+  };
+  const colors = sliceColorSets[themeId] || sliceColorSets.dark_luxury;
+
+  ctx.clearRect(0, 0, 250, 250);
+  for (let i = 0; i < total; i++) {
+    const a0 = (2 * Math.PI / total) * i;
+    const a1 = (2 * Math.PI / total) * (i + 1);
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, radio, a0, a1);
+    ctx.closePath();
+    ctx.fillStyle = colors[i % colors.length] + 'E6';
+    ctx.fill();
+    ctx.clip();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 9px Poppins, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const mid = (a0 + a1) / 2;
+    const tx = cx + Math.cos(mid) * radio * 0.65;
+    const ty = cy + Math.sin(mid) * radio * 0.65;
+    ctx.translate(tx, ty);
+    let rot = mid;
+    if (rot > Math.PI/2 && rot < 3*Math.PI/2) rot += Math.PI;
+    ctx.rotate(rot);
+    const text = prizes[i].replace(/[\u{1F300}-\u{1F9FF}]/gu, '').trim().toUpperCase();
+    ctx.fillText(text.substring(0, 14), 0, 0);
+    ctx.restore();
+  }
+  // Center
+  ctx.beginPath();
+  ctx.arc(cx, cy, 22, 0, 2 * Math.PI);
+  ctx.fillStyle = theme.colors[0];
+  ctx.fill();
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 22px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(theme.emoji, cx, cy + 2);
+}
+
+// =============================================================================
+// AJUSTES
+// =============================================================================
+function registerSettingsEvents() {
+  document.getElementById('change-pass-btn').addEventListener('click', doChangePassword);
+}
+
+function loadSettings() {
+  if (!modelConfig) return;
+  document.getElementById('set-slug').textContent = SLUG;
+  document.getElementById('set-plan').textContent = (modelConfig.plan || 'solo').toUpperCase();
+  document.getElementById('set-expires').textContent = modelConfig.subscription_expires_at
+    ? new Date(modelConfig.subscription_expires_at).toLocaleDateString('es-ES')
+    : 'No definida';
+  document.getElementById('set-codes-month').textContent = modelConfig.codes_created_this_month + (modelConfig.codes_limit ? '/' + modelConfig.codes_limit : '');
+  const refCode = 'REF-' + SLUG.toUpperCase();
+  document.getElementById('set-refcode').textContent = refCode;
+  document.getElementById('set-reflink').textContent = 'https://playofans.com/registro?ref=' + refCode;
+}
+
+async function doChangePassword() {
+  const pass = document.getElementById('new-pass').value;
+  if (!pass || pass.length < 6) { toast('La contraseña debe tener al menos 6 caracteres', 'error'); return; }
+  const btn = document.getElementById('change-pass-btn');
+  btn.disabled = true;
+  try {
+    const { error } = await sb.auth.updateUser({ password: pass });
+    if (error) throw error;
+    toast('Contraseña actualizada', 'success');
+    document.getElementById('new-pass').value = '';
+  } catch(e) { toast(e.message || 'Error al actualizar', 'error'); }
+  btn.disabled = false;
+}
+
+// =============================================================================
+// MODALS & UTILS
+// =============================================================================
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(ov => {
+  ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('show'); });
+});
+
+function setTemplate(elId, text) {
+  const el = document.getElementById(elId);
+  el.textContent = text;
+  el.dataset.text = text;
+  el.style.cursor = 'pointer';
+  el.onclick = () => copyText(text);
+}
+
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => toast('Copiado al portapapeles', 'success')).catch(() => {});
+}
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+function toast(msg, type = 'success') {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.innerHTML = `<span>${type === 'success' ? '✅' : '❌'}</span> ${esc(msg)}`;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+</script>
+</body>
+</html>

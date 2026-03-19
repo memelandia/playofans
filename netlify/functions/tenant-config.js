@@ -46,8 +46,10 @@ exports.handler = async (event) => {
       sound_enabled_default: model.sound_enabled_default,
       force_dark_mode: model.force_dark_mode,
       prizes: model.prizes,
+      spins_per_code: model.spins_per_code,
       active_games: activeGames,
       grace: inGrace || false,
+      subscription_expires_at: model.subscription_expires_at,
       codes_created_this_month: model.codes_created_this_month,
       codes_limit: codesLimit,
     });
