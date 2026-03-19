@@ -8,6 +8,11 @@ exports.handler = async (event) => {
     const { token } = JSON.parse(event.body || '{}');
     if (!token) return json(400, { error: 'Falta el token' });
 
+    // --- DEMO MODE ---
+    if (typeof token === 'string' && token.startsWith('demo-')) {
+      return json(200, { success: true, remaining_spins: 999, demo: true });
+    }
+
     // Buscar spin por token
     const { data: spin, error: spinError } = await supabase
       .from('spins')

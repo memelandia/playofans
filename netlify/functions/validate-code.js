@@ -37,6 +37,24 @@ exports.handler = async (event) => {
       return json(400, { error: 'Faltan datos obligatorios' });
     }
 
+    // --- DEMO MODE ---
+    if (slug === 'demo' && codigoId.toUpperCase() === 'DEMO2025') {
+      const demoPrizes = [
+        'Sexting 10min', 'Pack Fotos', 'Videollamada 5min',
+        'Audio Exclusivo', 'Descuento 30%', 'Premio Sorpresa'
+      ];
+      return json(200, {
+        fan_name: fanName || 'Fan',
+        prizes: demoPrizes,
+        remaining_spins: 999,
+        total_spins: 999,
+        expires_at: null,
+        welcome_message: '¡Bienvenid@ a la demo de PlayOFans! Gira todas las veces que quieras 🎰',
+        spin_history: [],
+        demo: true,
+      });
+    }
+
     // Buscar modelo por slug
     const { data: model, error: modelError } = await supabase
       .from('models')

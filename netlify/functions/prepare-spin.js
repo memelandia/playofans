@@ -11,6 +11,22 @@ exports.handler = async (event) => {
       return json(400, { error: 'Faltan datos obligatorios' });
     }
 
+    // --- DEMO MODE ---
+    if (slug === 'demo' && codigoId.toUpperCase() === 'DEMO2025') {
+      const demoPrizes = [
+        'Sexting 10min', 'Pack Fotos', 'Videollamada 5min',
+        'Audio Exclusivo', 'Descuento 30%', 'Premio Sorpresa'
+      ];
+      const chosen = Math.floor(Math.random() * demoPrizes.length);
+      return json(200, {
+        prize: demoPrizes[chosen],
+        wheelIndex: chosen,
+        token: 'demo-' + Date.now(),
+        recovered: false,
+        demo: true,
+      });
+    }
+
     // Buscar modelo
     const { data: model, error: modelError } = await supabase
       .from('models')

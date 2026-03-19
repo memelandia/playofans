@@ -21,8 +21,8 @@
 
 [[redirects]]
   from = "/demo"
-  to = "/demo.html"
-  status = 200
+  to = "/demo/ruleta"
+  status = 301
 
 [[redirects]]
   from = "/guia"

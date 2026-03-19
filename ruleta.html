@@ -2044,6 +2044,18 @@ window.addEventListener('load', async () => {
           validarCodigo();
         }
 
+        // Demo mode: banner + auto-fill code
+        if (SLUG === 'demo') {
+          const banner = document.createElement('div');
+          banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#ff0066,#b300ff);padding:10px 20px;text-align:center;font-size:.85rem;font-weight:600;color:#fff;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;';
+          banner.innerHTML = '🎮 Esto es una demo · Los premios son de ejemplo · <a href="/registro" style="color:#fff;text-decoration:underline;font-weight:700">¡Crea tu propia ruleta!</a>';
+          document.body.prepend(banner);
+          document.body.style.paddingTop = '42px';
+          if (!preloadedCode) {
+            document.getElementById('codigo').value = 'DEMO2025';
+          }
+        }
+
         // Recovery: check pending token in localStorage
         const savedRaw = localStorage.getItem('pof_token_' + SLUG);
         if (savedRaw) {
