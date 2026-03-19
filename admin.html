@@ -143,8 +143,9 @@ textarea.form-input { min-height: 100px; resize: vertical; }
 .char-counter.over { color: var(--danger); }
 
 /* Prize management */
-.prize-input-row { display: flex; gap: 10px; margin-bottom: 12px; }
-.prize-input-row input { flex: 1; }
+.prize-input-row { display: flex; gap: 10px; margin-bottom: 12px; align-items: center; }
+.prize-input-row input { flex: 1; min-width: 0; }
+.prize-input-row .btn { width: auto; flex-shrink: 0; }
 .prize-list { display: flex; flex-direction: column; gap: 8px; }
 .prize-item {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
@@ -153,6 +154,10 @@ textarea.form-input { min-height: 100px; resize: vertical; }
 }
 .prize-item:hover { border-color: var(--accent2); }
 .prize-item .prize-name { flex: 1; font-size: .9rem; font-weight: 500; }
+.prize-item.editing { border-color: var(--accent); background: rgba(255,0,102,0.06); }
+.prize-item .edit-row { display: flex; gap: 8px; flex: 1; align-items: center; }
+.prize-item .edit-row input { flex: 1; min-width: 0; }
+.prize-item .edit-row .btn { width: auto; flex-shrink: 0; }
 .prize-item .prize-actions { display: flex; gap: 6px; }
 .prize-limit-msg { font-size: .8rem; color: var(--text-soft); margin-top: 8px; }
 .save-prizes-bar {
@@ -1082,11 +1087,36 @@ function addPrize() {
 }
 
 function editPrize(index) {
+  const items = document.querySelectorAll('#cfg-prize-list .prize-item');
+  const item = items[index];
+  if (!item || item.classList.contains('editing')) return;
   const current = premiosLocales[index];
-  const newName = prompt('Editar premio:', current);
-  if (newName === null || !newName.trim()) return;
-  premiosLocales[index] = newName.trim();
+  item.classList.add('editing');
+  item.innerHTML = `
+    <div class="edit-row">
+      <input type="text" class="form-input" value="${esc(current)}" maxlength="40" id="edit-prize-input">
+      <button class="btn btn-success btn-sm" onclick="confirmEditPrize(${index})">✓</button>
+      <button class="btn btn-outline btn-sm" onclick="cancelEditPrize()">✕</button>
+    </div>
+  `;
+  const inp = document.getElementById('edit-prize-input');
+  inp.focus();
+  inp.select();
+  inp.addEventListener('keypress', e => { if (e.key === 'Enter') confirmEditPrize(index); });
+  inp.addEventListener('keydown', e => { if (e.key === 'Escape') cancelEditPrize(); });
+}
+
+function confirmEditPrize(index) {
+  const inp = document.getElementById('edit-prize-input');
+  if (!inp) return;
+  const val = inp.value.trim();
+  if (!val) { toast('El nombre no puede estar vacío', 'error'); return; }
+  premiosLocales[index] = val;
   markPrizesChanged();
+  renderPrizeList();
+}
+
+function cancelEditPrize() {
   renderPrizeList();
 }
 
