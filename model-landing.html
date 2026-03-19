@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlayOFans</title>
+<meta name="robots" content="noindex">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+:root{--bg:#0a0612;--bg2:#120e1f;--bg3:#1a1230;--accent:#ff0066;--accent2:#b300ff;--accent3:#7c3aed;--text:#f0e6ff;--text-soft:#a89cc8;--text-muted:#6b5f80;--glass:rgba(20,12,40,0.85);--glass-border:rgba(179,0,255,0.2);--success:#10ac84;--max-w:900px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;}
+
+/* LOADING */
+.loading-view{text-align:center;padding:40px 24px;}
+.spinner{width:48px;height:48px;border:3px solid var(--glass-border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 20px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-view p{color:var(--text-soft);font-size:.9rem;}
+
+/* ERROR VIEW */
+.error-view{text-align:center;padding:60px 24px;display:none;}
+.error-view .emoji{font-size:4rem;margin-bottom:16px;}
+.error-view h1{font-size:1.8rem;font-weight:800;margin-bottom:12px;}
+.error-view p{color:var(--text-soft);font-size:.95rem;line-height:1.6;margin-bottom:28px;max-width:420px;margin-left:auto;margin-right:auto;}
+.btn-home{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:50px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:inherit;font-weight:700;font-size:.95rem;text-decoration:none;transition:all .3s;}
+.btn-home:hover{filter:brightness(1.1);color:#fff;text-decoration:none;}
+
+/* GAMES GRID VIEW */
+.games-view{max-width:var(--max-w);width:100%;padding:60px 24px 80px;display:none;}
+.games-header{text-align:center;margin-bottom:40px;}
+.games-header h1{font-size:2rem;font-weight:800;margin-bottom:8px;}
+.games-header h1 .grad{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.games-header p{color:var(--text-soft);font-size:.95rem;}
+
+.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;}
+.game-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:32px 24px;text-align:center;transition:all .3s;cursor:pointer;text-decoration:none;color:var(--text);display:block;}
+.game-card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 8px 30px rgba(255,0,102,0.15);text-decoration:none;color:var(--text);}
+.game-card .game-emoji{font-size:3rem;margin-bottom:14px;}
+.game-card h2{font-size:1.1rem;font-weight:700;margin-bottom:8px;}
+.game-card p{font-size:.8rem;color:var(--text-soft);line-height:1.5;}
+
+/* POWERED BY */
+.powered{text-align:center;margin-top:40px;}
+.powered a{font-size:.8rem;color:var(--text-muted);font-weight:500;transition:color .2s;}
+.powered a:hover{color:var(--text);}
+
+@media(max-width:768px){
+  .games-header h1{font-size:1.6rem;}
+  .games-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-view" id="loading-view">
+  <div class="spinner"></div>
+  <p>Cargando...</p>
+</div>
+
+<!-- ERROR (403 / not found) -->
+<div class="error-view" id="error-view">
+  <div class="emoji">🎰</div>
+  <h1 id="error-title">Esta página no está disponible</h1>
+  <p id="error-msg">La modelo que buscas no existe o su cuenta no está activa en este momento.</p>
+  <a href="/" class="btn-home">Ir a PlayOFans 🏠</a>
+</div>
+
+<!-- GAMES GRID (2+ games) -->
+<div class="games-view" id="games-view">
+  <div class="games-header">
+    <h1>Juegos de <span class="grad" id="model-name"></span> 🎮</h1>
+    <p>Elige un juego para empezar a jugar</p>
+  </div>
+  <div class="games-grid" id="games-grid"></div>
+  <div class="powered"><a href="/">Powered by 🎰 PlayOFans</a></div>
+</div>
+
+<script>
+(async () => {
+  const slug = window.location.pathname.replace(/^\/+|\/+$/g, '');
+  if (!slug) { window.location.href = '/'; return; }
+
+  const loadingEl = document.getElementById('loading-view');
+  const errorEl = document.getElementById('error-view');
+  const gamesEl = document.getElementById('games-view');
+
+  try {
+    const res = await fetch('/api/model-landing?slug=' + encodeURIComponent(slug));
+    const data = await res.json();
+
+    if (!res.ok) {
+      loadingEl.style.display = 'none';
+      errorEl.style.display = 'block';
+      if (res.status === 404) {
+        document.getElementById('error-title').textContent = 'Modelo no encontrada';
+        document.getElementById('error-msg').textContent = 'No existe ninguna cuenta con este nombre. Verifica el enlace e inténtalo de nuevo.';
+      }
+      return;
+    }
+
+    // Redirect if single game
+    if (data.redirect_to) {
+      window.location.href = data.redirect_to;
+      return;
+    }
+
+    // Multiple games — show grid
+    document.title = data.display_name + ' — PlayOFans';
+    document.getElementById('model-name').textContent = data.display_name;
+
+    const gameIcons = { ruleta: '🎰', rasca: '🃏', verdad: '🎯' };
+    const grid = document.getElementById('games-grid');
+
+    (data.games || []).forEach(game => {
+      const card = document.createElement('a');
+      card.href = '/' + slug + '/' + game.id;
+      card.className = 'game-card';
+      card.innerHTML =
+        '<div class="game-emoji">' + (gameIcons[game.id] || '🎮') + '</div>' +
+        '<h2>' + escapeHtml(game.name) + '</h2>' +
+        '<p>' + escapeHtml(game.description || '') + '</p>';
+      grid.appendChild(card);
+    });
+
+    loadingEl.style.display = 'none';
+    gamesEl.style.display = 'block';
+
+  } catch (err) {
+    loadingEl.style.display = 'none';
+    errorEl.style.display = 'block';
+    document.getElementById('error-msg').textContent = 'Hubo un error al cargar esta página. Inténtalo de nuevo más tarde.';
+  }
+})();
+
+function escapeHtml(text) {
+  const d = document.createElement('div');
+  d.textContent = text;
+  return d.innerHTML;
+}
+</script>
+</body>
+</html>

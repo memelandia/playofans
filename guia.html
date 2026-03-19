@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía de Uso — PlayOFans | Cómo configurar tu ruleta</title>
+<meta name="description" content="Guía paso a paso para configurar tu ruleta de premios en PlayOFans. Aprende a crear códigos, personalizar premios y enviar el enlace a tus fans.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://playofans.com/guia">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+:root{--bg:#0a0612;--bg2:#120e1f;--bg3:#1a1230;--accent:#ff0066;--accent2:#b300ff;--accent3:#7c3aed;--text:#f0e6ff;--text-soft:#a89cc8;--text-muted:#6b5f80;--glass:rgba(20,12,40,0.85);--glass-border:rgba(179,0,255,0.2);--success:#10ac84;--max-w:800px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+a{color:var(--accent2);text-decoration:none;}
+a:hover{color:var(--accent);}
+
+/* NAV */
+.nav{background:rgba(10,6,18,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border);padding:14px 0;position:sticky;top:0;z-index:100;}
+.nav-inner{max-width:900px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-size:1.3rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-back{color:var(--text-soft);font-size:.85rem;font-weight:500;}
+.nav-back:hover{color:var(--text);}
+
+/* PAGE */
+.page{max-width:var(--max-w);margin:0 auto;padding:60px 24px 80px;}
+.page-header{text-align:center;margin-bottom:48px;}
+.page-header h1{font-size:2.2rem;font-weight:800;margin-bottom:12px;}
+.page-header h1 .grad{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.page-header p{font-size:1rem;color:var(--text-soft);max-width:560px;margin:0 auto;line-height:1.6;}
+
+/* TABLE OF CONTENTS */
+.toc{background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;padding:24px 28px;margin-bottom:48px;}
+.toc h2{font-size:.9rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:14px;}
+.toc ol{list-style:none;counter-reset:toc;}
+.toc ol li{counter-increment:toc;}
+.toc ol li a{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:.9rem;color:var(--text-soft);font-weight:500;transition:color .2s;border-bottom:1px solid rgba(255,255,255,0.03);}
+.toc ol li a:hover{color:var(--text);text-decoration:none;}
+.toc ol li a::before{content:counter(toc);width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:#fff;flex-shrink:0;}
+.toc ol li:last-child a{border-bottom:none;}
+
+/* GUIDE SECTIONS */
+.guide-section{margin-bottom:48px;}
+.guide-section .section-anchor{display:block;position:relative;top:-80px;visibility:hidden;}
+.section-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+.section-header .sec-icon{font-size:2rem;}
+.section-header h2{font-size:1.4rem;font-weight:800;}
+
+.guide-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;padding:28px;}
+.guide-card p{font-size:.9rem;color:var(--text-soft);line-height:1.7;margin-bottom:16px;}
+.guide-card p:last-child{margin-bottom:0;}
+.guide-card strong{color:var(--text);}
+
+/* STEPS LIST */
+.steps-list{list-style:none;counter-reset:steps;}
+.steps-list li{counter-increment:steps;position:relative;padding:14px 0 14px 44px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:.9rem;color:var(--text-soft);line-height:1.6;}
+.steps-list li:last-child{border-bottom:none;}
+.steps-list li::before{content:counter(steps);position:absolute;left:0;top:14px;width:28px;height:28px;border-radius:50%;background:rgba(179,0,255,0.15);color:var(--accent2);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;}
+
+/* TIP BOX */
+.tip-box{background:rgba(16,172,132,0.1);border:1px solid rgba(16,172,132,0.25);border-radius:12px;padding:16px 20px;margin-top:16px;display:flex;gap:10px;align-items:flex-start;}
+.tip-box .tip-icon{font-size:1.1rem;flex-shrink:0;margin-top:2px;}
+.tip-box p{font-size:.8rem;color:var(--text-soft);line-height:1.6;margin:0;}
+
+/* FAQ */
+.faq-list{margin-top:20px;}
+.faq-item{border-bottom:1px solid var(--glass-border);}
+.faq-question{width:100%;background:none;border:none;color:var(--text);font-family:inherit;font-size:.9rem;font-weight:600;padding:18px 0;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:color .2s;}
+.faq-question:hover{color:var(--accent);}
+.faq-question .arrow{font-size:1rem;transition:transform .3s;color:var(--text-soft);}
+.faq-item.open .faq-question .arrow{transform:rotate(180deg);color:var(--accent);}
+.faq-answer{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .4s ease;}
+.faq-item.open .faq-answer{max-height:400px;padding-bottom:18px;}
+.faq-answer p{font-size:.85rem;color:var(--text-soft);line-height:1.7;}
+
+/* CTA BOTTOM */
+.guide-cta{text-align:center;margin-top:48px;padding:40px 24px;background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;}
+.guide-cta h2{font-size:1.5rem;font-weight:800;margin-bottom:10px;}
+.guide-cta p{font-size:.95rem;color:var(--text-soft);margin-bottom:24px;line-height:1.6;}
+.btn-cta{padding:14px 32px;border-radius:50px;font-family:inherit;font-weight:700;font-size:.95rem;cursor:pointer;transition:all .3s;border:none;display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;}
+.btn-cta:hover{filter:brightness(1.1);text-decoration:none;color:#fff;}
+
+@media(max-width:768px){
+  .page-header h1{font-size:1.8rem;}
+  .section-header h2{font-size:1.2rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+<div class="nav-inner">
+  <a href="/" class="nav-logo">🎰 PlayOFans</a>
+  <a href="/" class="nav-back">← Volver al inicio</a>
+</div>
+</nav>
+
+<!-- PAGE -->
+<main class="page">
+  <div class="page-header">
+    <h1>Guía de <span class="grad">PlayOFans</span> 📖</h1>
+    <p>Todo lo que necesitas para configurar tu ruleta, crear códigos y empezar a sorprender a tus fans en minutos.</p>
+  </div>
+
+  <!-- TABLE OF CONTENTS -->
+  <nav class="toc">
+    <h2>📋 Índice</h2>
+    <ol>
+      <li><a href="#bienvenida">Bienvenida a PlayOFans</a></li>
+      <li><a href="#configurar">Configurar tu ruleta</a></li>
+      <li><a href="#crear-codigo">Crear un código para tu fan</a></li>
+      <li><a href="#enviar">Enviar el enlace al fan</a></li>
+      <li><a href="#faq-guia">Preguntas frecuentes</a></li>
+    </ol>
+  </nav>
+
+  <!-- 1. BIENVENIDA -->
+  <div class="guide-section">
+    <span class="section-anchor" id="bienvenida"></span>
+    <div class="section-header">
+      <span class="sec-icon">👋</span>
+      <h2>1. Bienvenida a PlayOFans</h2>
+    </div>
+    <div class="guide-card">
+      <p><strong>PlayOFans</strong> es la plataforma de juegos interactivos diseñada para creadores de contenido en OnlyFans, Fansly y plataformas similares.</p>
+      <p>Con PlayOFans puedes crear una <strong>ruleta de premios personalizada</strong> con tu propia URL (playofans.com/tunombre/ruleta). Generas códigos únicos para cada fan, les envías el enlace, y ellos giran la ruleta para ganar premios que tú eliges: fotos exclusivas, vídeos, descuentos, sexting, videollamadas... lo que quieras.</p>
+      <p>Tu panel de administración te permite ver todas las tiradas en tiempo real, gestionar códigos y analizar el rendimiento de tu engagement.</p>
+      <div class="tip-box">
+        <span class="tip-icon">💡</span>
+        <p><strong>Consejo:</strong> Antes de empezar, prueba la <a href="/demo">demo gratuita</a> con el código <strong>DEMO2025</strong> para ver cómo funciona desde el punto de vista del fan.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. CONFIGURAR RULETA -->
+  <div class="guide-section">
+    <span class="section-anchor" id="configurar"></span>
+    <div class="section-header">
+      <span class="sec-icon">🎨</span>
+      <h2>2. Configurar tu ruleta</h2>
+    </div>
+    <div class="guide-card">
+      <p>Una vez tengas acceso a tu panel de administración, lo primero es configurar tu ruleta con tus premios y tu estilo visual.</p>
+      <ol class="steps-list">
+        <li>Accede a tu panel en <strong>playofans.com/tunombre/admin</strong> con tus credenciales.</li>
+        <li>En la sección <strong>"Premios"</strong>, edita los premios que aparecerán en la ruleta. Puedes tener hasta 10 premios diferentes: fotos, vídeos, descuentos, sexting, videollamadas... ¡lo que se te ocurra!</li>
+        <li>En <strong>"Tema visual"</strong>, elige entre los temas disponibles según tu plan (5 en Solo, 10 en Pro/Agency): Dark Luxury, Rose Gold, Neon Cyber, Gold VIP, Red Hot...</li>
+        <li>Personaliza el <strong>mensaje de bienvenida</strong> que verá tu fan al abrir la ruleta. Usa <strong>{nombre}</strong> para incluir su nombre automáticamente.</li>
+        <li>Personaliza el <strong>mensaje post-premio</strong> que aparece cuando gana. También puedes usar <strong>{nombre}</strong> aquí.</li>
+        <li>Configura las <strong>tiradas por código</strong>: cuántas veces puede girar la ruleta cada fan (por defecto: 3).</li>
+      </ol>
+      <div class="tip-box">
+        <span class="tip-icon">💡</span>
+        <p><strong>Consejo:</strong> Varía los premios entre alto valor (videollamada, cena) y bajo valor (descuento, foto). Así la ruleta es emocionante porque siempre hay chance de ganar algo grande.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. CREAR CÓDIGO -->
+  <div class="guide-section">
+    <span class="section-anchor" id="crear-codigo"></span>
+    <div class="section-header">
+      <span class="sec-icon">🔗</span>
+      <h2>3. Crear un código para tu fan</h2>
+    </div>
+    <div class="guide-card">
+      <p>Cada fan necesita un <strong>código único</strong> para acceder a tu ruleta. Así controlas quién puede girar y cuántas veces.</p>
+      <ol class="steps-list">
+        <li>En tu panel, ve a la sección <strong>"Códigos"</strong>.</li>
+        <li>Haz clic en <strong>"Crear código"</strong>.</li>
+        <li>Escribe el <strong>nombre del fan</strong>. Este nombre aparecerá en la ruleta ("¡Hola María! 🎰").</li>
+        <li>Elige el <strong>número de tiradas</strong> para este código (puedes dejarlo en el valor por defecto).</li>
+        <li>Opcionalmente, selecciona <strong>premios específicos</strong> para este código o usa los premios generales.</li>
+        <li>Haz clic en <strong>"Crear"</strong>. Se generará el código, el enlace directo y un QR.</li>
+      </ol>
+      <div class="tip-box">
+        <span class="tip-icon">💡</span>
+        <p><strong>Consejo:</strong> Usa nombres reales o apodos de tus fans. La personalización hace que se sientan especiales y aumenta las propinas.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. ENVIAR AL FAN -->
+  <div class="guide-section">
+    <span class="section-anchor" id="enviar"></span>
+    <div class="section-header">
+      <span class="sec-icon">📨</span>
+      <h2>4. Enviar el enlace al fan</h2>
+    </div>
+    <div class="guide-card">
+      <p>Una vez creado el código, tienes <strong>3 formas de compartirlo</strong> con tu fan:</p>
+      <ol class="steps-list">
+        <li><strong>Enlace directo:</strong> Copia el enlace y pégalo en el chat de OnlyFans, Fansly, Telegram, WhatsApp o donde hables con tu fan.</li>
+        <li><strong>Plantilla de mensaje:</strong> Usa la plantilla pre-hecha que ya incluye el enlace y un mensaje personalizado con el nombre del fan. Solo copia y pega.</li>
+        <li><strong>Código QR:</strong> Ideal para compartir en historias de Instagram, TikTok o Twitter. El fan escanea el QR con su móvil y accede directamente a la ruleta.</li>
+      </ol>
+      <p>Cuando el fan abra el enlace, verá tu ruleta personalizada con tu tema visual, introducirá su nombre y el código, y podrá girar la ruleta. Tú verás los resultados en tiempo real en tu panel.</p>
+      <div class="tip-box">
+        <span class="tip-icon">💡</span>
+        <p><strong>Consejo:</strong> Envía la ruleta como recompensa por una propina, como bienvenida a nuevos suscriptores, o como incentivo para renovar. ¡Es muy versátil!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. FAQ -->
+  <div class="guide-section">
+    <span class="section-anchor" id="faq-guia"></span>
+    <div class="section-header">
+      <span class="sec-icon">❓</span>
+      <h2>5. Preguntas frecuentes</h2>
+    </div>
+    <div class="guide-card">
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question"><span>¿Puedo cambiar los premios después de crear códigos?</span><span class="arrow">▼</span></button>
+          <div class="faq-answer"><p>Sí. Si cambias los premios generales, los códigos que no tienen premios personalizados usarán los nuevos premios automáticamente. Los códigos con premios específicos no se ven afectados.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question"><span>¿El fan puede hacer trampa o saber el premio de antemano?</span><span class="arrow">▼</span></button>
+          <div class="faq-answer"><p>No. El premio se determina en nuestro servidor de forma aleatoria. Ni el fan ni nadie puede inspeccionar, predecir o manipular el resultado. Cada tirada se valida con un token único y se registra en la base de datos.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question"><span>¿Qué pasa si un fan intenta usar un código que ya se agotó?</span><span class="arrow">▼</span></button>
+          <div class="faq-answer"><p>Verá un mensaje indicando que el código ya no tiene tiradas disponibles. No podrá girar la ruleta. Puedes crear un nuevo código para él en cualquier momento.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question"><span>¿Cuántos códigos puedo crear al mes?</span><span class="arrow">▼</span></button>
+          <div class="faq-answer"><p>Depende de tu plan: Solo permite 100 códigos/mes, Pro y Agency tienen códigos ilimitados. El contador se reinicia el primer día de cada mes.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question"><span>¿Puedo usar PlayOFans desde el móvil?</span><span class="arrow">▼</span></button>
+          <div class="faq-answer"><p>Sí. Tanto tu panel de administración como la ruleta que ven tus fans están 100% optimizados para móvil. De hecho, la mayoría de fans accederán desde el móvil.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question"><span>¿Puedo eliminar o desactivar un código?</span><span class="arrow">▼</span></button>
+          <div class="faq-answer"><p>Sí. Desde tu panel puedes eliminar cualquier código. Una vez eliminado, si el fan intenta usarlo, verá un error. Los datos de las tiradas ya realizadas se conservan en tus analíticas.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question"><span>¿Necesito conocimientos técnicos para usar PlayOFans?</span><span class="arrow">▼</span></button>
+          <div class="faq-answer"><p>No. PlayOFans está diseñado para que cualquier persona pueda configurar su ruleta sin saber nada de programación. Si sabes enviar un mensaje con un enlace, sabes usar PlayOFans. Todo se gestiona desde un panel visual muy intuitivo.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA BOTTOM -->
+  <div class="guide-cta">
+    <h2>¿Lista para empezar? 🚀</h2>
+    <p>Crea tu cuenta y configura tu ruleta de premios en menos de 5 minutos.</p>
+    <a href="/registro" class="btn-cta">Crear mi cuenta 🚀</a>
+  </div>
+</main>
+
+<script>
+// FAQ accordion
+document.querySelectorAll('.faq-question').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.parentElement;
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  });
+});
+
+// Smooth scroll for TOC links
+document.querySelectorAll('.toc a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+</body>
+</html>

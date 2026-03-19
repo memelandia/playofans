@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro — PlayOFans</title>
+<meta name="description" content="Regístrate en PlayOFans y empieza a crear juegos interactivos para tus fans. Ruleta de premios personalizable para OnlyFans, Fansly y más.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://playofans.com/registro">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+:root{--bg:#0a0612;--bg2:#120e1f;--bg3:#1a1230;--accent:#ff0066;--accent2:#b300ff;--accent3:#7c3aed;--text:#f0e6ff;--text-soft:#a89cc8;--text-muted:#6b5f80;--glass:rgba(20,12,40,0.85);--glass-border:rgba(179,0,255,0.2);--success:#10ac84;--danger:#e74c3c;--max-w:720px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+a{color:var(--accent2);text-decoration:none;}
+a:hover{color:var(--accent);}
+
+/* NAV */
+.nav{background:rgba(10,6,18,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border);padding:14px 0;position:sticky;top:0;z-index:100;}
+.nav-inner{max-width:900px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-size:1.3rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-back{color:var(--text-soft);font-size:.85rem;font-weight:500;}
+.nav-back:hover{color:var(--text);}
+
+/* MAIN */
+.page{max-width:var(--max-w);margin:0 auto;padding:60px 24px 80px;}
+.page-header{text-align:center;margin-bottom:48px;}
+.page-header h1{font-size:2.2rem;font-weight:800;margin-bottom:12px;}
+.page-header h1 .grad{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.page-header p{font-size:1rem;color:var(--text-soft);max-width:540px;margin:0 auto;line-height:1.6;}
+
+/* FORM BLOCKS */
+.form-block{background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;padding:28px;margin-bottom:24px;}
+.form-block h2{font-size:1rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+.form-block h2 .num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:inline-flex;align-items:center;justify-content:center;font-size:.75rem;color:#fff;}
+
+.field{margin-bottom:18px;}
+.field:last-child{margin-bottom:0;}
+.field label{display:block;font-size:.85rem;font-weight:600;margin-bottom:6px;color:var(--text-soft);}
+.field input,.field select,.field textarea{width:100%;padding:12px 16px;border-radius:10px;border:1px solid var(--glass-border);background:rgba(10,6,18,0.6);color:var(--text);font-family:inherit;font-size:.9rem;transition:border-color .2s;outline:none;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent2);}
+.field input::placeholder,.field textarea::placeholder{color:var(--text-muted);}
+.field textarea{resize:vertical;min-height:60px;}
+.field .hint{font-size:.75rem;color:var(--text-muted);margin-top:4px;}
+.field .error-msg{font-size:.75rem;color:var(--danger);margin-top:4px;display:none;}
+
+/* Radio group */
+.radio-group{display:flex;flex-wrap:wrap;gap:10px;}
+.radio-group label{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;border:1px solid var(--glass-border);background:rgba(10,6,18,0.4);cursor:pointer;font-size:.85rem;color:var(--text-soft);transition:all .2s;font-weight:500;}
+.radio-group label:hover{border-color:var(--accent2);}
+.radio-group input[type="radio"]{appearance:none;-webkit-appearance:none;width:16px;height:16px;border:2px solid var(--glass-border);border-radius:50%;cursor:pointer;transition:all .2s;flex-shrink:0;}
+.radio-group input[type="radio"]:checked{border-color:var(--accent);background:var(--accent);box-shadow:inset 0 0 0 3px var(--bg);}
+.radio-group input[type="radio"]:checked+span{color:var(--text);}
+
+/* Slug field */
+.slug-wrap{display:flex;align-items:center;border-radius:10px;border:1px solid var(--glass-border);background:rgba(10,6,18,0.6);overflow:hidden;transition:border-color .2s;}
+.slug-wrap:focus-within{border-color:var(--accent2);}
+.slug-prefix{padding:12px 14px;font-size:.85rem;color:var(--text-muted);background:rgba(255,255,255,0.03);border-right:1px solid var(--glass-border);white-space:nowrap;}
+.slug-wrap input{border:none;background:transparent;padding:12px 14px;font-size:.9rem;color:var(--text);outline:none;flex:1;min-width:0;}
+.slug-status{padding:0 14px;font-size:.8rem;font-weight:600;}
+.slug-status.ok{color:var(--success);}
+.slug-status.err{color:var(--danger);}
+.slug-status.checking{color:var(--text-muted);}
+
+/* Submit */
+.submit-row{text-align:center;margin-top:36px;}
+.btn-submit{padding:16px 48px;border-radius:50px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:inherit;font-weight:700;font-size:1rem;border:none;cursor:pointer;transition:all .3s;display:inline-flex;align-items:center;gap:10px;}
+.btn-submit:hover{filter:brightness(1.1);transform:translateY(-2px);}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none;filter:none;}
+
+/* Success */
+.success-card{text-align:center;display:none;background:var(--glass);border:1px solid rgba(16,172,132,0.3);border-radius:20px;padding:48px 32px;}
+.success-card .icon{font-size:4rem;margin-bottom:16px;}
+.success-card h2{font-size:1.5rem;font-weight:700;margin-bottom:12px;}
+.success-card p{color:var(--text-soft);font-size:.95rem;line-height:1.7;max-width:440px;margin:0 auto;}
+
+/* Alert */
+.alert{padding:12px 16px;border-radius:10px;font-size:.85rem;margin-bottom:20px;display:none;}
+.alert.error{background:rgba(231,76,60,0.15);border:1px solid rgba(231,76,60,0.3);color:#e74c3c;}
+
+@media(max-width:600px){
+  .page-header h1{font-size:1.6rem;}
+  .radio-group{flex-direction:column;}
+  .slug-prefix{font-size:.75rem;padding:12px 10px;}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+<div class="nav-inner">
+  <a href="/" class="nav-logo">🎰 PlayOFans</a>
+  <a href="/" class="nav-back">← Volver al inicio</a>
+</div>
+</nav>
+
+<main class="page" id="formView">
+  <div class="page-header">
+    <h1>Crea tu cuenta en <span class="grad">PlayOFans</span></h1>
+    <p>Completa el formulario y revisaremos tu solicitud. Te contactaremos en menos de 24 horas.</p>
+  </div>
+
+  <div class="alert error" id="alertError"></div>
+
+  <form id="regForm" novalidate>
+    <!-- BLOCK 1: IDENTIDAD -->
+    <div class="form-block">
+      <h2><span class="num">1</span> Tu identidad</h2>
+      <div class="field">
+        <label for="display_name">Nombre artístico *</label>
+        <input type="text" id="display_name" name="display_name" placeholder="Ej: VickyLuna" maxlength="50" required>
+      </div>
+      <div class="field">
+        <label for="email">Email *</label>
+        <input type="email" id="email" name="email" placeholder="tu@email.com" required>
+      </div>
+      <div class="field">
+        <label for="country">País *</label>
+        <select id="country" name="country" required>
+          <option value="">Selecciona tu país</option>
+          <option value="ES">España</option>
+          <option value="MX">México</option>
+          <option value="CO">Colombia</option>
+          <option value="AR">Argentina</option>
+          <option value="CL">Chile</option>
+          <option value="PE">Perú</option>
+          <option value="VE">Venezuela</option>
+          <option value="EC">Ecuador</option>
+          <option value="US">Estados Unidos</option>
+          <option value="OTHER">Otro</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- BLOCK 2: NEGOCIO -->
+    <div class="form-block">
+      <h2><span class="num">2</span> Tu negocio</h2>
+      <div class="field">
+        <label>Ingresos mensuales aproximados</label>
+        <div class="radio-group">
+          <label><input type="radio" name="monthly_revenue" value="< 500€"><span>&lt; 500€</span></label>
+          <label><input type="radio" name="monthly_revenue" value="500€ - 2.000€"><span>500€ - 2.000€</span></label>
+          <label><input type="radio" name="monthly_revenue" value="2.000€ - 5.000€"><span>2.000€ - 5.000€</span></label>
+          <label><input type="radio" name="monthly_revenue" value="5.000€ - 10.000€"><span>5.000€ - 10.000€</span></label>
+          <label><input type="radio" name="monthly_revenue" value="> 10.000€"><span>&gt; 10.000€</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label>¿Trabajas con una agencia?</label>
+        <div class="radio-group">
+          <label><input type="radio" name="has_agency" value="Sí"><span>Sí</span></label>
+          <label><input type="radio" name="has_agency" value="No"><span>No</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Fans activos</label>
+        <div class="radio-group">
+          <label><input type="radio" name="active_fans" value="< 100"><span>&lt; 100</span></label>
+          <label><input type="radio" name="active_fans" value="100 - 500"><span>100 - 500</span></label>
+          <label><input type="radio" name="active_fans" value="500 - 2.000"><span>500 - 2.000</span></label>
+          <label><input type="radio" name="active_fans" value="> 2.000"><span>&gt; 2.000</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- BLOCK 3: INTERÉS -->
+    <div class="form-block">
+      <h2><span class="num">3</span> Tu interés</h2>
+      <div class="field">
+        <label for="plan">Plan deseado *</label>
+        <select id="plan" name="plan" required>
+          <option value="solo">Solo — 49€/mes</option>
+          <option value="pro">Pro — 89€/mes</option>
+          <option value="agency">Agency — 349€/mes</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="acquisition_channel">¿Cómo conociste PlayOFans?</label>
+        <select id="acquisition_channel" name="acquisition_channel">
+          <option value="">Selecciona una opción</option>
+          <option value="redes_sociales">Redes sociales</option>
+          <option value="recomendacion">Recomendación de otra modelo</option>
+          <option value="google">Google / Buscador</option>
+          <option value="telegram">Telegram</option>
+          <option value="twitter">Twitter / X</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- BLOCK 4: SLUG -->
+    <div class="form-block">
+      <h2><span class="num">4</span> Tu URL personalizada</h2>
+      <div class="field">
+        <label for="slug">Elige tu slug *</label>
+        <div class="slug-wrap">
+          <span class="slug-prefix">playofans.com/</span>
+          <input type="text" id="slug" name="slug" placeholder="tunombre" maxlength="30" required>
+          <span class="slug-status" id="slugStatus"></span>
+        </div>
+        <div class="hint">Solo letras minúsculas, números, guiones. Ej: vickyluna, maria-fit</div>
+      </div>
+    </div>
+
+    <!-- BLOCK 5: CONTACTO -->
+    <div class="form-block">
+      <h2><span class="num">5</span> Contacto adicional <span style="font-weight:400;font-size:.8rem;color:var(--text-muted)">(opcional)</span></h2>
+      <div class="field">
+        <label for="telegram_or_instagram">Telegram o Instagram</label>
+        <input type="text" id="telegram_or_instagram" name="telegram_or_instagram" placeholder="@tu_usuario">
+      </div>
+      <div class="field">
+        <label for="referral_code">Código de referido</label>
+        <input type="text" id="referral_code" name="referral_code" placeholder="REF-XXXXX">
+      </div>
+      <div class="field">
+        <label for="discount_code">Código de descuento</label>
+        <input type="text" id="discount_code" name="discount_code" placeholder="DESCUENTO20">
+      </div>
+    </div>
+
+    <div class="submit-row">
+      <button type="submit" class="btn-submit" id="btnSubmit">Enviar solicitud 🚀</button>
+    </div>
+  </form>
+</main>
+
+<!-- SUCCESS VIEW -->
+<main class="page" id="successView" style="display:none;">
+  <div class="success-card" style="display:block;">
+    <div class="icon">🎉</div>
+    <h2>¡Solicitud enviada!</h2>
+    <p>Hemos recibido tu solicitud correctamente. Revisaremos tus datos y te contactaremos en menos de 24 horas para activar tu cuenta.</p>
+    <br>
+    <a href="/" class="btn-submit" style="text-decoration:none;">Volver al inicio</a>
+  </div>
+</main>
+
+<script>
+const form = document.getElementById('regForm');
+const btnSubmit = document.getElementById('btnSubmit');
+const alertError = document.getElementById('alertError');
+const slugInput = document.getElementById('slug');
+const slugStatus = document.getElementById('slugStatus');
+
+// Pre-fill plan from URL
+const urlPlan = new URLSearchParams(window.location.search).get('plan');
+if (urlPlan && ['solo','pro','agency'].includes(urlPlan)) {
+  document.getElementById('plan').value = urlPlan;
+}
+
+// Pre-fill referral from localStorage
+const savedRef = localStorage.getItem('playofans_ref');
+if (savedRef) document.getElementById('referral_code').value = savedRef;
+
+// Slug validation with debounce
+let slugTimer = null;
+slugInput.addEventListener('input', () => {
+  const raw = slugInput.value.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+  slugInput.value = raw;
+  slugStatus.textContent = '';
+  slugStatus.className = 'slug-status';
+  clearTimeout(slugTimer);
+  if (raw.length < 3) {
+    if (raw.length > 0) { slugStatus.textContent = 'Mínimo 3 caracteres'; slugStatus.className = 'slug-status err'; }
+    return;
+  }
+  const reserved = ['admin','superadmin','api','demo','precios','guia','registro','contacto','afiliados','sounds','netlify'];
+  if (reserved.includes(raw)) { slugStatus.textContent = 'Reservado'; slugStatus.className = 'slug-status err'; return; }
+  slugStatus.textContent = '...'; slugStatus.className = 'slug-status checking';
+  slugTimer = setTimeout(async () => {
+    try {
+      const r = await fetch('/api/model-landing?slug=' + encodeURIComponent(raw));
+      if (r.status === 404) {
+        slugStatus.textContent = '✓ Disponible'; slugStatus.className = 'slug-status ok';
+      } else {
+        slugStatus.textContent = '✗ En uso'; slugStatus.className = 'slug-status err';
+      }
+    } catch { slugStatus.textContent = ''; }
+  }, 500);
+});
+
+// Submit
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  alertError.style.display = 'none';
+
+  const data = {
+    display_name: form.display_name.value.trim(),
+    email: form.email.value.trim(),
+    country: form.country.value,
+    plan: form.plan.value,
+    slug: form.slug.value.trim(),
+    monthly_revenue: form.querySelector('input[name="monthly_revenue"]:checked')?.value || '',
+    has_agency: form.querySelector('input[name="has_agency"]:checked')?.value || '',
+    active_fans: form.querySelector('input[name="active_fans"]:checked')?.value || '',
+    acquisition_channel: form.acquisition_channel.value,
+    telegram_or_instagram: form.telegram_or_instagram.value.trim(),
+    referral_code: form.referral_code.value.trim(),
+    discount_code: form.discount_code.value.trim(),
+  };
+
+  if (!data.display_name || !data.email || !data.country || !data.slug) {
+    alertError.textContent = 'Completa todos los campos obligatorios (*)';
+    alertError.style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+
+  btnSubmit.disabled = true;
+  btnSubmit.textContent = 'Enviando...';
+
+  try {
+    const res = await fetch('/api/submit-registration', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || 'Error al enviar');
+
+    document.getElementById('formView').style.display = 'none';
+    document.getElementById('successView').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (err) {
+    alertError.textContent = err.message;
+    alertError.style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    btnSubmit.disabled = false;
+    btnSubmit.textContent = 'Enviar solicitud 🚀';
+  }
+});
+</script>
+</body>
+</html>
