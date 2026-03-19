@@ -318,6 +318,7 @@ textarea.form-input { min-height: 100px; resize: vertical; }
     <div class="nav-item active" data-section="dashboard"><span class="icon">📊</span> Dashboard</div>
     <div class="nav-item" data-section="codes"><span class="icon">🎰</span> Códigos</div>
     <div class="nav-item" data-section="config"><span class="icon">⚙️</span> Configuración</div>
+    <div class="nav-item" data-section="afiliados"><span class="icon">🤝</span> Afiliados</div>
     <div class="nav-item" data-section="settings"><span class="icon">🔧</span> Ajustes</div>
   </div>
   <div class="sidebar-footer">
@@ -488,6 +489,69 @@ textarea.form-input { min-height: 100px; resize: vertical; }
       <input type="password" id="new-pass" class="form-input" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
     </div>
     <button class="btn btn-primary btn-sm" id="change-pass-btn" style="margin-top:12px">Actualizar contraseña</button>
+  </div>
+</section>
+
+<!-- ===== AFILIADOS ===== -->
+<section id="section-afiliados" style="display:none">
+  <div class="page-title">🤝 Programa de Afiliados</div>
+
+  <div class="card">
+    <div class="card-title">🔗 Tu código de referido</div>
+    <div class="form-group">
+      <label>Código</label>
+      <div class="copyable">
+        <code id="af-refcode"></code>
+        <button class="btn btn-outline btn-sm" onclick="copyText(document.getElementById('af-refcode').textContent)">📋 Copiar código</button>
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:12px">
+      <label>Link completo</label>
+      <div class="copyable">
+        <code id="af-reflink" style="font-size:.78rem"></code>
+        <button class="btn btn-outline btn-sm" onclick="copyText(document.getElementById('af-reflink').textContent)">📋 Copiar link</button>
+      </div>
+    </div>
+    <p style="font-size:.85rem;color:var(--text-soft);margin-top:16px">Comparte este link. Por cada modelo que se registre ganarás 20% de sus pagos durante 12 meses.</p>
+  </div>
+
+  <div class="stats-grid" id="af-stats">
+    <div class="stat-card"><div class="label">Total ganado</div><div class="value success" id="af-total-earned">€0,00</div></div>
+    <div class="stat-card"><div class="label">Referidas activas</div><div class="value accent" id="af-referrals">0</div></div>
+    <div class="stat-card"><div class="label">Comisiones pendientes</div><div class="value warning" id="af-pending">€0,00</div></div>
+    <div class="stat-card"><div class="label">Tu descuento actual</div><div class="value accent2" id="af-discount">0%</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 Comisiones</div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Período</th>
+            <th>Modelo referida</th>
+            <th>Plan</th>
+            <th>Pago de la modelo</th>
+            <th>Tu comisión (20%)</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody id="af-commissions-tbody"></tbody>
+      </table>
+    </div>
+    <div id="af-empty" style="text-align:center;padding:32px;color:var(--text-soft);font-size:.9rem;display:none">Aún no tienes comisiones. ¡Comparte tu link de referido!</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">ℹ️ Cómo funciona</div>
+    <div style="font-size:.9rem;color:var(--text-soft);line-height:1.7">
+      <div>• 1 referida activa → <strong style="color:var(--text)">10% descuento</strong> en tu plan</div>
+      <div>• 2 referidas activas → <strong style="color:var(--text)">15% descuento</strong> en tu plan</div>
+      <div>• 3+ referidas activas → <strong style="color:var(--text)">20% descuento</strong> en tu plan</div>
+      <div style="margin-top:12px">• 20% de comisión por cada pago de tus referidas</div>
+      <div>• Durante los primeros 12 meses de cada referida</div>
+      <div>• Los descuentos se aplican automáticamente cada mes</div>
+    </div>
   </div>
 </section>
 
@@ -727,11 +791,12 @@ async function initPanel() {
 function switchSection(name) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.querySelector(`.nav-item[data-section="${name}"]`).classList.add('active');
-  ['dashboard','codes','config','settings'].forEach(s => {
+  ['dashboard','codes','config','afiliados','settings'].forEach(s => {
     document.getElementById('section-' + s).style.display = s === name ? '' : 'none';
   });
   if (name === 'codes') loadCodes();
   if (name === 'config') loadConfig();
+  if (name === 'afiliados') loadAfiliados();
   if (name === 'settings') loadSettings();
   // Close mobile menu
   document.getElementById('sidebar').classList.remove('open');
@@ -1296,6 +1361,72 @@ function drawPreview() {
 // =============================================================================
 function registerSettingsEvents() {
   document.getElementById('change-pass-btn').addEventListener('click', doChangePassword);
+}
+
+async function loadAfiliados() {
+  if (!modelConfig) return;
+  const refCode = 'REF-' + SLUG.toUpperCase();
+  document.getElementById('af-refcode').textContent = refCode;
+  document.getElementById('af-reflink').textContent = 'https://playofans.com/registro?ref=' + refCode;
+
+  try {
+    // Get model id
+    const { data: myModel } = await sb.from('models').select('id').eq('slug', SLUG).single();
+    if (!myModel) return;
+
+    // Referrals count (models referred by this model)
+    const { data: referrals } = await sb.from('models')
+      .select('id, display_name, plan, created_at')
+      .eq('referred_by', refCode)
+      .eq('active', true);
+    const activeRefs = (referrals || []).filter(r => new Date(r.created_at) > new Date(Date.now() - 365.25*24*60*60*1000));
+    const refCount = activeRefs.length;
+
+    // Affiliate record
+    const { data: aff } = await sb.from('affiliates').select('total_earned').eq('model_id', myModel.id).single();
+    const totalEarned = aff ? Number(aff.total_earned) : 0;
+
+    // Commissions
+    const { data: comms } = await sb.from('affiliate_commissions')
+      .select('period, month_number, origin_amount, amount, status, created_at, referred_model_id')
+      .eq('affiliate_model_id', myModel.id)
+      .order('created_at', { ascending: false });
+
+    const pendingTotal = (comms || []).filter(c => c.status === 'pending').reduce((s, c) => s + Number(c.amount), 0);
+    const discountPct = refCount >= 3 ? 20 : refCount === 2 ? 15 : refCount === 1 ? 10 : 0;
+
+    document.getElementById('af-total-earned').textContent = '€' + totalEarned.toFixed(2).replace('.', ',');
+    document.getElementById('af-referrals').textContent = refCount;
+    document.getElementById('af-pending').textContent = '€' + pendingTotal.toFixed(2).replace('.', ',');
+    document.getElementById('af-discount').textContent = discountPct + '%';
+
+    // Build referral name map
+    const refMap = {};
+    (referrals || []).forEach(r => { refMap[r.id] = { name: r.display_name, plan: r.plan }; });
+
+    const tbody = document.getElementById('af-commissions-tbody');
+    const emptyMsg = document.getElementById('af-empty');
+    if (!comms || comms.length === 0) {
+      tbody.innerHTML = '';
+      emptyMsg.style.display = '';
+    } else {
+      emptyMsg.style.display = 'none';
+      tbody.innerHTML = comms.map(c => {
+        const ref = refMap[c.referred_model_id] || { name: '—', plan: '—' };
+        const badge = c.status === 'paid'
+          ? '<span class="badge badge-active">Cobrada ✅</span>'
+          : '<span class="badge badge-used">Pendiente 🟡</span>';
+        return `<tr>
+          <td>${esc(c.period)}</td>
+          <td>${esc(ref.name)}</td>
+          <td>${esc(ref.plan?.toUpperCase())}</td>
+          <td>€${Number(c.origin_amount).toFixed(2)}</td>
+          <td>€${Number(c.amount).toFixed(2)}</td>
+          <td>${badge}</td>
+        </tr>`;
+      }).join('');
+    }
+  } catch(e) { console.error('Afiliados error:', e); }
 }
 
 function loadSettings() {

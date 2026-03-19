@@ -327,3 +327,219 @@ create policy "game_catalog_public_read" on game_catalog
 insert into game_catalog (id, name, description, min_plan) values
   ('ruleta', 'Ruleta de Premios', 'Ruleta giratoria con premios personalizables', 'solo'),
   ('rasca', 'Rasca y Gana', 'Rasca y descubre tu premio', 'pro');
+
+-- ============================================
+-- 10. SPRINT 2-F — FACTURACIÓN Y COMISIONES
+-- ============================================
+
+-- Añadir ciclo de facturación a modelos
+alter table models add column if not exists billing_cycle text not null default 'monthly'
+  check (billing_cycle in ('monthly', 'annual'));
+
+-- Registros de facturación
+create table billing_records (
+  id uuid primary key default uuid_generate_v4(),
+  model_id uuid not null references models(id) on delete cascade,
+  period text not null,
+  plan text not null,
+  billing_cycle text not null default 'monthly' check (billing_cycle in ('monthly', 'annual')),
+  base_price numeric not null,
+  referral_discount_pct numeric not null default 0,
+  referral_discount_amount numeric not null default 0,
+  total_amount numeric not null,
+  status text not null default 'pending' check (status in ('pending', 'paid', 'overdue')),
+  payment_method text,
+  payment_reference text,
+  billing_notes text,
+  due_date timestamptz,
+  paid_at timestamptz,
+  created_at timestamptz not null default now(),
+  unique (model_id, period)
+);
+
+-- Comisiones de afiliados
+create table affiliate_commissions (
+  id uuid primary key default uuid_generate_v4(),
+  affiliate_model_id uuid not null references models(id) on delete cascade,
+  referred_model_id uuid not null references models(id) on delete cascade,
+  billing_record_id uuid references billing_records(id) on delete set null,
+  period text not null,
+  month_number int not null,
+  origin_amount numeric not null,
+  amount numeric not null,
+  status text not null default 'pending' check (status in ('pending', 'paid')),
+  paid_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+-- Índices de facturación
+create index idx_billing_model on billing_records(model_id);
+create index idx_billing_period on billing_records(period);
+create index idx_billing_status on billing_records(status);
+create index idx_billing_due on billing_records(due_date);
+create index idx_commissions_affiliate on affiliate_commissions(affiliate_model_id);
+create index idx_commissions_referred on affiliate_commissions(referred_model_id);
+create index idx_commissions_status on affiliate_commissions(status);
+create index idx_commissions_period on affiliate_commissions(period);
+
+-- RLS para billing_records y affiliate_commissions
+alter table billing_records enable row level security;
+alter table affiliate_commissions enable row level security;
+
+-- billing_records: solo lectura por service_role (superadmin)
+-- No se añade política de usuario final
+
+-- affiliate_commissions: lectura por el afiliado dueño
+create policy "commissions_affiliate_read" on affiliate_commissions
+  for select using (
+    affiliate_model_id in (select id from models where supabase_user_id = auth.uid())
+  );
+
+-- ============================================
+-- 11. AUTO-CREAR REGISTRO DE AFILIADO
+-- ============================================
+
+create or replace function create_affiliate_record()
+returns trigger as $$
+begin
+  insert into affiliates (model_id, referral_code)
+  values (new.id, new.referral_code)
+  on conflict do nothing;
+  return new;
+end;
+$$ language plpgsql security definer;
+
+create trigger trg_models_create_affiliate
+  after insert on models
+  for each row execute function create_affiliate_record();
+
+-- ============================================
+-- 12. GENERAR COBROS MENSUALES
+-- ============================================
+
+create or replace function generate_monthly_billing()
+returns json as $$
+declare
+  rec record;
+  v_base_price numeric;
+  v_referral_count int;
+  v_referral_pct numeric;
+  v_referral_amount numeric;
+  v_total numeric;
+  v_period text;
+  v_created int := 0;
+begin
+  v_period := to_char(now(), 'YYYY-MM');
+
+  for rec in
+    select m.* from models m
+    where m.active = true
+    and m.subscription_expires_at is not null
+    and m.subscription_expires_at <= now() + interval '30 days'
+    and not exists (
+      select 1 from billing_records br
+      where br.model_id = m.id and br.period = v_period
+    )
+  loop
+    v_base_price := case
+      when rec.plan = 'solo'   and rec.billing_cycle = 'monthly' then 49
+      when rec.plan = 'solo'   and rec.billing_cycle = 'annual'  then 399
+      when rec.plan = 'pro'    and rec.billing_cycle = 'monthly' then 89
+      when rec.plan = 'pro'    and rec.billing_cycle = 'annual'  then 699
+      when rec.plan = 'agency' and rec.billing_cycle = 'monthly' then 349
+      when rec.plan = 'agency' and rec.billing_cycle = 'annual'  then 2800
+      else 0
+    end;
+
+    select count(*) into v_referral_count
+    from models
+    where referred_by = rec.referral_code
+    and active = true
+    and created_at > now() - interval '12 months';
+
+    v_referral_pct := case
+      when v_referral_count >= 3 then 20
+      when v_referral_count = 2  then 15
+      when v_referral_count = 1  then 10
+      else 0
+    end;
+
+    v_referral_amount := round(v_base_price * v_referral_pct / 100, 2);
+    v_total := v_base_price - v_referral_amount;
+
+    insert into billing_records (
+      model_id, period, plan, billing_cycle, base_price,
+      referral_discount_pct, referral_discount_amount, total_amount, due_date
+    ) values (
+      rec.id, v_period, rec.plan, rec.billing_cycle, v_base_price,
+      v_referral_pct, v_referral_amount, v_total, rec.subscription_expires_at
+    );
+
+    v_created := v_created + 1;
+  end loop;
+
+  return json_build_object('created', v_created);
+end;
+$$ language plpgsql security definer;
+
+-- ============================================
+-- 13. MARCAR COBRO COMO PAGADO + GENERAR COMISIÓN
+-- ============================================
+
+create or replace function mark_billing_paid(
+  p_billing_id uuid,
+  p_payment_method text default null,
+  p_payment_reference text default null
+)
+returns json as $$
+declare
+  v_billing billing_records%rowtype;
+  v_referred_model models%rowtype;
+  v_affiliate_model models%rowtype;
+  v_month_number int;
+begin
+  select * into v_billing from billing_records where id = p_billing_id;
+  if not found then
+    return json_build_object('error', 'Registro no encontrado');
+  end if;
+
+  update billing_records set
+    status = 'paid',
+    payment_method = p_payment_method,
+    payment_reference = p_payment_reference,
+    paid_at = now()
+  where id = p_billing_id;
+
+  select * into v_referred_model from models where id = v_billing.model_id;
+
+  if v_referred_model.referred_by is not null then
+    select * into v_affiliate_model from models
+    where referral_code = v_referred_model.referred_by
+    and active = true;
+
+    if found then
+      if v_referred_model.created_at > now() - interval '12 months' then
+        v_month_number := greatest(1,
+          extract(year from age(now(), v_referred_model.created_at))::int * 12 +
+          extract(month from age(now(), v_referred_model.created_at))::int + 1
+        );
+
+        insert into affiliate_commissions (
+          affiliate_model_id, referred_model_id, billing_record_id,
+          period, month_number, origin_amount, amount, status
+        ) values (
+          v_affiliate_model.id, v_referred_model.id, p_billing_id,
+          v_billing.period, v_month_number, v_billing.total_amount,
+          round(v_billing.total_amount * 0.20, 2), 'pending'
+        );
+
+        update affiliates set
+          total_earned = total_earned + round(v_billing.total_amount * 0.20, 2)
+        where model_id = v_affiliate_model.id;
+      end if;
+    end if;
+  end if;
+
+  return json_build_object('success', true);
+end;
+$$ language plpgsql security definer;

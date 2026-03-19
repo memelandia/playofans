@@ -279,3 +279,31 @@ admin-get-analytics.js: GET métricas del modelo
 admin-get-spins-live.js: GET últimos 10 spins
 admin-update-config.js: POST actualizar config modelo
 admin-get-qr.js: GET generar imagen QR
+
+## SPRINT 2-F — Afiliados + Facturación
+
+### Schema
+- billing_records: tabla de cobros mensuales
+- affiliate_commissions: comisiones de afiliados
+- billing_cycle column en models
+- generate_monthly_billing() función PL/pgSQL
+- mark_billing_paid() función PL/pgSQL + genera comisiones
+- create_affiliate_record() trigger auto-crear afiliado
+
+### Funciones Netlify (6 nuevas)
+- sa-billing-list.js: GET cobros con filtros
+- sa-billing-pay.js: POST marcar pagado (llama mark_billing_paid RPC)
+- sa-billing-generate.js: POST generar cobros del mes
+- sa-commissions-list.js: GET comisiones pendientes
+- sa-commission-pay.js: POST marcar comisión pagada
+- sa-billing-export.js: GET exportar CSV
+
+### admin.html
+- Sección Afiliados: código referido, stats, tabla comisiones, cómo funciona
+- Lee directo de Supabase con RLS (sin función Netlify)
+
+### superadmin.html
+- Página Facturación con 3 subsecciones:
+  1. Cobros del mes (tabla + filtros + generar + marcar pagado)
+  2. Comisiones a pagar (tabla + marcar pagada)
+  3. Historial completo (filtros + exportar CSV)
