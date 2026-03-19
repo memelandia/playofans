@@ -183,11 +183,10 @@ img{max-width:100%;display:block;}
 .hero-badge{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);background:var(--glass);border:1px solid var(--glass-border);border-radius:50px;padding:10px 24px;font-size:.85rem;font-weight:600;white-space:nowrap;backdrop-filter:blur(10px);}
 .hero-wheel-wrap::after{content:'';position:absolute;top:4px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-top:20px solid var(--accent);z-index:2;filter:drop-shadow(0 2px 6px rgba(255,0,102,0.6));}
 
-/* TRUST BAR */
-.trust-bar{padding:28px 0;background:var(--bg3);border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border);}
-.trust-items{display:flex;justify-content:center;gap:48px;flex-wrap:wrap;}
-.trust-item{display:flex;align-items:center;gap:10px;font-size:.9rem;color:var(--text-soft);font-weight:500;}
-.trust-item .icon{font-size:1.3rem;}
+/* TRUST BADGES (inside hero) */
+.hero-trust{display:flex;gap:28px;flex-wrap:wrap;margin-top:40px;}
+.hero-trust-item{display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--text-muted);font-weight:500;}
+.hero-trust-item .ti{font-size:1rem;}
 
 /* SECTION STYLES */
 section{padding:100px 0;}
@@ -240,7 +239,19 @@ section{padding:100px 0;}
 .price-card .plan-name{font-size:1.1rem;font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;}
 .price-card .plan-price{font-size:3rem;font-weight:900;margin-bottom:4px;}
 .price-card .plan-price span{font-size:1rem;font-weight:400;color:var(--text-soft);}
+.price-card .plan-price .price-old{font-size:1.1rem;text-decoration:line-through;color:var(--text-muted);margin-right:6px;font-weight:400;}
 .price-card .plan-desc{font-size:.85rem;color:var(--text-soft);margin-bottom:24px;}
+.plan-annual-note{display:none;font-size:.75rem;color:var(--success);font-weight:600;margin-bottom:12px;}
+.plan-annual-note.visible{display:block;}
+/* Pricing toggle */
+.pricing-toggle{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:24px;}
+.pricing-toggle span{font-size:.9rem;font-weight:500;color:var(--text-muted);transition:color .2s;}
+.pricing-toggle span.active{color:var(--text);font-weight:700;}
+.toggle-switch{width:52px;height:28px;background:var(--glass);border:2px solid var(--glass-border);border-radius:50px;cursor:pointer;position:relative;transition:all .3s;}
+.toggle-switch::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--text-soft);transition:all .3s;}
+.toggle-switch.annual{background:linear-gradient(135deg,var(--accent),var(--accent2));border-color:transparent;}
+.toggle-switch.annual::after{left:27px;background:#fff;}
+.pricing-save{font-size:.7rem;padding:3px 10px;border-radius:50px;background:rgba(16,172,132,0.15);color:var(--success);font-weight:700;letter-spacing:.5px;}
 .price-card ul{list-style:none;text-align:left;margin-bottom:28px;}
 .price-card ul li{font-size:.85rem;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;gap:10px;}
 .price-card ul li .check{color:var(--success);font-weight:700;}
@@ -320,7 +331,7 @@ section{padding:100px 0;}
   .hero-text h1{font-size:1.8rem;}
   .btn-hero{padding:14px 28px;font-size:.9rem;}
   .footer-grid{grid-template-columns:1fr;}
-  .trust-items{gap:24px;}
+  .hero-trust{gap:12px;justify-content:center;}
 }
 </style>
 </head>
@@ -362,6 +373,13 @@ section{padding:100px 0;}
       <a href="/registro" class="btn-hero btn-hero-primary">Quiero Empezar 🚀</a>
       <a href="/demo" class="btn-hero btn-hero-outline">Ver Demo 🎰</a>
     </div>
+    <div class="hero-trust">
+      <div class="hero-trust-item"><span class="ti">🔒</span> Premios seguros</div>
+      <div class="hero-trust-item"><span class="ti">⚡</span> Setup 5 min</div>
+      <div class="hero-trust-item"><span class="ti">📱</span> Mobile-first</div>
+      <div class="hero-trust-item"><span class="ti">🎨</span> 10 temas</div>
+      <div class="hero-trust-item"><span class="ti">📊</span> Analíticas</div>
+    </div>
   </div>
   <div class="hero-visual">
     <div class="hero-wheel-wrap">
@@ -372,44 +390,54 @@ section{padding:100px 0;}
             <stop offset="0%" stop-color="#ff0066"/><stop offset="50%" stop-color="#ff1493"/><stop offset="100%" stop-color="#b300ff"/>
           </linearGradient>
         </defs>
-        <!-- Outer gradient ring -->
-        <circle cx="150" cy="150" r="145" fill="none" stroke="url(#rg)" stroke-width="9"/>
-        <!-- 10 colored segments -->
-        <path d="M150,150 L150,18 A132,132 0 0,1 227.6,43.2 Z" fill="#ef8c2e"/>
-        <path d="M150,150 L227.6,43.2 A132,132 0 0,1 275.5,109.2 Z" fill="#10b981"/>
-        <path d="M150,150 L275.5,109.2 A132,132 0 0,1 275.5,190.8 Z" fill="#3b82f6"/>
-        <path d="M150,150 L275.5,190.8 A132,132 0 0,1 227.6,256.8 Z" fill="#ec4899"/>
-        <path d="M150,150 L227.6,256.8 A132,132 0 0,1 150,282 Z" fill="#f472b6"/>
-        <path d="M150,150 L150,282 A132,132 0 0,1 72.4,256.8 Z" fill="#e11d48"/>
-        <path d="M150,150 L72.4,256.8 A132,132 0 0,1 24.5,190.8 Z" fill="#eab308"/>
-        <path d="M150,150 L24.5,190.8 A132,132 0 0,1 24.5,109.2 Z" fill="#8b5cf6"/>
-        <path d="M150,150 L24.5,109.2 A132,132 0 0,1 72.4,43.2 Z" fill="#14b8a6"/>
-        <path d="M150,150 L72.4,43.2 A132,132 0 0,1 150,18 Z" fill="#f97316"/>
-        <!-- Divider lines -->
-        <g stroke="rgba(255,255,255,0.25)" stroke-width="0.8">
-          <line x1="150" y1="150" x2="150" y2="18"/><line x1="150" y1="150" x2="227.6" y2="43.2"/>
-          <line x1="150" y1="150" x2="275.5" y2="109.2"/><line x1="150" y1="150" x2="275.5" y2="190.8"/>
-          <line x1="150" y1="150" x2="227.6" y2="256.8"/><line x1="150" y1="150" x2="150" y2="282"/>
-          <line x1="150" y1="150" x2="72.4" y2="256.8"/><line x1="150" y1="150" x2="24.5" y2="190.8"/>
-          <line x1="150" y1="150" x2="24.5" y2="109.2"/><line x1="150" y1="150" x2="72.4" y2="43.2"/>
+        <!-- Outer ring -->
+        <circle cx="150" cy="150" r="146" fill="none" stroke="url(#rg)" stroke-width="4"/>
+        <!-- 10 segments (36° each) -->
+        <path d="M150,150 L150,8 A142,142 0 0,1 233.5,34.8 Z" fill="#ef8c2e"/>
+        <path d="M150,150 L233.5,34.8 A142,142 0 0,1 285.1,112.7 Z" fill="#10b981"/>
+        <path d="M150,150 L285.1,112.7 A142,142 0 0,1 285.1,187.3 Z" fill="#3b82f6"/>
+        <path d="M150,150 L285.1,187.3 A142,142 0 0,1 233.5,265.2 Z" fill="#ec4899"/>
+        <path d="M150,150 L233.5,265.2 A142,142 0 0,1 150,292 Z" fill="#f472b6"/>
+        <path d="M150,150 L150,292 A142,142 0 0,1 66.5,265.2 Z" fill="#e11d48"/>
+        <path d="M150,150 L66.5,265.2 A142,142 0 0,1 14.9,187.3 Z" fill="#eab308"/>
+        <path d="M150,150 L14.9,187.3 A142,142 0 0,1 14.9,112.7 Z" fill="#8b5cf6"/>
+        <path d="M150,150 L14.9,112.7 A142,142 0 0,1 66.5,34.8 Z" fill="#14b8a6"/>
+        <path d="M150,150 L66.5,34.8 A142,142 0 0,1 150,8 Z" fill="#f97316"/>
+        <!-- Dividers -->
+        <g stroke="rgba(255,255,255,0.18)" stroke-width="0.6">
+          <line x1="150" y1="150" x2="150" y2="8"/><line x1="150" y1="150" x2="233.5" y2="34.8"/>
+          <line x1="150" y1="150" x2="285.1" y2="112.7"/><line x1="150" y1="150" x2="285.1" y2="187.3"/>
+          <line x1="150" y1="150" x2="233.5" y2="265.2"/><line x1="150" y1="150" x2="150" y2="292"/>
+          <line x1="150" y1="150" x2="66.5" y2="265.2"/><line x1="150" y1="150" x2="14.9" y2="187.3"/>
+          <line x1="150" y1="150" x2="14.9" y2="112.7"/><line x1="150" y1="150" x2="66.5" y2="34.8"/>
         </g>
-        <!-- Prize labels -->
-        <g font-family="Poppins,sans-serif" font-weight="700" fill="white" stroke="rgba(0,0,0,0.35)" stroke-width="0.4" paint-order="stroke" font-size="7" text-anchor="middle" letter-spacing="0.5">
-          <text transform="translate(150,150) rotate(18)"><tspan x="0" y="-92">FOTO</tspan><tspan x="0" y="-80">EXCLUSIVA</tspan></text>
-          <text transform="translate(150,150) rotate(54)"><tspan x="0" y="-92">30%</tspan><tspan x="0" y="-80">DESCUENTO</tspan></text>
-          <text transform="translate(150,150) rotate(90)"><tspan x="0" y="-92">AUDIO</tspan><tspan x="0" y="-80">EXCLUSIVO</tspan></text>
-          <text transform="translate(150,150) rotate(126)"><tspan x="0" y="-92">VIDEO</tspan><tspan x="0" y="-80">EXCLUSIVO</tspan></text>
-          <text transform="translate(150,150) rotate(162)"><tspan x="0" y="-92">SEXTING</tspan><tspan x="0" y="-80">15 MIN</tspan></text>
-          <text transform="translate(150,150) rotate(198)"><tspan x="0" y="-92">PACK</tspan><tspan x="0" y="-80">FOTOS HOT</tspan></text>
-          <text transform="translate(150,150) rotate(234)"><tspan x="0" y="-92">PACK</tspan><tspan x="0" y="-80">VIDEOS</tspan></text>
-          <text transform="translate(150,150) rotate(270)"><tspan x="0" y="-92">PREMIO</tspan><tspan x="0" y="-80">SORPRESA</tspan></text>
-          <text transform="translate(150,150) rotate(306)"><tspan x="0" y="-92">VIDEOLLAMADA</tspan><tspan x="0" y="-80">5 MIN</tspan></text>
-          <text transform="translate(150,150) rotate(342)"><tspan x="0" y="-92">UNA CENA</tspan><tspan x="0" y="-80">CONMIGO</tspan></text>
+        <!-- Radial labels (text along each slice, reading outwards) -->
+        <g font-family="Poppins,sans-serif" font-weight="700" fill="white" font-size="7.2" text-anchor="middle" dominant-baseline="central" letter-spacing="0.4">
+          <!-- Slice 0: 0°-36° center=18° -->
+          <g transform="translate(150,150) rotate(108)"><text transform="rotate(-90)" y="-85" x="0" font-size="6">UNA CENA</text><text transform="rotate(-90)" y="-73" x="0" font-size="6">CONMIGO 🍷</text></g>
+          <!-- Slice 1: 36°-72° center=54° -->
+          <g transform="translate(150,150) rotate(144)"><text transform="rotate(-90)" y="-85" x="0" font-size="6.5">DICKRATE</text><text transform="rotate(-90)" y="-73" x="0" font-size="6">🔥</text></g>
+          <!-- Slice 2: 72°-108° center=90° -->
+          <g transform="translate(150,150) rotate(180)"><text transform="rotate(-90)" y="-85" x="0" font-size="6">30%</text><text transform="rotate(-90)" y="-73" x="0" font-size="6">DESCUENTO 🏷️</text></g>
+          <!-- Slice 3: 108°-144° center=126° -->
+          <g transform="translate(150,150) rotate(216)"><text transform="rotate(-90)" y="-85" x="0" font-size="5.5">AUDIO</text><text transform="rotate(-90)" y="-73" x="0" font-size="5.5">EXCLUSIVO 🎧</text></g>
+          <!-- Slice 4: 144°-180° center=162° -->
+          <g transform="translate(150,150) rotate(252)"><text transform="rotate(-90)" y="-85" x="0" font-size="5.5">VIDEO</text><text transform="rotate(-90)" y="-73" x="0" font-size="5.5">EXCLUSIVO 🎬</text></g>
+          <!-- Slice 5: 180°-216° center=198° -->
+          <g transform="translate(150,150) rotate(288)"><text transform="rotate(-90)" y="-85" x="0" font-size="5.5">SEXTING</text><text transform="rotate(-90)" y="-73" x="0" font-size="5.5">15 MIN 💬</text></g>
+          <!-- Slice 6: 216°-252° center=234° -->
+          <g transform="translate(150,150) rotate(324)"><text transform="rotate(-90)" y="-85" x="0" font-size="5.5">PACK FOTOS</text><text transform="rotate(-90)" y="-73" x="0" font-size="5.5">HOT 📸</text></g>
+          <!-- Slice 7: 252°-288° center=270° -->
+          <g transform="translate(150,150) rotate(0)"><text transform="rotate(-90)" y="-85" x="0" font-size="5.5">PACK</text><text transform="rotate(-90)" y="-73" x="0" font-size="5.5">VIDEOS 🎥</text></g>
+          <!-- Slice 8: 288°-324° center=306° -->
+          <g transform="translate(150,150) rotate(36)"><text transform="rotate(-90)" y="-85" x="0" font-size="5.5">PREMIO</text><text transform="rotate(-90)" y="-73" x="0" font-size="5.5">SORPRESA 🎁</text></g>
+          <!-- Slice 9: 324°-360° center=342° -->
+          <g transform="translate(150,150) rotate(72)"><text transform="rotate(-90)" y="-85" x="0" font-size="5">VIDEOLLAMADA</text><text transform="rotate(-90)" y="-73" x="0" font-size="5">5 MIN 📹</text></g>
         </g>
         <!-- Center hub -->
-        <circle cx="150" cy="150" r="24" fill="#0a0612" stroke="url(#rg)" stroke-width="3"/>
-        <circle cx="150" cy="150" r="13" fill="url(#rg)" opacity=".85"/>
-        <circle cx="150" cy="150" r="5" fill="white" opacity=".9"/>
+        <circle cx="150" cy="150" r="22" fill="#0a0612" stroke="url(#rg)" stroke-width="2.5"/>
+        <circle cx="150" cy="150" r="12" fill="url(#rg)" opacity=".85"/>
+        <circle cx="150" cy="150" r="4" fill="white" opacity=".9"/>
       </svg>
       <div class="hero-badge">✨ 10 temas · Personalizable · Tu marca</div>
     </div>
@@ -418,18 +446,7 @@ section{padding:100px 0;}
 </div>
 </header>
 
-<!-- TRUST BAR -->
-<div class="trust-bar">
-<div class="container">
-<div class="trust-items">
-  <div class="trust-item"><span class="icon">🔒</span> Premios seguros en servidor</div>
-  <div class="trust-item"><span class="icon">⚡</span> Setup en 5 minutos</div>
-  <div class="trust-item"><span class="icon">📱</span> Mobile-first</div>
-  <div class="trust-item"><span class="icon">🎨</span> 10 temas visuales</div>
-  <div class="trust-item"><span class="icon">📊</span> Analíticas en tiempo real</div>
-</div>
-</div>
-</div>
+
 
 <!-- ===== CÓMO FUNCIONA ===== -->
 <section id="como-funciona">
@@ -548,12 +565,19 @@ section{padding:100px 0;}
     <span class="section-tag">Precios</span>
     <h2 class="section-title">Planes para cada nivel</h2>
     <p class="section-subtitle mx-auto">Empieza con el plan Solo y escala cuando lo necesites. Sin permanencia, cancela cuando quieras.</p>
+    <div class="pricing-toggle">
+      <span class="active" id="label-monthly">Mensual</span>
+      <div class="toggle-switch" id="pricing-toggle" role="switch" aria-checked="false" tabindex="0"></div>
+      <span id="label-annual">Anual</span>
+      <span class="pricing-save">AHORRA 20%</span>
+    </div>
   </div>
   <div class="pricing-grid">
     <!-- SOLO -->
     <div class="price-card">
       <div class="plan-name">Solo</div>
-      <div class="plan-price">49€ <span>/mes</span></div>
+      <div class="plan-price" data-monthly="49" data-annual="39"><span class="price-amount">49€</span> <span>/mes</span></div>
+      <div class="plan-annual-note">Facturado 468€/año (ahorra 120€)</div>
       <div class="plan-desc">Para modelos independientes</div>
       <ul>
         <li><span class="check">✓</span> 100 códigos por mes</li>
@@ -571,7 +595,8 @@ section{padding:100px 0;}
     <!-- PRO -->
     <div class="price-card featured">
       <div class="plan-name">Pro</div>
-      <div class="plan-price">89€ <span>/mes</span></div>
+      <div class="plan-price" data-monthly="89" data-annual="71"><span class="price-amount">89€</span> <span>/mes</span></div>
+      <div class="plan-annual-note">Facturado 852€/año (ahorra 216€)</div>
       <div class="plan-desc">Para modelos top</div>
       <ul>
         <li><span class="check">✓</span> Códigos ilimitados</li>
@@ -589,7 +614,8 @@ section{padding:100px 0;}
     <!-- AGENCY -->
     <div class="price-card">
       <div class="plan-name">Agency</div>
-      <div class="plan-price">349€ <span>/mes</span></div>
+      <div class="plan-price" data-monthly="349" data-annual="279"><span class="price-amount">349€</span> <span>/mes</span></div>
+      <div class="plan-annual-note">Facturado 3.348€/año (ahorra 840€)</div>
       <div class="plan-desc">Para agencias y managers</div>
       <ul>
         <li><span class="check">✓</span> Códigos ilimitados</li>
@@ -787,6 +813,33 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     }
   });
 });
+
+// Pricing toggle (monthly ↔ annual)
+const pricingToggle = document.getElementById('pricing-toggle');
+const labelMonthly = document.getElementById('label-monthly');
+const labelAnnual = document.getElementById('label-annual');
+let isAnnual = false;
+function updatePrices() {
+  document.querySelectorAll('.plan-price[data-monthly]').forEach(el => {
+    const m = el.dataset.monthly;
+    const a = el.dataset.annual;
+    const amountEl = el.querySelector('.price-amount');
+    if (isAnnual) {
+      amountEl.innerHTML = '<span class="price-old">' + m + '€</span>' + a + '€';
+    } else {
+      amountEl.textContent = m + '€';
+    }
+  });
+  document.querySelectorAll('.plan-annual-note').forEach(n => {
+    n.classList.toggle('visible', isAnnual);
+  });
+  labelMonthly.classList.toggle('active', !isAnnual);
+  labelAnnual.classList.toggle('active', isAnnual);
+  pricingToggle.classList.toggle('annual', isAnnual);
+  pricingToggle.setAttribute('aria-checked', isAnnual);
+}
+pricingToggle.addEventListener('click', () => { isAnnual = !isAnnual; updatePrices(); });
+pricingToggle.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); isAnnual = !isAnnual; updatePrices(); }});
 </script>
 </body>
 </html>
