@@ -142,6 +142,42 @@ textarea.form-input { min-height: 100px; resize: vertical; }
 .char-counter { font-size: .75rem; color: var(--text-soft); text-align: right; margin-top: 4px; }
 .char-counter.over { color: var(--danger); }
 
+/* Prize management */
+.prize-input-row { display: flex; gap: 10px; margin-bottom: 12px; }
+.prize-input-row input { flex: 1; }
+.prize-list { display: flex; flex-direction: column; gap: 8px; }
+.prize-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border);
+  border-radius: 10px; padding: 10px 14px; transition: all .2s;
+}
+.prize-item:hover { border-color: var(--accent2); }
+.prize-item .prize-name { flex: 1; font-size: .9rem; font-weight: 500; }
+.prize-item .prize-actions { display: flex; gap: 6px; }
+.prize-limit-msg { font-size: .8rem; color: var(--text-soft); margin-top: 8px; }
+.save-prizes-bar {
+  margin-top: 12px; padding: 12px; background: rgba(255,0,102,0.08);
+  border: 1px solid rgba(255,0,102,0.3); border-radius: 10px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.save-prizes-bar .hint { font-size: .85rem; color: var(--accent); }
+
+/* Prize selector (code creation) */
+.prize-selector { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.prize-selector-item {
+  display: flex; align-items: center; gap: 10px; cursor: pointer;
+  background: rgba(255,255,255,0.04); border: 2px solid var(--glass-border);
+  border-radius: 10px; padding: 10px 14px; transition: all .2s; user-select: none;
+}
+.prize-selector-item:hover { border-color: var(--accent2); }
+.prize-selector-item.selected { border-color: var(--accent); background: rgba(255,0,102,0.1); }
+.prize-selector-item input { display: none; }
+.prize-selector-item .check-icon { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: .75rem; flex-shrink: 0; transition: all .2s; }
+.prize-selector-item.selected .check-icon { border-color: var(--accent); background: var(--accent); }
+.prize-selector-item .prize-label { flex: 1; font-size: .9rem; }
+.selector-actions { display: flex; gap: 8px; margin-top: 8px; }
+.selector-hint { font-size: .8rem; color: var(--text-soft); margin-top: 6px; }
+
 /* Theme selector */
 .themes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
 .theme-card {
@@ -354,10 +390,16 @@ textarea.form-input { min-height: 100px; resize: vertical; }
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
     <div>
       <div class="card">
-        <div class="card-title">🎁 Premios globales</div>
-        <div class="form-group">
-          <textarea id="cfg-prizes" class="form-input" placeholder="Un premio por línea (mín 2, máx 10)" rows="6"></textarea>
-          <div class="char-counter"><span id="prizes-count">0</span>/10 premios</div>
+        <div class="card-title">🎁 Premios de la Ruleta</div>
+        <div class="prize-input-row">
+          <input type="text" id="cfg-new-prize" class="form-input" placeholder="Nombre del nuevo premio..." maxlength="40">
+          <button class="btn btn-primary btn-sm" id="cfg-add-prize-btn" style="white-space:nowrap">➕ Añadir</button>
+        </div>
+        <div class="prize-list" id="cfg-prize-list"></div>
+        <div class="prize-limit-msg"><span id="prizes-count">0</span>/10 premios</div>
+        <div id="save-prizes-bar" class="save-prizes-bar" style="display:none">
+          <span class="hint">⚠️ Tienes cambios sin guardar</span>
+          <button class="btn btn-primary btn-sm" id="save-prizes-btn">💾 Guardar premios</button>
         </div>
       </div>
       <div class="card">
@@ -466,8 +508,13 @@ textarea.form-input { min-height: 100px; resize: vertical; }
     </div>
   </div>
   <div class="form-group">
-    <label>Premios (dejar vacío para usar globales)</label>
-    <textarea id="create-prizes" class="form-input" placeholder="Un premio por línea" rows="4"></textarea>
+    <label>🎯 Selecciona los premios que le van a tocar</label>
+    <div class="prize-selector" id="create-prize-selector"></div>
+    <div class="selector-actions" id="selector-actions">
+      <button type="button" class="btn btn-outline btn-sm" onclick="selectAllCreatePrizes()">Seleccionar todos</button>
+      <button type="button" class="btn btn-outline btn-sm" onclick="clearAllCreatePrizes()">Limpiar selección</button>
+    </div>
+    <div class="selector-hint" id="selector-hint"></div>
   </div>
   <div style="display:flex;gap:12px;margin-top:16px">
     <button class="btn btn-primary" id="create-code-btn" style="flex:1">✨ Crear código</button>
@@ -534,6 +581,9 @@ let session = null;
 let modelConfig = null;
 let allCodes = [];
 let pollInterval = null;
+let premiosLocales = [];
+let premiosOriginales = [];
+let premiosModificados = false;
 
 const THEMES = {
   dark_luxury:  { name:'Dark Luxury',   emoji:'💎',   plan:'solo', colors:['#ff0066','#b300ff','#1a0a1e'] },
@@ -741,10 +791,82 @@ async function loadLiveSpins() {
 // CÓDIGOS
 // =============================================================================
 function registerCodeEvents() {
-  document.getElementById('open-create-btn').addEventListener('click', () => openModal('modal-create'));
+  document.getElementById('open-create-btn').addEventListener('click', openCreateCodeModal);
   document.getElementById('create-code-btn').addEventListener('click', doCreateCode);
   document.getElementById('filter-status').addEventListener('change', renderCodes);
   document.getElementById('filter-search').addEventListener('input', renderCodes);
+}
+
+function openCreateCodeModal() {
+  document.getElementById('create-spins').value = modelConfig.spins_per_code || 3;
+  renderPrizeSelector();
+  updatePrizeSelectorMode();
+  openModal('modal-create');
+}
+
+function renderPrizeSelector() {
+  const selector = document.getElementById('create-prize-selector');
+  const prizes = Array.isArray(modelConfig.prizes) ? modelConfig.prizes : premiosLocales;
+  if (prizes.length === 0) {
+    selector.innerHTML = '<div style="text-align:center;color:var(--text-soft);padding:16px;font-size:.85rem">No hay premios configurados. Ve a Configuración para añadir premios.</div>';
+    return;
+  }
+  selector.innerHTML = prizes.map((p, i) => `
+    <div class="prize-selector-item" data-index="${i}" onclick="toggleCreatePrize(this)">
+      <input type="checkbox" value="${esc(p)}">
+      <span class="check-icon">✓</span>
+      <span class="prize-label">${esc(p)}</span>
+    </div>
+  `).join('');
+}
+
+function updatePrizeSelectorMode() {
+  const spins = parseInt(document.getElementById('create-spins').value) || 1;
+  const isRadio = spins === 1;
+  const actionsDiv = document.getElementById('selector-actions');
+  const hint = document.getElementById('selector-hint');
+  actionsDiv.style.display = isRadio ? 'none' : '';
+  hint.textContent = isRadio ? 'Selecciona el premio que ganará' : `Selecciona al menos ${spins} premios para ${spins} tiradas`;
+  // Clear selections when mode changes
+  document.querySelectorAll('#create-prize-selector .prize-selector-item').forEach(item => {
+    item.classList.remove('selected');
+    item.querySelector('input').checked = false;
+  });
+}
+
+function toggleCreatePrize(el) {
+  const spins = parseInt(document.getElementById('create-spins').value) || 1;
+  const isRadio = spins === 1;
+  const cb = el.querySelector('input');
+  if (isRadio) {
+    document.querySelectorAll('#create-prize-selector .prize-selector-item').forEach(item => {
+      item.classList.remove('selected');
+      item.querySelector('input').checked = false;
+    });
+    cb.checked = true;
+    el.classList.add('selected');
+  } else {
+    cb.checked = !cb.checked;
+    el.classList.toggle('selected', cb.checked);
+  }
+}
+
+function selectAllCreatePrizes() {
+  document.querySelectorAll('#create-prize-selector .prize-selector-item').forEach(item => {
+    item.classList.add('selected');
+    item.querySelector('input').checked = true;
+  });
+}
+
+function clearAllCreatePrizes() {
+  document.querySelectorAll('#create-prize-selector .prize-selector-item').forEach(item => {
+    item.classList.remove('selected');
+    item.querySelector('input').checked = false;
+  });
+}
+
+function getSelectedCreatePrizes() {
+  return [...document.querySelectorAll('#create-prize-selector .prize-selector-item input:checked')].map(cb => cb.value);
 }
 
 async function loadCodes() {
@@ -811,12 +933,12 @@ async function doCreateCode() {
   if (!fanName) { toast('El nombre del fan es obligatorio', 'error'); return; }
   const spins = parseInt(document.getElementById('create-spins').value) || 3;
   const expiresVal = document.getElementById('create-expires').value;
-  const prizesText = document.getElementById('create-prizes').value.trim();
-  const prizes = prizesText ? prizesText.split('\n').map(p => p.trim()).filter(Boolean) : null;
+  const selectedPrizes = getSelectedCreatePrizes();
 
-  if (prizes && (prizes.length < 2 || prizes.length > 10)) {
-    toast('Los premios deben ser entre 2 y 10', 'error'); return;
-  }
+  if (selectedPrizes.length === 0) { toast('Selecciona al menos un premio', 'error'); return; }
+  if (selectedPrizes.length < spins) { toast(`Necesitas al menos ${spins} premios para ${spins} tiradas`, 'error'); return; }
+
+  const prizes = selectedPrizes;
 
   const btn = document.getElementById('create-code-btn');
   btn.disabled = true; btn.textContent = 'Creando...';
@@ -849,7 +971,6 @@ async function doCreateCode() {
 
     // Reset form
     document.getElementById('create-fan').value = '';
-    document.getElementById('create-prizes').value = '';
     document.getElementById('create-expires').value = '';
     document.getElementById('create-spins').value = modelConfig.spins_per_code || 3;
 
@@ -915,12 +1036,9 @@ function showTemplates(code, fanName) {
 // CONFIGURACIÓN
 // =============================================================================
 function registerConfigEvents() {
-  document.getElementById('cfg-prizes').addEventListener('input', function() {
-    const lines = this.value.split('\n').filter(l => l.trim()).length;
-    document.getElementById('prizes-count').textContent = lines;
-    document.getElementById('prizes-count').parentElement.classList.toggle('over', lines > 10);
-    drawPreview();
-  });
+  document.getElementById('cfg-add-prize-btn').addEventListener('click', addPrize);
+  document.getElementById('cfg-new-prize').addEventListener('keypress', e => { if (e.key === 'Enter') { e.preventDefault(); addPrize(); } });
+  document.getElementById('save-prizes-btn').addEventListener('click', doSavePrizes);
   document.getElementById('cfg-welcome').addEventListener('input', function() {
     document.getElementById('welcome-count').textContent = this.value.length;
     document.getElementById('welcome-count').parentElement.classList.toggle('over', this.value.length > 80);
@@ -930,13 +1048,15 @@ function registerConfigEvents() {
     document.getElementById('postprize-count').parentElement.classList.toggle('over', this.value.length > 100);
   });
   document.getElementById('save-config-btn').addEventListener('click', doSaveConfig);
+  document.getElementById('create-spins').addEventListener('change', updatePrizeSelectorMode);
 }
 
 function loadConfig() {
   if (!modelConfig) return;
-  const prizes = Array.isArray(modelConfig.prizes) ? modelConfig.prizes.join('\n') : '';
-  document.getElementById('cfg-prizes').value = prizes;
-  document.getElementById('prizes-count').textContent = (prizes.match(/\n/g) || []).length + (prizes.trim() ? 1 : 0);
+  premiosLocales = Array.isArray(modelConfig.prizes) ? [...modelConfig.prizes] : [];
+  premiosOriginales = [...premiosLocales];
+  premiosModificados = false;
+  renderPrizeList();
   document.getElementById('cfg-welcome').value = modelConfig.welcome_message || '';
   document.getElementById('welcome-count').textContent = (modelConfig.welcome_message || '').length;
   document.getElementById('cfg-postprize').value = modelConfig.post_prize_message || '';
@@ -947,6 +1067,79 @@ function loadConfig() {
 
   renderThemeGrid();
   drawPreview();
+}
+
+// --- Prize CRUD ---
+function addPrize() {
+  const input = document.getElementById('cfg-new-prize');
+  const name = input.value.trim();
+  if (!name) return;
+  if (premiosLocales.length >= 10) { toast('Máximo 10 premios', 'error'); return; }
+  premiosLocales.push(name);
+  input.value = '';
+  markPrizesChanged();
+  renderPrizeList();
+}
+
+function editPrize(index) {
+  const current = premiosLocales[index];
+  const newName = prompt('Editar premio:', current);
+  if (newName === null || !newName.trim()) return;
+  premiosLocales[index] = newName.trim();
+  markPrizesChanged();
+  renderPrizeList();
+}
+
+function deletePrize(index) {
+  premiosLocales.splice(index, 1);
+  markPrizesChanged();
+  renderPrizeList();
+}
+
+function markPrizesChanged() {
+  premiosModificados = JSON.stringify(premiosLocales) !== JSON.stringify(premiosOriginales);
+  document.getElementById('save-prizes-bar').style.display = premiosModificados ? '' : 'none';
+}
+
+function renderPrizeList() {
+  const list = document.getElementById('cfg-prize-list');
+  document.getElementById('prizes-count').textContent = premiosLocales.length;
+  const addBtn = document.getElementById('cfg-add-prize-btn');
+  const addInput = document.getElementById('cfg-new-prize');
+  addBtn.disabled = premiosLocales.length >= 10;
+  addInput.disabled = premiosLocales.length >= 10;
+
+  if (premiosLocales.length === 0) {
+    list.innerHTML = '<div style="text-align:center;color:var(--text-soft);padding:16px;font-size:.85rem">No hay premios. Añade al menos 2 para la ruleta.</div>';
+    drawPreview();
+    return;
+  }
+  list.innerHTML = premiosLocales.map((p, i) => `
+    <div class="prize-item">
+      <span class="prize-name">${esc(p)}</span>
+      <div class="prize-actions">
+        <button class="btn btn-outline btn-sm" onclick="editPrize(${i})" title="Editar">✏️</button>
+        <button class="btn btn-outline btn-sm" onclick="deletePrize(${i})" title="Eliminar">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+  drawPreview();
+}
+
+async function doSavePrizes() {
+  if (premiosLocales.length < 2) { toast('Necesitas al menos 2 premios', 'error'); return; }
+  const btn = document.getElementById('save-prizes-btn');
+  btn.disabled = true; btn.textContent = 'Guardando...';
+  try {
+    await apiFetch('/api/admin-update-config', { method: 'POST', body: JSON.stringify({ slug: SLUG, prizes: premiosLocales }) });
+    const cfgRes = await apiFetch('/api/tenant-config?slug=' + SLUG);
+    modelConfig = cfgRes;
+    premiosOriginales = [...premiosLocales];
+    premiosModificados = false;
+    document.getElementById('save-prizes-bar').style.display = 'none';
+    toast('Premios guardados', 'success');
+  } catch(e) { toast(e.message, 'error'); }
+  btn.disabled = false; btn.textContent = '💾 Guardar premios';
 }
 
 function renderThemeGrid() {
@@ -977,13 +1170,10 @@ async function doSaveConfig() {
   const btn = document.getElementById('save-config-btn');
   btn.disabled = true; btn.textContent = 'Guardando...';
 
-  const prizesText = document.getElementById('cfg-prizes').value.trim();
-  const prizes = prizesText.split('\n').map(p => p.trim()).filter(Boolean);
   const selectedTheme = document.querySelector('.theme-card.active')?.dataset.theme;
 
   const body = {
     slug: SLUG,
-    prizes,
     welcome_message: document.getElementById('cfg-welcome').value,
     post_prize_message: document.getElementById('cfg-postprize').value,
     spins_per_code: parseInt(document.getElementById('cfg-spins').value) || 3,
@@ -994,7 +1184,6 @@ async function doSaveConfig() {
 
   try {
     await apiFetch('/api/admin-update-config', { method: 'POST', body: JSON.stringify(body) });
-    // Refresh config
     const cfgRes = await apiFetch('/api/tenant-config?slug=' + SLUG);
     modelConfig = cfgRes;
     toast('Configuración guardada', 'success');
@@ -1009,8 +1198,7 @@ function drawPreview() {
   const canvas = document.getElementById('preview-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  const prizesText = document.getElementById('cfg-prizes').value.trim();
-  const prizes = prizesText ? prizesText.split('\n').map(p => p.trim()).filter(Boolean) : ['Premio 1', 'Premio 2'];
+  const prizes = premiosLocales.length >= 2 ? premiosLocales : ['Premio 1', 'Premio 2'];
   const themeId = document.querySelector('.theme-card.active')?.dataset.theme || 'dark_luxury';
   const theme = THEMES[themeId];
   const total = prizes.length;
