@@ -250,9 +250,15 @@ if (urlPlan && ['solo','pro','agency'].includes(urlPlan)) {
   document.getElementById('plan').value = urlPlan;
 }
 
-// Pre-fill referral from localStorage
+// Pre-fill referral from URL param or localStorage
+const urlParams = new URLSearchParams(window.location.search);
+const urlRef = urlParams.get('ref');
 const savedRef = localStorage.getItem('playofans_ref');
-if (savedRef) document.getElementById('referral_code').value = savedRef;
+const refValue = urlRef || savedRef || '';
+if (refValue) {
+  document.getElementById('referral_code').value = refValue;
+  localStorage.setItem('playofans_ref', refValue);
+}
 
 // Slug validation with debounce
 let slugTimer = null;
