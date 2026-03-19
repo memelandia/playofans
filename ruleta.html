@@ -1168,9 +1168,9 @@ function getCurrentRotation(element) {
     return 0;
 }
 
-const soundClick = new Audio('sounds/click.wav');
-const soundWin = new Audio('sounds/win.wav');
-const soundSpin = new Audio('sounds/spin.wav');
+const soundClick = new Audio('/sounds/click.wav');
+const soundWin = new Audio('/sounds/win.wav');
+const soundSpin = new Audio('/sounds/spin.wav');
 
 // =============================================================================
 // SISTEMA DE NOTIFICACIONES
@@ -1485,13 +1485,26 @@ async function girarRuleta() {
     girarBtn.disabled = true;
     girarBtn.textContent = 'Girando... 🎲';
 
+    const opcionesCanvas = document.getElementById('opciones');
+
+    // FASE 1: Empezar a girar INMEDIATAMENTE (antes de llamar al API)
+    const startAngle = getCurrentRotation(opcionesCanvas);
+    opcionesCanvas.classList.remove('is-idling');
+    opcionesCanvas.style.transition = 'none';
+    opcionesCanvas.style.transform = `rotate(${startAngle}deg)`;
+    opcionesCanvas.offsetWidth; // forzar reflow
+
+    // Giro rápido visual mientras esperamos al servidor
+    opcionesCanvas.style.transition = 'transform 10s linear';
+    opcionesCanvas.style.transform = `rotate(${startAngle + 3600}deg)`;
+
     soundSpin.loop = true;
     if (!isMuted) soundSpin.play().catch(()=>{});
 
     mostrarMensaje("🎯 ¡La ruleta está girando mágicamente! ✨");
 
     try {
-        // 1. Call prepare-spin (server picks the prize)
+        // Llamar a prepare-spin (mientras la ruleta ya gira visualmente)
         const spinRes = await fetch('/api/prepare-spin', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1500,6 +1513,10 @@ async function girarRuleta() {
         const spinData = await spinRes.json();
 
         if (!spinRes.ok) {
+            // Frenar la ruleta
+            const stopAngle = getCurrentRotation(opcionesCanvas);
+            opcionesCanvas.style.transition = 'none';
+            opcionesCanvas.style.transform = `rotate(${stopAngle}deg)`;
             mostrarNotificacion(spinData.error || 'Error al preparar la tirada', 'error');
             mostrarMensaje(spinData.error || 'Error');
             soundSpin.pause();
@@ -1510,37 +1527,33 @@ async function girarRuleta() {
 
         const { prize: premioGanado, wheelIndex, token, recovered } = spinData;
 
-        // Save token for recovery
+        // Guardar token para recovery
         localStorage.setItem('pof_token_' + SLUG, JSON.stringify({ token, code: codigoActual }));
 
         if (recovered) mostrarNotificacion('Recuperando tirada anterior...', 'success');
 
-        // Usar wheelIndex directamente (el servidor ya eligió el premio)
-        const indiceEnRuletaCompleta = wheelIndex;
-
-        // --- INICIO DEL BLOQUE DE ANIMACIÓN (EXACTO del original) ---
-        const opcionesCanvas = document.getElementById('opciones');
-
-        // 1. Obtener la rotación actual y detener la animación CSS
-        const currentAngle = getCurrentRotation(opcionesCanvas);
-        opcionesCanvas.classList.remove('is-idling');
+        // FASE 2: Desacelerar hacia el premio correcto
+        const midAngle = getCurrentRotation(opcionesCanvas);
         opcionesCanvas.style.transition = 'none';
-        opcionesCanvas.style.transform = `rotate(${currentAngle}deg)`;
+        opcionesCanvas.style.transform = `rotate(${midAngle}deg)`;
+        opcionesCanvas.offsetWidth; // forzar reflow
 
-        // Forzar un reflow del navegador
-        opcionesCanvas.offsetWidth; 
-
-        // 2. Calcular el ángulo final del giro
+        // Calcular ángulo final correcto
+        // La flecha está arriba (270° en coordenadas canvas desde las 3 en punto)
+        // Para que el centro del premio wheelIndex quede bajo la flecha:
+        // rotation = 270 - centroDelPremio (mod 360)
         const anguloPorPremio = 360 / premiosDisponibles.length;
-        const anguloDeGiro = (360 * 6) + (indiceEnRuletaCompleta * anguloPorPremio) + (anguloPorPremio / 2);
-        const anguloFinalTotal = currentAngle + anguloDeGiro;
+        const centroDelPremio = wheelIndex * anguloPorPremio + anguloPorPremio / 2;
+        const targetAngle = ((270 - centroDelPremio) % 360 + 360) % 360;
+        const delta = ((targetAngle - (midAngle % 360)) % 360 + 360) % 360;
+        const anguloFinalTotal = midAngle + 360 * 5 + delta;
 
-        // 3. Aplicar la transición para el giro rápido
+        // Aplicar transición de desaceleración
         opcionesCanvas.style.transition = "transform 5s cubic-bezier(.17,.67,.83,.67)";
         opcionesCanvas.style.transform = `rotate(${anguloFinalTotal}deg)`;
 
-        // 4. Procesar el resultado después de que termine el giro
-        setTimeout(async () => {
+        // Procesar resultado cuando termine la animación
+        setTimeout(() => {
             soundSpin.pause();
             soundSpin.currentTime = 0;
             if (!isMuted) soundWin.play().catch(()=>{});
@@ -1552,33 +1565,27 @@ async function girarRuleta() {
                 gravity: 0.8
             });
 
-            // Detener la transición para que la ruleta se quede fija
+            // Detener la transición
             opcionesCanvas.style.transition = 'none';
 
-            // Confirm spin con el servidor
-            try {
-                const confirmRes = await fetch('/api/confirm-spin', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token })
-                });
-                const confirmData = await confirmRes.json();
-                if (confirmRes.ok && confirmData.success) {
-                    tiradasRestantes = confirmData.remaining_spins;
-                }
-            } catch(e) {
-                console.error('Error confirming spin:', e);
-            }
-
-            // Clean token
-            localStorage.removeItem('pof_token_' + SLUG);
-
-            // Mostrar resultado con mensaje post-premio personalizado
+            // Mostrar popup INMEDIATAMENTE (sin esperar confirm-spin)
             const postMsg = (mensajePremio || '').replace(/\{nombre\}/gi, nombreUsuario);
             mostrarPopupPremio(premioGanado, postMsg);
             mostrarMensaje(`🎉 ¡Felicidades ${nombreUsuario}! Ganaste: <b>${premioGanado}</b>`);
             agregarPremioAlHistorial(premioGanado);
-            mostrarInfoTiradas(tiradasRestantes, expiresAt);
+
+            // Confirmar spin en segundo plano (no bloquea popup)
+            fetch('/api/confirm-spin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token })
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    tiradasRestantes = data.remaining_spins;
+                }
+                localStorage.removeItem('pof_token_' + SLUG);
+                mostrarInfoTiradas(tiradasRestantes, expiresAt);
+            }).catch(e => console.error('Error confirming spin:', e));
 
             // Reset button after 3s
             setTimeout(() => {
@@ -1586,9 +1593,12 @@ async function girarRuleta() {
             }, 3000);
 
         }, 5200);
-        // --- FIN DEL BLOQUE DE ANIMACIÓN ---
 
     } catch (err) {
+        // Frenar la ruleta en caso de error
+        const stopAngle = getCurrentRotation(opcionesCanvas);
+        opcionesCanvas.style.transition = 'none';
+        opcionesCanvas.style.transform = `rotate(${stopAngle}deg)`;
         soundSpin.pause();
         soundSpin.currentTime = 0;
         mostrarNotificacion('Error de conexión. Tu tirada está guardada.', 'error');

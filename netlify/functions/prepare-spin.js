@@ -68,10 +68,30 @@ exports.handler = async (event) => {
       });
     }
 
-    // Elegir premio ALEATORIAMENTE en el servidor
+    // Elegir premio ALEATORIAMENTE en el servidor (sin repetir)
     const prizes = code.prizes || model.prizes;
-    const wheelIndex = Math.floor(Math.random() * prizes.length);
-    const prize = prizes[wheelIndex];
+
+    // Obtener premios ya otorgados para este código (verificados + pendientes)
+    const { data: previousSpins } = await supabase
+      .from('spins')
+      .select('prize')
+      .eq('code_id', code.id);
+
+    const wonPrizes = (previousSpins || []).map(s => s.prize);
+
+    // Filtrar premios disponibles (no repetidos)
+    let available = prizes
+      .map((p, i) => ({ prize: p, index: i }))
+      .filter(p => !wonPrizes.includes(p.prize));
+
+    // Si todos los premios ya se ganaron, permitir cualquiera (fallback)
+    if (available.length === 0) {
+      available = prizes.map((p, i) => ({ prize: p, index: i }));
+    }
+
+    const chosen = available[Math.floor(Math.random() * available.length)];
+    const prize = chosen.prize;
+    const wheelIndex = chosen.index;
     const token = randomUUID();
 
     // Insertar spin con verified: false
