@@ -49,6 +49,10 @@ body.force-dark { color-scheme: dark; }
 75% { background-position: 0% 100%; }
 100% { background-position: 0% 50%; }
 }
+@keyframes slowRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
 .background-shapes { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
 .particle { position: absolute; pointer-events: none; opacity: 0.6; animation: floatParticle 8s ease-in-out infinite; }
 .particle.heart { font-size: 20px; color: var(--accent-principal); animation: floatHeart 10s ease-in-out infinite; }
@@ -437,11 +441,6 @@ font-family: 'Poppins', sans-serif; transition: all 0.3s ease;
         @keyframes fadeInUp {
             0% { opacity: 0; transform: translateY(30px) scale(0.9); }
             100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        
-        @keyframes slowRotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
         }
         
         .mensaje-update {
@@ -1727,11 +1726,9 @@ document.getElementById('popup-overlay').classList.add('show');
 function cerrarPopup() {
     if (!isMuted) soundClick.play().catch(()=>{});
     document.getElementById('popup-overlay').classList.remove('show');
-
-    // Volver a girar lentamente
-    if (!isSpinning) {
-        document.getElementById('opciones').classList.add('is-idling');
-    }
+    // NO re-añadir is-idling aquí.
+    // La ruleta se queda frozen en la posición del premio.
+    // Solo vuelve a girar cuando el usuario valide un nuevo código.
 }
 
 function mostrarMensaje(msg) {
