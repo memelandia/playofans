@@ -562,7 +562,7 @@ window.addEventListener('load', async () => {
     if (!initRes.ok) throw new Error(initData.error);
     sb = supabase.createClient(initData.url, initData.anonKey);
   } catch(e) {
-    document.body.innerHTML = '<div style="padding:40px;text-align:center;color:#e74c3c">Error al conectar con el servicio de autenticación</div>';
+    document.body.innerHTML = '<div style="padding:40px;text-align:center;color:#e74c3c">Error al conectar con el servicio de autenticación<br><small style="color:#a89cc8">' + (e.message || '') + '</small></div>';
     return;
   }
 
