@@ -46,7 +46,6 @@ exports.handler = async (event) => {
       // Combined analytics in parallel
       let combinedSpins = 0;
       let combinedCodesActive = 0;
-      const memberStats = {};
 
       if (memberIds.length > 0) {
         const [spinsRes, codesRes] = await Promise.all([

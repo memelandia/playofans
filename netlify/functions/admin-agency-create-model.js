@@ -38,6 +38,20 @@ exports.handler = async (event) => {
       return json(400, { error: 'Email, nombre y slug son obligatorios' });
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    if (!emailRegex.test(email.trim())) {
+      return json(400, { error: 'Email no válido' });
+    }
+
+    // Check email not already in use in models table
+    const { data: emailExists } = await supabase
+      .from('models')
+      .select('id')
+      .eq('email', email.trim())
+      .maybeSingle();
+
+    if (emailExists) return json(409, { error: 'Ya existe un modelo con este email' });
+
     const cleanSlug = slug.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
     if (cleanSlug.length < 3 || cleanSlug.length > 30) {
       return json(400, { error: 'Slug: 3-30 caracteres (letras, números, - y _)' });
@@ -94,7 +108,7 @@ exports.handler = async (event) => {
         email: email.trim(),
         plan: 'solo',
         code_prefix: prefix,
-        referral_code: 'REF-' + cleanSlug.toUpperCase(),
+        referral_code: 'REF-' + cleanSlug.toUpperCase() + '-' + Date.now().toString(36).slice(-4).toUpperCase(),
         subscription_expires_at: expiresAt.toISOString(),
         next_billing_date: nextBillingDate.toISOString().slice(0, 10),
         supabase_user_id: authData.user.id,
