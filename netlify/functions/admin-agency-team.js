@@ -104,12 +104,28 @@ exports.handler = async (event) => {
 
       const { data: member } = await supabase
         .from('models')
-        .select('id')
+        .select('id, supabase_user_id')
         .eq('slug', member_slug)
         .single();
 
       if (!member) return json(404, { error: 'Modelo "' + member_slug + '" no encontrado' });
       if (member.id === agency.id) return json(400, { error: 'No puedes añadirte a ti mismo' });
+
+      // Only allow linking models created by this agency (no supabase_user_id = orphan from sa-create)
+      // or models that the agency itself created (they share no auth user linkage)
+      // Security: check the model is not already in another agency
+      const { data: existingLink } = await supabase
+        .from('agency_members')
+        .select('agency_model_id')
+        .eq('member_model_id', member.id)
+        .maybeSingle();
+
+      if (existingLink) {
+        if (existingLink.agency_model_id === agency.id) {
+          return json(400, { error: 'Este modelo ya es miembro de tu equipo' });
+        }
+        return json(400, { error: 'Este modelo ya pertenece a otra agencia' });
+      }
 
       // Check limit
       const { count } = await supabase
