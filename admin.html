@@ -84,6 +84,8 @@ select.form-input { color-scheme: dark; }
 .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--glass-border); }
 .main { margin-left: var(--sidebar-w); flex: 1; padding: 28px; min-height: 100vh; }
 .page-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; }
+.team-member-card { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--bg2); border: 1px solid var(--glass-border); border-radius: 12px; }
+.team-member-card:hover { border-color: var(--accent); }
 .hamburger {
   display: none; position: fixed; top: 16px; left: 16px; z-index: 200;
   width: 40px; height: 40px; border-radius: 10px; background: var(--bg2);
@@ -355,6 +357,7 @@ textarea.form-input { min-height: 100px; resize: vertical; }
     <div class="nav-item" data-section="codes"><span class="icon">🎰</span> Códigos</div>
     <div class="nav-item" data-section="config"><span class="icon">⚙️</span> Configuración</div>
     <div class="nav-item" data-section="afiliados"><span class="icon">🤝</span> Afiliados</div>
+    <div class="nav-item" data-section="equipo" id="nav-equipo" style="display:none"><span class="icon">👥</span> Equipo</div>
     <div class="nav-item" data-section="settings"><span class="icon">🔧</span> Ajustes</div>
   </div>
   <div class="sidebar-footer">
@@ -587,6 +590,36 @@ textarea.form-input { min-height: 100px; resize: vertical; }
       <div style="margin-top:12px">• 10% de comisión acumulada como saldo a favor</div>
       <div>• Se descuenta automáticamente de tu próximo cobro</div>
       <div>• Durante los primeros 6 meses de cada referida</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== EQUIPO (Agency) ===== -->
+<section id="section-equipo" style="display:none">
+  <div class="page-title">👥 Mi Equipo</div>
+
+  <div class="stats-grid" id="team-stats">
+    <div class="stat-card"><div class="label">Modelos</div><div class="value accent" id="eq-count">—</div></div>
+    <div class="stat-card"><div class="label">Giros totales</div><div class="value" id="eq-spins">—</div></div>
+    <div class="stat-card"><div class="label">Códigos activos</div><div class="value success" id="eq-codes">—</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">➕ Añadir modelo al equipo</div>
+    <div style="display:flex;gap:8px;align-items:flex-end">
+      <div style="flex:1">
+        <input type="text" class="form-input" id="eq-add-slug" placeholder="Slug del modelo (ej: vickyluna)" maxlength="40">
+      </div>
+      <button class="btn btn-primary btn-sm" id="eq-add-btn" style="height:42px">Añadir</button>
+    </div>
+    <div id="eq-add-error" style="color:var(--danger);font-size:.85rem;margin-top:8px"></div>
+    <p style="font-size:.82rem;color:var(--text-soft);margin-top:12px">Máximo 8 modelos. Escribe el slug exacto del modelo que quieres añadir.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 Miembros del equipo <span style="font-size:.85rem;color:var(--text-soft)" id="eq-member-count"></span></div>
+    <div id="eq-members-list" style="display:flex;flex-direction:column;gap:12px">
+      <div style="text-align:center;color:var(--text-soft);padding:20px">Cargando...</div>
     </div>
   </div>
 </section>
@@ -850,6 +883,12 @@ async function initPanel() {
   registerCodeEvents();
   registerConfigEvents();
   registerSettingsEvents();
+
+  // Show Equipo tab only for agency plan
+  if (modelConfig.plan === 'agency') {
+    document.getElementById('nav-equipo').style.display = '';
+    registerEquipoEvents();
+  }
 }
 
 // =============================================================================
@@ -858,12 +897,14 @@ async function initPanel() {
 function switchSection(name) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.querySelector(`.nav-item[data-section="${name}"]`).classList.add('active');
-  ['dashboard','codes','config','afiliados','settings'].forEach(s => {
-    document.getElementById('section-' + s).style.display = s === name ? '' : 'none';
+  ['dashboard','codes','config','afiliados','equipo','settings'].forEach(s => {
+    const el = document.getElementById('section-' + s);
+    if (el) el.style.display = s === name ? '' : 'none';
   });
   if (name === 'codes') loadCodes();
   if (name === 'config') loadConfig();
   if (name === 'afiliados') loadAfiliados();
+  if (name === 'equipo') loadEquipo();
   if (name === 'settings') loadSettings();
   // Close mobile menu
   document.getElementById('sidebar').classList.remove('open');
@@ -1566,6 +1607,84 @@ function setTemplate(elId, text) {
 
 function copyText(text) {
   navigator.clipboard.writeText(text).then(() => toast('Copiado al portapapeles', 'success')).catch(() => { toast('No se pudo copiar', 'error'); });
+}
+
+// =============================================================================
+// EQUIPO (Agency)
+// =============================================================================
+function registerEquipoEvents() {
+  document.getElementById('eq-add-btn').addEventListener('click', addAgencyMember);
+  document.getElementById('eq-add-slug').addEventListener('keypress', e => { if (e.key === 'Enter') addAgencyMember(); });
+}
+
+async function loadEquipo() {
+  try {
+    const data = await apiFetch('/api/admin-agency-team?slug=' + SLUG);
+    document.getElementById('eq-count').textContent = data.totals.members + '/8';
+    document.getElementById('eq-spins').textContent = data.totals.spins;
+    document.getElementById('eq-codes').textContent = data.totals.codes_active;
+    document.getElementById('eq-member-count').textContent = '(' + data.totals.members + '/8)';
+    renderTeamMembers(data.members);
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function renderTeamMembers(members) {
+  const container = document.getElementById('eq-members-list');
+  if (!members || members.length === 0) {
+    container.innerHTML = '<div style="text-align:center;color:var(--text-soft);padding:24px">No hay miembros en tu equipo todavía.<br>Usa el formulario de arriba para añadir modelos.</div>';
+    return;
+  }
+  container.innerHTML = members.map(m => `
+    <div class="team-member-card">
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600;font-size:1rem">${esc(m.display_name)}</div>
+        <div style="font-size:.82rem;color:var(--text-soft)">/${esc(m.slug)} · ${m.active ? '<span style="color:var(--success)">Activa</span>' : '<span style="color:var(--danger)">Inactiva</span>'}</div>
+        <div style="display:flex;gap:16px;margin-top:6px;font-size:.82rem;color:var(--text-soft)">
+          <span>🎰 ${m.spins || 0} giros</span>
+          <span>🎫 ${m.codes_active || 0} códigos</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <a href="/${esc(m.slug)}/admin" target="_blank" class="btn btn-outline btn-sm" title="Abrir panel">📊</a>
+        <button class="btn btn-sm" style="background:var(--danger);color:#fff" onclick="removeAgencyMember('${m.id}','${esc(m.display_name)}')">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function addAgencyMember() {
+  const input = document.getElementById('eq-add-slug');
+  const errEl = document.getElementById('eq-add-error');
+  const btn = document.getElementById('eq-add-btn');
+  const slug = input.value.trim().toLowerCase();
+  errEl.textContent = '';
+  if (!slug) { errEl.textContent = 'Escribe un slug'; return; }
+  btn.disabled = true; btn.textContent = 'Añadiendo...';
+  try {
+    await apiFetch('/api/admin-agency-team?slug=' + SLUG, {
+      method: 'POST',
+      body: JSON.stringify({ member_slug: slug }),
+    });
+    input.value = '';
+    toast('Modelo añadida al equipo', 'success');
+    await loadEquipo();
+  } catch(e) {
+    errEl.textContent = e.message;
+  } finally {
+    btn.disabled = false; btn.textContent = 'Añadir';
+  }
+}
+
+async function removeAgencyMember(memberId, name) {
+  if (!confirm('¿Eliminar a ' + name + ' del equipo?')) return;
+  try {
+    await apiFetch('/api/admin-agency-team?slug=' + SLUG, {
+      method: 'DELETE',
+      body: JSON.stringify({ member_id: memberId }),
+    });
+    toast('Modelo eliminada del equipo', 'success');
+    await loadEquipo();
+  } catch(e) { toast(e.message, 'error'); }
 }
 
 function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }

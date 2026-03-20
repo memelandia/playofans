@@ -552,7 +552,7 @@ Todos los hallazgos organizados por prioridad. Incluye bugs, seguridad, inconsis
 
 ## FASE 6 — FEATURES FALTANTES
 
-### ⬜ NF1 · Panel de Agencia inexistente
+### ✅ NF1 · Panel de Agencia inexistente
 - **Referencia**: `contexto.md` L35 — "Agency: 349€/mes · hasta 8 modelos · panel unificado"
 - **Problema**: La tabla `agency_members` existe y `sa-agency-members.js` permite CRUD desde superadmin. Pero NO existe un panel para que la agencia misma gestione sus modelos. Una agencia debería poder:
   1. Ver dashboard consolidado de todos sus modelos
@@ -560,12 +560,13 @@ Todos los hallazgos organizados por prioridad. Incluye bugs, seguridad, inconsis
   3. Ver analytics combinados (total spins, total códigos)
   4. Gestionar facturación unificada
   5. Cambiar entre modelos sin cerrar sesión
-- **Implementación sugerida**: 
-  - Crear sección "Equipo" en `admin.html` visible solo si `plan === 'agency'`
-  - Endpoint `admin-agency-team.js` para listar/gestionar miembros
-  - RLS policies para que agency vea datos de sus miembros
-  - Dashboard card con métricas combinadas
-- **Prioridad**: 🔴 CRÍTICA (feature vendida pero no entregada)
+- **Implementación**: 
+  - Creada sección "Equipo" en `admin.html` visible solo si `plan === 'agency'`
+  - Endpoint `admin-agency-team.js` con GET (list + analytics), POST (add), DELETE (remove)
+  - Dashboard combinado: total giros, códigos activos, cards por miembro
+  - Botón para abrir panel de cada miembro en nueva pestaña
+  - Auth: JWT + ownership (supabase_user_id) + plan check
+- **Estado**: CORREGIDO
 
 ### ⬜ NF2 · Rasca y Gana
 - **Referencia**: `schema.sql` game_catalog seed — `'rasca'` listado
