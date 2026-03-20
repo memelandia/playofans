@@ -84,6 +84,7 @@ display: none;
 }
 .controls-container { display: flex; flex-direction: column; align-items: center; gap: 25px; }
 .ruleta-section { display: flex; flex-direction: column; align-items: center; gap: 30px; flex-shrink: 0; }
+.ruleta-wrap { position: relative; display: flex; align-items: center; justify-content: center; }
 .historial-container { display: flex; flex-direction: column; align-items: center; gap: 25px; }
 
 /* === ESTILOS DEL HISTORIAL DE PREMIOS === */
@@ -250,28 +251,39 @@ background: linear-gradient(135deg, var(--accent-principal), var(--accent-secund
 box-shadow: 0 0 50px rgba(255,0,102,0.5), 0 0 100px rgba(179,0,255,0.3), 0 15px 30px rgba(0,0,0,0.2);
 }
 
-/* LED lights ring */
-.ruleta-leds {
+/* Casino glow ring around wheel */
+.ruleta-ring {
 position: absolute;
-width: 480px;
-height: 480px;
+width: 490px;
+height: 490px;
 top: 50%;
 left: 50%;
 transform: translate(-50%, -50%);
 border-radius: 50%;
 pointer-events: none;
-z-index: 5;
+z-index: 4;
+background: conic-gradient(from 0deg, var(--accent-principal), var(--accent-secundario), transparent, var(--accent-principal), transparent, var(--accent-secundario), var(--accent-principal));
+-webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #fff calc(100% - 5px), #fff calc(100% - 1px), transparent 100%);
+mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #fff calc(100% - 5px), #fff calc(100% - 1px), transparent 100%);
+animation: ringRotate 4s linear infinite;
+filter: blur(1px);
+opacity: .8;
 }
-.led-dot {
+@keyframes ringRotate { to { transform: translate(-50%, -50%) rotate(360deg); } }
+.ruleta-ring-glow {
 position: absolute;
-width: 8px;
-height: 8px;
+width: 510px;
+height: 510px;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
 border-radius: 50%;
-background: var(--accent-principal);
-box-shadow: 0 0 8px var(--accent-principal);
-animation: ledBlink 1.2s ease-in-out infinite alternate;
+pointer-events: none;
+z-index: 3;
+background: radial-gradient(circle, transparent 55%, var(--accent-soft) 70%, transparent 85%);
+animation: glowPulse 2.5s ease-in-out infinite alternate;
 }
-@keyframes ledBlink { 0%{opacity:.3;box-shadow:0 0 4px var(--accent-principal)} 100%{opacity:1;box-shadow:0 0 12px var(--accent-principal),0 0 20px rgba(255,0,102,0.3)} }
+@keyframes glowPulse { 0%{opacity:.4;transform:translate(-50%,-50%) scale(1)} 100%{opacity:.8;transform:translate(-50%,-50%) scale(1.04)} }
 
 /* Confetti */
 .confetti-container {
@@ -340,6 +352,7 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 min-height: 35px; 
 backdrop-filter: blur(10px);
 border: 2px solid var(--glass-border);
+white-space: nowrap;
 }
 .form-title { 
 font-family: 'Poppins', sans-serif; 
@@ -699,6 +712,8 @@ width: 350px;
 height: 350px;
 border-width: 7px;
 }
+.ruleta-ring { width: 380px; height: 380px; }
+.ruleta-ring-glow { width: 400px; height: 400px; }
 
 #flecha {
 border-left-width: 20px;
@@ -808,6 +823,8 @@ width: 280px;
 height: 280px;
 border-width: 6px;
 }
+.ruleta-ring { width: 310px; height: 310px; }
+.ruleta-ring-glow { width: 330px; height: 330px; }
 
 #flecha {
 border-left-width: 18px;
@@ -882,6 +899,8 @@ width: 250px;
 height: 250px;
 border-width: 5px;
 }
+.ruleta-ring { width: 278px; height: 278px; }
+.ruleta-ring-glow { width: 296px; height: 296px; }
 
 #flecha {
 border-left-width: 15px;
@@ -964,13 +983,15 @@ font-size: 2rem;
 </div>
 </div>
 <div class="ruleta-section">
-<div class="ruleta-leds" id="ruleta-leds"></div>
+<div class="ruleta-wrap">
+<div class="ruleta-ring-glow"></div>
+<div class="ruleta-ring"></div>
 <div id="ruleta">
 <div id="flecha"></div>
 <canvas id="opciones" width="450" height="450"></canvas>
 </div>
-<button id="girarBtn" class="button" disabled>🎯 ¡GIRAR RULETA! 🎯</button>
 </div>
+<button id="girarBtn" class="button" disabled>🎯 ¡GIRAR RULETA! 🎯</button>
 <!-- Historial de premios -->
 <div class="historial-container" id="historial-container">
 <div class="historial-section">
@@ -1951,25 +1972,6 @@ window.addEventListener('load', async () => {
 
         // Crear partículas de fondo con colores del tema
         crearParticulasFondo();
-
-        // Generar LED dots alrededor de la ruleta
-        (function initLeds() {
-            const container = document.getElementById('ruleta-leds');
-            if (!container) return;
-            const count = 24;
-            const radius = 240;
-            for (let i = 0; i < count; i++) {
-                const dot = document.createElement('div');
-                dot.className = 'led-dot';
-                const angle = (i / count) * Math.PI * 2;
-                const x = 240 + Math.cos(angle) * radius - 4;
-                const y = 240 + Math.sin(angle) * radius - 4;
-                dot.style.left = x + 'px';
-                dot.style.top = y + 'px';
-                dot.style.animationDelay = (i * 0.1) + 's';
-                container.appendChild(dot);
-            }
-        })();
 
         // Ocultar pantalla de carga
         document.getElementById('screen-loading').style.display = 'none';
