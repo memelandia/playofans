@@ -17,7 +17,7 @@
   --sidebar-w: 260px;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; color-scheme: dark; }
 a { color: var(--accent2); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
@@ -252,6 +252,11 @@ textarea.form-input { min-height: 100px; resize: vertical; }
 .info-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: .9rem; gap: 16px; }
 .info-row:last-child { border-bottom: none; }
 .info-label { color: var(--text-soft); flex-shrink: 0; min-width: 140px; }
+.info-value { text-align: right; font-weight: 500; }
+.plan-badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+.plan-badge.solo { background: rgba(255,0,102,0.12); color: #ff0066; }
+.plan-badge.pro { background: rgba(255,215,0,0.12); color: #ffd700; }
+.plan-badge.agency { background: rgba(179,0,255,0.12); color: #b300ff; }
 .copyable { display: flex; align-items: center; gap: 8px; }
 .copyable code { background: rgba(255,255,255,0.06); padding: 4px 10px; border-radius: 6px; font-size: .85rem; font-family: monospace; }
 
@@ -476,14 +481,14 @@ textarea.form-input { min-height: 100px; resize: vertical; }
 </section>
 
 <!-- ===== AJUSTES ===== -->
-<section id="section-settings" style="display:none">
+<section id="section-settings" style="display:none;max-width:700px">
   <div class="page-title">🔧 Ajustes de la cuenta</div>
   <div class="card">
     <div class="card-title">📋 Información</div>
-    <div class="info-row"><span class="info-label">Slug</span><span id="set-slug"></span></div>
-    <div class="info-row"><span class="info-label">Plan</span><span id="set-plan"></span></div>
-    <div class="info-row"><span class="info-label">Expiración</span><span id="set-expires"></span></div>
-    <div class="info-row"><span class="info-label">Códigos este mes</span><span id="set-codes-month"></span></div>
+    <div class="info-row"><span class="info-label">Slug</span><span class="info-value" id="set-slug"></span></div>
+    <div class="info-row"><span class="info-label">Plan</span><span class="info-value" id="set-plan"></span></div>
+    <div class="info-row"><span class="info-label">Expiración</span><span class="info-value" id="set-expires"></span></div>
+    <div class="info-row"><span class="info-label">Códigos este mes</span><span class="info-value" id="set-codes-month"></span></div>
   </div>
   <div class="card">
     <div class="card-title">🔗 Programa de referidos</div>
@@ -1485,11 +1490,13 @@ async function loadAfiliados() {
 function loadSettings() {
   if (!modelConfig) return;
   document.getElementById('set-slug').textContent = SLUG;
-  document.getElementById('set-plan').textContent = (modelConfig.plan || 'solo').toUpperCase();
+  const plan = (modelConfig.plan || 'solo');
+  document.getElementById('set-plan').innerHTML = `<span class="plan-badge ${plan}">${plan.toUpperCase()}</span>`;
   document.getElementById('set-expires').textContent = modelConfig.subscription_expires_at
     ? new Date(modelConfig.subscription_expires_at).toLocaleDateString('es-ES')
     : 'No definida';
-  document.getElementById('set-codes-month').textContent = modelConfig.codes_created_this_month + (modelConfig.codes_limit ? '/' + modelConfig.codes_limit : '');
+  const codesUsed = modelConfig.codes_created_this_month || 0;
+  document.getElementById('set-codes-month').textContent = codesUsed + (modelConfig.codes_limit ? '/' + modelConfig.codes_limit : '');
   const refCode = 'REF-' + SLUG.toUpperCase();
   document.getElementById('set-refcode').textContent = refCode;
   document.getElementById('set-reflink').textContent = 'https://playofans.com/registro?ref=' + refCode;

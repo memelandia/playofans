@@ -166,19 +166,22 @@ img{max-width:100%;display:block;}
 .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(179,0,255,0.15),transparent 60%),radial-gradient(ellipse at 70% 80%,rgba(255,0,102,0.1),transparent 60%);pointer-events:none;}
 .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;position:relative;z-index:1;}
 .hero-text h1{font-size:3.5rem;font-weight:900;line-height:1.1;margin-bottom:24px;}
-.hero-text h1 .gradient{background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.hero-text h1 .gradient{background:linear-gradient(135deg,var(--accent),var(--gold),var(--accent2));background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite;}
+@keyframes shimmer{to{background-position:200% center}}
 .hero-text p{font-size:1.15rem;color:var(--text-soft);line-height:1.7;margin-bottom:36px;max-width:520px;}
+.hero-text p strong{color:var(--gold);font-weight:700;}
 .hero-buttons{display:flex;gap:16px;flex-wrap:wrap;}
 .btn-hero{padding:16px 36px;border-radius:50px;font-family:inherit;font-weight:700;font-size:1rem;cursor:pointer;transition:all .3s;border:none;display:inline-flex;align-items:center;gap:10px;}
-.btn-hero-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 8px 30px rgba(255,0,102,0.3);}
-.btn-hero-primary:hover{filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 12px 40px rgba(255,0,102,0.4);text-decoration:none;color:#fff;}
+.btn-hero-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 8px 30px rgba(255,0,102,0.3);animation:ctaPulse 2.5s ease-in-out infinite;}
+@keyframes ctaPulse{0%,100%{box-shadow:0 8px 30px rgba(255,0,102,0.3)}50%{box-shadow:0 8px 40px rgba(255,0,102,0.5),0 0 20px rgba(255,0,102,0.2)}}
+.btn-hero-primary:hover{filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 12px 40px rgba(255,0,102,0.4);text-decoration:none;color:#fff;animation:none;}
 .btn-hero-outline{background:transparent;border:2px solid var(--glass-border);color:var(--text);backdrop-filter:blur(10px);}
 .btn-hero-outline:hover{border-color:var(--accent2);color:var(--accent2);text-decoration:none;}
 .hero-visual{display:flex;justify-content:center;align-items:center;position:relative;}
 .hero-wheel-wrap{width:400px;height:400px;position:relative;}
 .hero-wheel{width:100%;height:100%;animation:heroSpin 30s linear infinite;}
 @keyframes heroSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
-.hero-glow{position:absolute;inset:-40px;background:radial-gradient(circle,rgba(255,0,102,0.2),transparent 70%);border-radius:50%;animation:pulse 3s ease-in-out infinite;}
+.hero-glow{position:absolute;inset:-40px;background:radial-gradient(circle,rgba(255,215,0,0.15),rgba(255,0,102,0.1),transparent 70%);border-radius:50%;animation:pulse 3s ease-in-out infinite;}
 @keyframes pulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
 .hero-badge{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);background:var(--glass);border:1px solid var(--glass-border);border-radius:50px;padding:10px 24px;font-size:.85rem;font-weight:600;white-space:nowrap;backdrop-filter:blur(10px);}
 .hero-wheel-wrap::after{content:'';position:absolute;top:4px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-top:20px solid var(--accent);z-index:2;filter:drop-shadow(0 2px 6px rgba(255,0,102,0.6));}
@@ -192,6 +195,8 @@ img{max-width:100%;display:block;}
 section{padding:100px 0;}
 .section-tag{display:inline-block;padding:6px 16px;border-radius:50px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;background:rgba(179,0,255,0.1);color:var(--accent2);border:1px solid rgba(179,0,255,0.2);}
 .section-title{font-size:2.5rem;font-weight:800;margin-bottom:16px;line-height:1.2;}
+.section-title .hl{color:var(--accent);}
+.section-title .hl-gold{color:var(--gold);}
 .section-subtitle{font-size:1.1rem;color:var(--text-soft);max-width:640px;line-height:1.7;}
 .text-center{text-align:center;}
 .mx-auto{margin-left:auto;margin-right:auto;}
@@ -204,7 +209,8 @@ section{padding:100px 0;}
 .step-icon{font-size:3rem;margin-bottom:16px;}
 .step-card h3{font-size:1.15rem;font-weight:700;margin-bottom:12px;}
 .step-card p{font-size:.9rem;color:var(--text-soft);line-height:1.6;}
-.step-arrow{position:absolute;right:-32px;top:50%;transform:translateY(-50%);font-size:1.8rem;color:var(--accent2);opacity:.4;z-index:1;}
+.step-card p strong{color:var(--gold);font-weight:600;}
+.step-arrow{position:absolute;right:-32px;top:50%;transform:translateY(-50%);font-size:1.8rem;color:var(--gold);opacity:.5;z-index:1;}
 
 /* GAMES */
 .games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;margin-top:60px;}
@@ -233,11 +239,16 @@ section{padding:100px 0;}
 #precios{background:var(--bg2);}
 .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:60px;}
 .price-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:24px;padding:36px;text-align:center;transition:all .3s;position:relative;}
-.price-card:hover{transform:translateY(-4px);}
-.price-card.featured{border-color:var(--accent);box-shadow:0 0 60px rgba(255,0,102,0.15);}
-.price-card.featured::before{content:'⭐ POPULAR';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:4px 20px;border-radius:50px;font-size:.7rem;font-weight:700;letter-spacing:1px;}
+.price-card:hover{transform:translateY(-6px);box-shadow:0 12px 40px rgba(0,0,0,0.3);}
+.price-card.featured{border:2px solid var(--gold);box-shadow:0 0 40px rgba(255,215,0,0.1),0 0 60px rgba(255,0,102,0.08);}
+.price-card.featured::before{content:'⭐ POPULAR';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--gold),#ff8c00);color:#000;padding:4px 20px;border-radius:50px;font-size:.7rem;font-weight:700;letter-spacing:1px;}
 .price-card .plan-name{font-size:1.1rem;font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;}
+.price-card.featured .plan-name{color:var(--gold);}
 .price-card .plan-price{font-size:3rem;font-weight:900;margin-bottom:4px;}
+.price-card.featured .plan-price{background:linear-gradient(135deg,var(--gold),#ff8c00);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.price-card.agency-card{border-color:var(--accent2);}
+.price-card.agency-card:hover{box-shadow:0 12px 40px rgba(179,0,255,0.15);}
+.price-card.agency-card .plan-name{color:var(--accent2);}
 .price-card .plan-price span{font-size:1rem;font-weight:400;color:var(--text-soft);}
 .price-card .plan-price .price-old{font-size:1.1rem;text-decoration:line-through;color:var(--text-muted);margin-right:6px;font-weight:400;}
 .price-card .plan-desc{font-size:.85rem;color:var(--text-soft);margin-bottom:24px;}
@@ -266,7 +277,7 @@ section{padding:100px 0;}
 .testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:60px;}
 .testimonial-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:28px;transition:all .3s;}
 .testimonial-card:hover{border-color:var(--accent2);}
-.testimonial-stars{color:var(--gold);font-size:.9rem;margin-bottom:12px;letter-spacing:2px;}
+.testimonial-stars{color:var(--gold);font-size:.9rem;margin-bottom:12px;letter-spacing:2px;text-shadow:0 0 10px rgba(255,215,0,0.3);}
 .testimonial-text{font-size:.9rem;color:var(--text-soft);line-height:1.7;margin-bottom:16px;font-style:italic;}
 .testimonial-author{font-size:.85rem;font-weight:600;}
 .testimonial-role{font-size:.75rem;color:var(--text-muted);}
@@ -333,6 +344,22 @@ section{padding:100px 0;}
   .footer-grid{grid-template-columns:1fr;}
   .hero-trust{gap:10px;flex-wrap:wrap;justify-content:center;}
 }
+
+/* V6 — Scroll-reveal animations */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-delay-1{transition-delay:.15s;}
+.reveal-delay-2{transition-delay:.3s;}
+.reveal-delay-3{transition-delay:.45s;}
+
+/* Button ripple */
+.btn-hero,.nav-cta,.btn-home{position:relative;overflow:hidden;}
+.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,0.3);transform:scale(0);animation:rippleAnim .6s ease-out;pointer-events:none;}
+@keyframes rippleAnim{to{transform:scale(4);opacity:0;}}
+
+/* Card subtle tilt on hover */
+.step-card,.game-card,.plan-card,.audience-card{transition:transform .3s ease,box-shadow .3s ease;}
+.step-card:hover,.game-card:hover,.audience-card:hover{transform:translateY(-6px);}
 </style>
 </head>
 <body>
@@ -448,8 +475,8 @@ section{padding:100px 0;}
 <div class="container">
   <div class="text-center">
     <span class="section-tag">Cómo funciona</span>
-    <h2 class="section-title">Engancha a tus fans en 3 pasos</h2>
-    <p class="section-subtitle mx-auto">Sin código, sin complicaciones. Configura tu ruleta de premios en minutos y empieza a sorprender a tus fans hoy mismo.</p>
+    <h2 class="section-title">Engancha a tus fans en <span class="hl">3 pasos</span></h2>
+    <p class="section-subtitle mx-auto">Sin código, sin complicaciones. Configura tu <strong style="color:var(--gold)">ruleta de premios</strong> en minutos y empieza a sorprender a tus fans hoy mismo.</p>
   </div>
   <div class="how-grid">
     <div class="step-card">
@@ -484,7 +511,7 @@ section{padding:100px 0;}
 <div class="container">
   <div class="text-center">
     <span class="section-tag">Juegos disponibles</span>
-    <h2 class="section-title">Tu arsenal de engagement</h2>
+    <h2 class="section-title">Tu <span class="hl-gold">arsenal</span> de engagement</h2>
     <p class="section-subtitle mx-auto">Empezamos con la ruleta de premios y vamos añadiendo más juegos interactivos para que nunca te quedes sin ideas.</p>
   </div>
   <div class="games-grid">
@@ -515,7 +542,7 @@ section{padding:100px 0;}
 <div class="container">
   <div class="text-center">
     <span class="section-tag">¿Para quién es?</span>
-    <h2 class="section-title">Creado para creadores de contenido</h2>
+    <h2 class="section-title">Creado para <span class="hl">creadores de contenido</span></h2>
     <p class="section-subtitle mx-auto">Ya seas modelo independiente, parte de una agencia o manager, PlayOFans se adapta a ti.</p>
   </div>
   <div class="audience-grid">
@@ -561,7 +588,7 @@ section{padding:100px 0;}
 <div class="container">
   <div class="text-center">
     <span class="section-tag">Precios</span>
-    <h2 class="section-title">Planes para cada nivel</h2>
+    <h2 class="section-title">Planes para <span class="hl-gold">cada nivel</span></h2>
     <p class="section-subtitle mx-auto">Empieza con el plan Solo y escala cuando lo necesites. Sin permanencia, cancela cuando quieras.</p>
     <div class="pricing-toggle">
       <span class="active" id="label-monthly">Mensual</span>
@@ -610,7 +637,7 @@ section{padding:100px 0;}
       <a href="/registro?plan=pro" class="btn-price primary">Empezar Ahora</a>
     </div>
     <!-- AGENCY -->
-    <div class="price-card">
+    <div class="price-card agency-card">
       <div class="plan-name">Agency</div>
       <div class="plan-price" data-monthly="349" data-annual="279"><span class="price-amount">349€</span> <span>/mes</span></div>
       <div class="plan-annual-note">Facturado 3.348€/año (ahorra 840€)</div>
@@ -637,7 +664,7 @@ section{padding:100px 0;}
 <div class="container">
   <div class="text-center">
     <span class="section-tag">Lo que dicen</span>
-    <h2 class="section-title">Modelos que ya usan PlayOFans</h2>
+    <h2 class="section-title">Modelos que ya usan <span class="hl">PlayOFans</span></h2>
   </div>
   <div class="testimonials-grid">
     <div class="testimonial-card">
@@ -765,7 +792,7 @@ section{padding:100px 0;}
 <!-- ===== CTA FINAL ===== -->
 <section class="cta-section">
 <div class="container" style="position:relative;z-index:1;">
-  <h2 class="cta-title">¿Lista para enganchar a tus fans?</h2>
+  <h2 class="cta-title">¿Lista para <span style="color:var(--gold)">enganchar</span> a tus fans?</h2>
   <p class="cta-subtitle">Únete a las modelos que ya están usando juegos interactivos para multiplicar su engagement e ingresos.</p>
   <div class="cta-buttons">
     <a href="/registro" class="btn-hero btn-hero-primary">Empieza ahora 🚀</a>
@@ -882,6 +909,28 @@ function updatePrices() {
 }
 pricingToggle.addEventListener('click', () => { isAnnual = !isAnnual; updatePrices(); });
 pricingToggle.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); isAnnual = !isAnnual; updatePrices(); }});
+
+// V6 — Scroll reveal
+document.querySelectorAll('section:not(.hero)').forEach(s => s.classList.add('reveal'));
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); }});
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// V6 — Button ripple
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.btn-hero, .nav-cta');
+  if (!btn) return;
+  const r = document.createElement('span');
+  r.className = 'ripple';
+  const rect = btn.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  r.style.width = r.style.height = size + 'px';
+  r.style.left = (e.clientX - rect.left - size / 2) + 'px';
+  r.style.top = (e.clientY - rect.top - size / 2) + 'px';
+  btn.appendChild(r);
+  r.addEventListener('animationend', () => r.remove());
+});
 </script>
 </body>
 </html>

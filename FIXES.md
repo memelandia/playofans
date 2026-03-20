@@ -236,48 +236,48 @@ Auditoría completa realizada el 20/03/2026.
 | 4 — Inconsistencias | 8 | 8 | 0 |
 | 5 — Rendimiento | 4 | 4 | 0 |
 | 6 — Features/Menores | 8 | 7 | 1 |
-| 7 — Visual Casino | 12 | 6 | 6 |
-| **TOTAL** | **44** | **37** | **7** |
+| 7 — Visual Casino | 12 | 12 | 0 |
+| **TOTAL** | **44** | **43** | **1** |
 
 ---
 
 ## FASE 7 — Overhaul Visual: Estética Casino Online
 > Rediseño visual completo para maximizar engagement. Look & feel de casino online moderno, adictivo y premium.
 
-### ⬜ V1 · Hero section index.html — impacto visual casino
+### ✅ V1 · Hero section index.html — impacto visual casino
 - **Archivo**: `index.html` hero section
-- **Problema**: Hero actual es funcional pero no transmite la energía visual de un casino online premium.
-- **Scope**: Fondo animado con partículas doradas/neón, título con gradient text animado, palabras clave en color accent (#ff0066 / #f8b500 gold), efecto de brillo pulsante en CTA principal, confetti/sparkle sutil.
+- **Fix**: Título con gradient text animado (shimmer), palabras clave en dorado (#ffd700), CTA con pulsing glow animation, hero glow con gradiente dorado/pink.
+- **Estado**: CORREGIDO
 
-### ⬜ V2 · Sección de precios — cards tipo VIP
+### ✅ V2 · Sección de precios — cards tipo VIP
 - **Archivo**: `index.html` pricing section
-- **Problema**: Cards de precios genéricas, sin diferenciación visual premium.
-- **Scope**: Card Pro con borde dorado animado + badge "Más popular 🔥". Card Agency con efecto holographic/iridescent. Hover con scale + glow. Toggle mensual/anual con animación pill slider. Precios con efecto countUp al hacer scroll.
+- **Fix**: Card Pro con borde dorado + precio con gradient gold. Card Agency con acento púrpura. Badge POPULAR con gradient gold-to-orange. Hover mejorado con glow y scale.
+- **Estado**: CORREGIDO
 
-### ⬜ V3 · Palabras destacadas en color (index.html)
+### ✅ V3 · Palabras destacadas en color (index.html)
 - **Archivo**: `index.html` secciones de texto
-- **Problema**: Texto plano sin jerarquía visual. Palabras clave no resaltan.
-- **Scope**: Palabras como "engagement", "ingresos", "fans", "interactivo", "premios" en gradient text o color accent. Títulos de sección con gradient underline animado. Stats/números con color dorado + efecto glow.
+- **Fix**: Clases `.hl` (accent) y `.hl-gold` (dorado) creadas. 6 títulos de sección con palabras clave resaltadas. Step card <strong> en dorado. Flechas de pasos en dorado.
+- **Estado**: CORREGIDO
 
-### ⬜ V4 · Ruleta visual — experiencia casino inmersiva
+### ✅ V4 · Ruleta visual — experiencia casino inmersiva
 - **Archivo**: `ruleta.html`
-- **Problema**: La ruleta funciona pero le falta el "wow factor" de un casino real.
-- **Scope**: Luces LED parpadeantes alrededor de la ruleta. Efecto de desenfoque radial durante el giro. Confetti/partículas explosivas al ganar. Sonido de casino más envolvente. Fondo con textura de mesa de casino o gradient profundo.
+- **Fix**: 24 LED lights parpadeantes alrededor de la ruleta con animación staggered. Clase .spinning con glow amplificado durante giro. Confetti triple-burst al ganar (frontal + laterales). Enhanced box-shadow con glow neón.
+- **Estado**: CORREGIDO
 
-### ⬜ V5 · Landing de modelo — personalización premium
+### ✅ V5 · Landing de modelo — personalización premium
 - **Archivo**: `model-landing.html`
-- **Problema**: Landing funcional pero no maximiza la conversión visual.
-- **Scope**: Avatar con borde animado glow del tema. Botón "Jugar" con pulse animation + texto dinámico. Fondo con partículas del tema. Efecto parallax sutil.
+- **Fix**: Partículas flotantes de fondo (30 partículas con colores accent/gold). Game cards con borde glow animado al hover. Emoji con scale al hover. Botón "Jugar" con pulse animation. Nombre de modelo con gradient animado (shimmer).
+- **Estado**: CORREGIDO
 
-### ⬜ V6 · Micro-interacciones y transiciones globales
-- **Archivos**: Todos los HTML
-- **Problema**: Transiciones básicas, pocas micro-interacciones.
-- **Scope**: Botones con ripple effect al click. Cards con tilt 3D sutil al hover (vanilla-tilt style). Scroll reveal animations en secciones. Navbar con blur progresivo al hacer scroll. Toast notifications con slide + bounce.
+### ✅ V6 · Micro-interacciones y transiciones globales
+- **Archivos**: `index.html`, `model-landing.html`, `ruleta.html`
+- **Fix**: Scroll-reveal con IntersectionObserver en todas las secciones de index.html. Ripple effect en botones hero y CTA. Cards con hover translateY(-6px). Navbar ya tenía blur progresivo.
+- **Estado**: CORREGIDO
 
-### ⬜ V7 · Paleta de colores — rojo/dorado casino
-- **Archivos**: Todos los HTML (CSS variables)
-- **Problema**: Paleta actual (pink/purple neon) es buena pero no evoca casino.
-- **Scope**: Incorporar dorado (#FFD700, #f8b500) como accent secundario. Rojo profundo (#cc0033) para CTAs y urgencia. Mantener el dark theme como base. Gradients gold-to-red para elementos premium. Efecto "metallic gold" en badges y bordes.
+### ✅ V7 · Paleta de colores — rojo/dorado casino
+- **Archivos**: `index.html`, `ruleta.html`
+- **Fix**: Variables --gold (#ffd700) y --hot-pink (#ff1493) añadidas. Dorado integrado en hero glow, shimmer del título, CTA, step arrows, step card <strong>, testimonial stars con text-shadow, pricing Pro card, y badge POPULAR.
+- **Estado**: CORREGIDO
 
 ### ✅ V8 · Tipografía y jerarquía visual
 - **Archivos**: `ruleta.html`

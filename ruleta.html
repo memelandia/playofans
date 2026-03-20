@@ -282,9 +282,59 @@ height: 450px;
 border: 10px solid var(--accent-principal); 
 border-radius: 50%; 
 position: relative; 
-box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+box-shadow: 0 0 30px rgba(255,0,102,0.3), 0 0 60px rgba(179,0,255,0.15), 0 15px 30px rgba(0,0,0,0.2);
 overflow: hidden;
 background: linear-gradient(135deg, var(--accent-principal), var(--accent-secundario));
+}
+#ruleta.spinning {
+box-shadow: 0 0 50px rgba(255,0,102,0.5), 0 0 100px rgba(179,0,255,0.3), 0 15px 30px rgba(0,0,0,0.2);
+}
+
+/* LED lights ring */
+.ruleta-leds {
+position: absolute;
+width: 480px;
+height: 480px;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+border-radius: 50%;
+pointer-events: none;
+z-index: 5;
+}
+.led-dot {
+position: absolute;
+width: 8px;
+height: 8px;
+border-radius: 50%;
+background: var(--accent-principal);
+box-shadow: 0 0 8px var(--accent-principal);
+animation: ledBlink 1.2s ease-in-out infinite alternate;
+}
+@keyframes ledBlink { 0%{opacity:.3;box-shadow:0 0 4px var(--accent-principal)} 100%{opacity:1;box-shadow:0 0 12px var(--accent-principal),0 0 20px rgba(255,0,102,0.3)} }
+
+/* Confetti */
+.confetti-container {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+pointer-events: none;
+z-index: 2000;
+overflow: hidden;
+}
+.confetti-piece {
+position: absolute;
+top: -20px;
+width: 10px;
+height: 16px;
+opacity: 0;
+animation: confettiFall 3s ease-in forwards;
+}
+@keyframes confettiFall {
+0% { transform: translateY(0) rotateZ(0deg); opacity: 1; }
+100% { transform: translateY(100vh) rotateZ(720deg); opacity: 0; }
 }
 
 #flecha { 
@@ -964,6 +1014,7 @@ font-size: 2rem;
 </div>
 </div>
 <div class="ruleta-section">
+<div class="ruleta-leds" id="ruleta-leds"></div>
 <div id="ruleta">
 <div id="flecha"></div>
 <canvas id="opciones" width="450" height="450"></canvas>
@@ -1489,6 +1540,7 @@ async function girarRuleta() {
     girarBtn.textContent = 'Girando... 🎲';
 
     const opcionesCanvas = document.getElementById('opciones');
+    document.getElementById('ruleta').classList.add('spinning');
 
     // FASE 1: Empezar a girar INMEDIATAMENTE (antes de llamar al API)
     const startAngle = getCurrentRotation(opcionesCanvas);
@@ -1517,6 +1569,7 @@ async function girarRuleta() {
 
         if (!spinRes.ok) {
             // Frenar la ruleta
+            document.getElementById('ruleta').classList.remove('spinning');
             const stopAngle = getCurrentRotation(opcionesCanvas);
             opcionesCanvas.style.transition = 'none';
             opcionesCanvas.style.transform = `rotate(${stopAngle}deg)`;
@@ -1561,12 +1614,17 @@ async function girarRuleta() {
             soundSpin.currentTime = 0;
             if (!isMuted) soundWin.play().catch(()=>{});
 
+            document.getElementById('ruleta').classList.remove('spinning');
+
             confetti({
                 particleCount: 200,
                 spread: 100,
                 origin: { y: 0.6 },
                 gravity: 0.8
             });
+            // Extra burst for wow-factor
+            setTimeout(() => confetti({ particleCount: 80, angle: 60, spread: 55, origin: { x: 0 } }), 200);
+            setTimeout(() => confetti({ particleCount: 80, angle: 120, spread: 55, origin: { x: 1 } }), 400);
 
             // Detener la transición
             opcionesCanvas.style.transition = 'none';
@@ -1599,6 +1657,7 @@ async function girarRuleta() {
 
     } catch (err) {
         // Frenar la ruleta en caso de error
+        document.getElementById('ruleta').classList.remove('spinning');
         const stopAngle = getCurrentRotation(opcionesCanvas);
         opcionesCanvas.style.transition = 'none';
         opcionesCanvas.style.transform = `rotate(${stopAngle}deg)`;
@@ -2035,6 +2094,25 @@ window.addEventListener('load', async () => {
 
         // Crear partículas
         createParticles();
+
+        // Generar LED dots alrededor de la ruleta
+        (function initLeds() {
+            const container = document.getElementById('ruleta-leds');
+            if (!container) return;
+            const count = 24;
+            const radius = 240;
+            for (let i = 0; i < count; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'led-dot';
+                const angle = (i / count) * Math.PI * 2;
+                const x = 240 + Math.cos(angle) * radius - 4;
+                const y = 240 + Math.sin(angle) * radius - 4;
+                dot.style.left = x + 'px';
+                dot.style.top = y + 'px';
+                dot.style.animationDelay = (i * 0.1) + 's';
+                container.appendChild(dot);
+            }
+        })();
 
         // Ocultar pantalla de carga
         document.getElementById('screen-loading').style.display = 'none';

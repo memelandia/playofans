@@ -11,7 +11,7 @@ exports.handler = async (event) => {
     // Buscar modelo por slug
     const { data: model, error } = await supabase
       .from('models')
-      .select('id, slug, display_name, plan, active, theme, welcome_message, post_prize_message, sound_enabled_default, force_dark_mode, prizes, spins_per_code, subscription_expires_at, grace_period_until')
+      .select('id, slug, display_name, plan, active, theme, welcome_message, post_prize_message, sound_enabled_default, force_dark_mode, prizes, spins_per_code, subscription_expires_at, grace_period_until, codes_created_this_month')
       .eq('slug', slug)
       .single();
 

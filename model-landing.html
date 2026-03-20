@@ -17,6 +17,11 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-view p{color:var(--text-soft);font-size:.9rem;}
 
+/* Particle background */
+.particles-bg{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;}
+.particle{position:absolute;border-radius:50%;opacity:0;animation:particleFloat linear infinite;}
+@keyframes particleFloat{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:.6}90%{opacity:.6}100%{transform:translateY(-20px) scale(1);opacity:0}}
+
 /* ERROR VIEW */
 .error-view{text-align:center;padding:60px 24px;display:none;}
 .error-view .emoji{font-size:4rem;margin-bottom:16px;}
@@ -29,15 +34,22 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min
 .games-view{max-width:var(--max-w);width:100%;padding:60px 24px 80px;display:none;}
 .games-header{text-align:center;margin-bottom:40px;}
 .games-header h1{font-size:2rem;font-weight:800;margin-bottom:8px;}
-.games-header h1 .grad{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.games-header h1 .grad{background:linear-gradient(135deg,var(--accent),var(--accent2),#ffd700);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:gradShift 4s ease infinite;}
+@keyframes gradShift{0%,100%{background-position:0% center}50%{background-position:200% center}}
 .games-header p{color:var(--text-soft);font-size:.95rem;}
 
 .games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;}
-.game-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:32px 24px;text-align:center;transition:all .3s;cursor:pointer;text-decoration:none;color:var(--text);display:block;}
-.game-card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 8px 30px rgba(255,0,102,0.15);text-decoration:none;color:var(--text);}
-.game-card .game-emoji{font-size:3rem;margin-bottom:14px;}
+.game-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:32px 24px;text-align:center;transition:all .3s;cursor:pointer;text-decoration:none;color:var(--text);display:block;position:relative;overflow:hidden;}
+.game-card::before{content:'';position:absolute;inset:-2px;border-radius:22px;background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent));background-size:200% 200%;animation:cardGlow 3s ease infinite;z-index:-1;opacity:0;transition:opacity .3s;}
+.game-card:hover::before{opacity:1;}
+.game-card:hover{transform:translateY(-6px);box-shadow:0 12px 40px rgba(255,0,102,0.2);text-decoration:none;color:var(--text);}
+@keyframes cardGlow{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.game-card .game-emoji{font-size:3.5rem;margin-bottom:14px;filter:drop-shadow(0 0 12px rgba(255,0,102,0.4));transition:transform .3s;}
+.game-card:hover .game-emoji{transform:scale(1.15);}
 .game-card h2{font-size:1.1rem;font-weight:700;margin-bottom:8px;}
 .game-card p{font-size:.8rem;color:var(--text-soft);line-height:1.5;}
+.game-card .play-hint{display:inline-block;margin-top:14px;padding:8px 24px;border-radius:50px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:.8rem;font-weight:700;animation:playPulse 2s ease-in-out infinite;}
+@keyframes playPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,0,102,0.4)}50%{box-shadow:0 0 0 10px rgba(255,0,102,0)}}
 
 /* POWERED BY */
 .powered{text-align:center;margin-top:40px;}
@@ -51,6 +63,9 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min
 </style>
 </head>
 <body>
+
+<!-- Particle background -->
+<div class="particles-bg" id="particles-bg"></div>
 
 <!-- LOADING -->
 <div class="loading-view" id="loading-view">
@@ -119,7 +134,8 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min
       card.innerHTML =
         '<div class="game-emoji">' + (gameIcons[game.id] || '🎮') + '</div>' +
         '<h2>' + escapeHtml(game.name) + '</h2>' +
-        '<p>' + escapeHtml(game.description || '') + '</p>';
+        '<p>' + escapeHtml(game.description || '') + '</p>' +
+        '<span class="play-hint">▶ Jugar</span>';
       grid.appendChild(card);
     });
 
@@ -138,6 +154,25 @@ function escapeHtml(text) {
   d.textContent = text;
   return d.innerHTML;
 }
+
+// Floating particles
+(function initParticles() {
+  const bg = document.getElementById('particles-bg');
+  if (!bg) return;
+  const colors = ['var(--accent)', 'var(--accent2)', '#ffd700'];
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 4 + 2;
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.background = colors[i % colors.length];
+    p.style.animationDuration = (Math.random() * 8 + 6) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    bg.appendChild(p);
+  }
+})();
 </script>
 </body>
 </html>
