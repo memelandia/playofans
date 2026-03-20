@@ -37,6 +37,8 @@ create table models (
   codes_created_this_month int not null default 0,
   codes_month_reset date not null default date_trunc('month', now())::date,
   referred_by text,
+  applied_discount_code text,
+  must_change_password boolean not null default false,
   supabase_user_id uuid references auth.users(id),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -116,6 +118,15 @@ create table agency_members (
   member_model_id uuid not null references models(id) on delete cascade,
   created_at timestamptz not null default now(),
   unique (agency_model_id, member_model_id)
+);
+
+-- Mensajes de contacto
+create table contact_messages (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  email text not null,
+  message text not null,
+  created_at timestamptz default now()
 );
 
 -- Solicitudes de registro (modelos nuevas)
@@ -444,6 +455,8 @@ returns table (
   annual_discount_amount numeric,
   referral_discount_pct numeric,
   referral_discount_amount numeric,
+  discount_code_pct numeric,
+  discount_code_amount numeric,
   final_price numeric,
   referral_count int
 ) as $$
@@ -457,6 +470,9 @@ declare
   v_ann_pct numeric;
   v_ann_amt numeric;
   v_ref_amt numeric;
+  v_dc_pct numeric := 0;
+  v_dc_amt numeric := 0;
+  v_after_ref numeric;
 begin
   select * into v_model from models where id = p_model_id;
 
@@ -466,7 +482,7 @@ begin
   end;
   -- Precios anuales
   v_annual := case v_model.plan
-    when 'solo' then 399 when 'pro' then 699 when 'agency' then 2800 else 399
+    when 'solo' then 468 when 'pro' then 852 when 'agency' then 3348 else 468
   end;
 
   -- Precio base según ciclo
@@ -498,12 +514,30 @@ begin
   end;
 
   v_ref_amt := round(v_base * v_ref_pct / 100, 2);
+  v_after_ref := v_base - v_ref_amt;
+
+  -- Descuento por código de descuento
+  if v_model.applied_discount_code is not null then
+    select dc.discount_pct into v_dc_pct
+    from discount_codes dc
+    where dc.code = v_model.applied_discount_code
+      and dc.active = true
+      and (dc.valid_until is null or dc.valid_until > now())
+      and (dc.max_uses is null or dc.times_used < dc.max_uses);
+
+    if v_dc_pct is not null and v_dc_pct > 0 then
+      v_dc_amt := round(v_after_ref * v_dc_pct / 100, 2);
+    else
+      v_dc_pct := 0;
+    end if;
+  end if;
 
   return query select
     v_base, v_model.billing_cycle,
     v_ann_pct, round(v_ann_amt, 2),
     v_ref_pct, v_ref_amt,
-    v_base - v_ref_amt, v_ref_count;
+    v_dc_pct, v_dc_amt,
+    v_after_ref - v_dc_amt, v_ref_count;
 end;
 $$ language plpgsql security definer;
 
@@ -652,3 +686,64 @@ begin
   return json_build_object('success', true);
 end;
 $$ language plpgsql security definer;
+
+-- ============================================
+-- Rate limiting table (para validate-code)
+-- ============================================
+create table if not exists rate_limits (
+  id uuid primary key default gen_random_uuid(),
+  ip_address text not null,
+  action text not null default 'validate-code',
+  created_at timestamptz default now()
+);
+
+create index if not exists idx_rate_limits_lookup
+  on rate_limits(ip_address, action, created_at);
+
+-- Auto-limpiar registros antiguos (>5 min)
+create or replace function cleanup_rate_limits()
+returns void as $$
+begin
+  delete from rate_limits where created_at < now() - interval '5 minutes';
+end;
+$$ language plpgsql security definer;
+
+-- RLS: solo service_role puede leer/escribir
+alter table rate_limits enable row level security;
+
+-- ============================================
+-- Confirm spin atómico (evita race condition)
+-- ============================================
+create or replace function confirm_spin_atomic(p_spin_id uuid, p_code_id uuid)
+returns json as $$
+declare
+  v_new_remaining int;
+begin
+  -- Marcar spin como verificado
+  update spins set verified = true where id = p_spin_id and verified = false;
+
+  if not found then
+    return json_build_object('error', 'Spin ya verificado o no encontrado');
+  end if;
+
+  -- Decrementar atómicamente y obtener nuevo valor
+  update codes
+    set remaining_spins = greatest(0, remaining_spins - 1),
+        used = case when remaining_spins <= 1 then true else used end
+    where id = p_code_id
+    returning remaining_spins into v_new_remaining;
+
+  return json_build_object('remaining_spins', v_new_remaining);
+end;
+$$ language plpgsql security definer;
+
+-- P1: Contar spins verificados por modelo (evita N+1 en sa-list-models)
+create or replace function count_spins_by_models(model_ids uuid[])
+returns table (model_id uuid, cnt bigint)
+language sql stable security definer as $$
+  select s.model_id, count(*) as cnt
+  from spins s
+  where s.model_id = any(model_ids)
+    and s.verified = true
+  group by s.model_id;
+$$;

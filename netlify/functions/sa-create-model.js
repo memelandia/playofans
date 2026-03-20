@@ -67,6 +67,10 @@ exports.handler = async (event) => {
     // Generate code_prefix (first 4 consonants/letters from slug, uppercase)
     const prefix = cleanSlug.replace(/[^a-z]/g, '').slice(0, 4).toUpperCase().padEnd(4, 'X');
 
+    // Calculate next billing date (1 month from now for monthly billing)
+    const nextBillingDate = new Date(now);
+    nextBillingDate.setMonth(nextBillingDate.getMonth() + 1);
+
     // Create model row
     const { data: model, error: modelError } = await supabase
       .from('models')
@@ -78,7 +82,9 @@ exports.handler = async (event) => {
         code_prefix: prefix,
         referral_code: 'REF-' + cleanSlug.toUpperCase(),
         subscription_expires_at: expiresAt.toISOString(),
+        next_billing_date: nextBillingDate.toISOString().slice(0, 10),
         supabase_user_id: authData.user.id,
+        must_change_password: true,
         active: true,
       })
       .select()
@@ -88,6 +94,20 @@ exports.handler = async (event) => {
       // Rollback: delete the auth user
       await supabase.auth.admin.deleteUser(authData.user.id);
       return json(500, { error: 'Error al crear el modelo: ' + modelError.message });
+    }
+
+    // Enviar welcome email (no bloquea la respuesta si falla)
+    try {
+      const { sendWelcomeEmail } = require('./send-welcome-email');
+      await sendWelcomeEmail({
+        email: email.trim(),
+        display_name: display_name.trim(),
+        slug: cleanSlug,
+        password: tempPassword,
+        admin_url: `https://playofans.com/${cleanSlug}/admin`,
+      });
+    } catch (emailErr) {
+      console.error('Welcome email error:', emailErr);
     }
 
     return json(201, {

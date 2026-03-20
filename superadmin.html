@@ -41,6 +41,7 @@ a:hover { text-decoration:underline; }
   background:rgba(255,255,255,0.05); color:var(--text); font-family:inherit; font-size:.95rem;
   transition:border-color .3s;
 }
+select.form-input { color-scheme:dark; }
 .form-input:focus { outline:none; border-color:var(--accent); }
 .btn {
   display:inline-flex; align-items:center; justify-content:center; gap:8px;
@@ -113,9 +114,9 @@ a:hover { text-decoration:underline; }
 
 /* TABLE */
 .table-wrap { overflow-x:auto; border-radius:12px; border:1px solid var(--glass-border); background:var(--glass); margin-bottom:20px; }
-.table { width:100%; border-collapse:collapse; font-size:.85rem; }
+.table { width:100%; border-collapse:collapse; font-size:.85rem; min-width:600px; }
 .table th { text-align:left; padding:12px 16px; font-weight:600; color:var(--text-soft); border-bottom:1px solid var(--glass-border); white-space:nowrap; }
-.table td { padding:10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; }
+.table td { padding:10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; word-break:break-word; }
 .table tr:last-child td { border-bottom:none; }
 .table tr:hover td { background:rgba(255,255,255,0.02); }
 .badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:.75rem; font-weight:600; }
@@ -223,6 +224,36 @@ a:hover { text-decoration:underline; }
   </div>
   <button class="btn btn-primary" id="login-btn">Acceder</button>
   <div class="login-error" id="login-error"></div>
+</div>
+</div>
+
+<!-- 2FA TOTP CHALLENGE -->
+<div class="login-screen" id="totp-screen" style="display:none;">
+<div class="login-card">
+  <h1>🔑 Verificación 2FA</h1>
+  <p>Ingresa el código de tu app de autenticación</p>
+  <div class="form-group">
+    <label>Código TOTP</label>
+    <input type="text" id="totp-code" class="form-input" placeholder="000000" maxlength="6" autocomplete="one-time-code" inputmode="numeric" style="text-align:center;font-size:1.5rem;letter-spacing:8px">
+  </div>
+  <button class="btn btn-primary" id="totp-verify-btn">Verificar</button>
+  <div class="login-error" id="totp-error"></div>
+</div>
+</div>
+
+<!-- 2FA TOTP ENROLLMENT -->
+<div class="login-screen" id="totp-enroll-screen" style="display:none;">
+<div class="login-card" style="max-width:420px;">
+  <h1>🛡️ Configurar 2FA</h1>
+  <p>Escanea este QR con Google Authenticator o Authy</p>
+  <div id="totp-qr" style="margin:16px auto;text-align:center;"></div>
+  <div style="margin:8px 0;padding:8px 12px;background:rgba(255,255,255,.05);border-radius:8px;font-family:monospace;font-size:.75rem;word-break:break-all;color:#a89cc8" id="totp-secret-text"></div>
+  <div class="form-group" style="margin-top:16px;">
+    <label>Código de verificación</label>
+    <input type="text" id="totp-enroll-code" class="form-input" placeholder="000000" maxlength="6" autocomplete="one-time-code" inputmode="numeric" style="text-align:center;font-size:1.5rem;letter-spacing:8px">
+  </div>
+  <button class="btn btn-primary" id="totp-enroll-btn">Activar 2FA</button>
+  <div class="login-error" id="totp-enroll-error"></div>
 </div>
 </div>
 
@@ -494,6 +525,15 @@ a:hover { text-decoration:underline; }
     <textarea class="notes-area" id="ma-notes" placeholder="Notas internas sobre este modelo..."></textarea>
     <div style="margin-top:8px;"><button class="btn btn-outline btn-sm" onclick="modelAction('update_notes')">Guardar Notas</button></div>
   </div>
+  <div class="card" id="ma-agency-card" style="margin-bottom:16px;display:none;">
+    <div class="card-title">🏢 Miembros de Agencia</div>
+    <div id="ma-agency-list" style="margin-bottom:12px;font-size:.85rem;"></div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <input type="text" id="ma-agency-slug" class="form-input" placeholder="Slug del modelo miembro" style="flex:1;">
+      <button class="btn btn-primary btn-sm" onclick="addAgencyMember()">Añadir</button>
+    </div>
+    <div id="ma-agency-error" style="font-size:.8rem;color:var(--danger);margin-top:6px;"></div>
+  </div>
   <div style="text-align:center;margin-top:12px;">
     <a id="ma-admin-link" href="#" target="_blank" style="font-size:.85rem;">Abrir panel admin →</a>
   </div>
@@ -565,6 +605,8 @@ const API = '/api';
 // ============================
 // INIT
 // ============================
+let pendingSecret = '';
+
 async function init() {
   try {
     const res = await fetch(API + '/auth-init');
@@ -577,7 +619,6 @@ async function init() {
   // Check existing session
   const { data: { session } } = await sb.auth.getSession();
   if (session) {
-    // Need secret from localStorage
     const saved = localStorage.getItem('sa_verified');
     if (saved) {
       saSecret = saved;
@@ -588,12 +629,16 @@ async function init() {
 }
 
 // ============================
-// AUTH
+// AUTH + 2FA TOTP
 // ============================
 document.getElementById('login-btn').addEventListener('click', doLogin);
 document.getElementById('login-email').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 document.getElementById('login-secret').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+document.getElementById('totp-verify-btn').addEventListener('click', verifyTotp);
+document.getElementById('totp-code').addEventListener('keydown', e => { if (e.key === 'Enter') verifyTotp(); });
+document.getElementById('totp-enroll-btn').addEventListener('click', confirmEnrollTotp);
+document.getElementById('totp-enroll-code').addEventListener('keydown', e => { if (e.key === 'Enter') confirmEnrollTotp(); });
 
 async function doLogin() {
   const email = document.getElementById('login-email').value.trim();
@@ -609,7 +654,7 @@ async function doLogin() {
     const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
     if (error) { errEl.textContent = 'Credenciales incorrectas'; btn.disabled = false; return; }
 
-    // Validate secret by making a test API call
+    // Validate secret
     const testRes = await apiFetch('/sa-dashboard', 'GET', null, secret);
     if (testRes.error) {
       await sb.auth.signOut();
@@ -618,13 +663,93 @@ async function doLogin() {
       return;
     }
 
-    saSecret = secret;
-    localStorage.setItem('sa_verified', secret);
+    pendingSecret = secret;
     currentUser = data.user;
-    showApp();
+
+    // Check MFA enrollment
+    const { data: factors } = await sb.auth.mfa.listFactors();
+    const totpFactor = (factors?.totp || []).find(f => f.status === 'verified');
+
+    if (totpFactor) {
+      // Has 2FA — show challenge screen
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('totp-screen').style.display = 'flex';
+      document.getElementById('totp-code').value = '';
+      document.getElementById('totp-code').focus();
+      document.getElementById('totp-screen').dataset.factorId = totpFactor.id;
+    } else {
+      // No 2FA enrolled — show enrollment screen
+      await startTotpEnrollment();
+    }
   } catch {
     errEl.textContent = 'Error al iniciar sesión';
     btn.disabled = false;
+  }
+}
+
+async function verifyTotp() {
+  const code = document.getElementById('totp-code').value.trim();
+  const errEl = document.getElementById('totp-error');
+  if (!code || code.length !== 6) { errEl.textContent = 'Ingresa el código de 6 dígitos'; return; }
+
+  const factorId = document.getElementById('totp-screen').dataset.factorId;
+
+  try {
+    const { data: challenge, error: challengeErr } = await sb.auth.mfa.challenge({ factorId });
+    if (challengeErr) { errEl.textContent = 'Error al crear desafío 2FA'; return; }
+
+    const { error: verifyErr } = await sb.auth.mfa.verify({ factorId, challengeId: challenge.id, code });
+    if (verifyErr) { errEl.textContent = 'Código incorrecto'; return; }
+
+    // 2FA verified — complete login
+    saSecret = pendingSecret;
+    localStorage.setItem('sa_verified', saSecret);
+    document.getElementById('totp-screen').style.display = 'none';
+    showApp();
+  } catch {
+    errEl.textContent = 'Error de verificación';
+  }
+}
+
+async function startTotpEnrollment() {
+  const errEl = document.getElementById('totp-enroll-error');
+  try {
+    const { data: enroll, error } = await sb.auth.mfa.enroll({ factorType: 'totp', friendlyName: 'PlayOFans SuperAdmin' });
+    if (error) { errEl.textContent = 'Error al configurar 2FA: ' + error.message; return; }
+
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('totp-enroll-screen').style.display = 'flex';
+    document.getElementById('totp-qr').innerHTML = '<img src="' + enroll.totp.qr_code + '" alt="QR Code" style="width:200px;height:200px;border-radius:12px">';
+    document.getElementById('totp-secret-text').textContent = 'Clave manual: ' + enroll.totp.secret;
+    document.getElementById('totp-enroll-screen').dataset.factorId = enroll.id;
+    document.getElementById('totp-enroll-code').value = '';
+    document.getElementById('totp-enroll-code').focus();
+  } catch {
+    errEl.textContent = 'Error al generar QR';
+  }
+}
+
+async function confirmEnrollTotp() {
+  const code = document.getElementById('totp-enroll-code').value.trim();
+  const errEl = document.getElementById('totp-enroll-error');
+  if (!code || code.length !== 6) { errEl.textContent = 'Ingresa el código de 6 dígitos'; return; }
+
+  const factorId = document.getElementById('totp-enroll-screen').dataset.factorId;
+
+  try {
+    const { data: challenge, error: challengeErr } = await sb.auth.mfa.challenge({ factorId });
+    if (challengeErr) { errEl.textContent = 'Error al crear desafío'; return; }
+
+    const { error: verifyErr } = await sb.auth.mfa.verify({ factorId, challengeId: challenge.id, code });
+    if (verifyErr) { errEl.textContent = 'Código incorrecto. Intenta de nuevo.'; return; }
+
+    // Enrollment complete — continue to app
+    saSecret = pendingSecret;
+    localStorage.setItem('sa_verified', saSecret);
+    document.getElementById('totp-enroll-screen').style.display = 'none';
+    showApp();
+  } catch {
+    errEl.textContent = 'Error al activar 2FA';
   }
 }
 
@@ -632,9 +757,13 @@ function logout() {
   sb.auth.signOut();
   localStorage.removeItem('sa_verified');
   saSecret = '';
+  pendingSecret = '';
   currentUser = null;
   document.getElementById('admin-wrap').style.display = 'none';
+  document.getElementById('totp-screen').style.display = 'none';
+  document.getElementById('totp-enroll-screen').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-btn').disabled = false;
 }
 
 // ============================
@@ -783,6 +912,15 @@ function openModelActions(id) {
   `;
 
   openModal('modal-model-actions');
+
+  // Show agency card if plan is agency
+  const agencyCard = document.getElementById('ma-agency-card');
+  if (m.plan === 'agency') {
+    agencyCard.style.display = 'block';
+    loadAgencyMembers(id);
+  } else {
+    agencyCard.style.display = 'none';
+  }
 }
 
 async function modelAction(action) {
@@ -799,6 +937,47 @@ async function modelAction(action) {
   toast('Acción completada', 'success');
   closeModal('modal-model-actions');
   loadClients();
+}
+
+// ============================
+// AGENCY MEMBERS
+// ============================
+async function loadAgencyMembers(agencyId) {
+  const listEl = document.getElementById('ma-agency-list');
+  listEl.innerHTML = '<span style="color:var(--text-soft);">Cargando...</span>';
+  const data = await apiFetch('/sa-agency-members?agency_id=' + agencyId);
+  if (data.error) { listEl.innerHTML = '<span style="color:var(--danger);">' + esc(data.error) + '</span>'; return; }
+  const members = data.members || [];
+  if (members.length === 0) {
+    listEl.innerHTML = '<span style="color:var(--text-soft);">Sin miembros aún (máx. 8)</span>';
+    return;
+  }
+  listEl.innerHTML = members.map(m => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);">
+      <span>${esc(m.display_name)} <span style="color:var(--text-soft);">/${esc(m.slug)}</span></span>
+      <button class="btn btn-danger btn-sm" onclick="removeAgencyMember('${m.id}')" style="padding:2px 8px;font-size:.75rem;">✕</button>
+    </div>
+  `).join('');
+}
+
+async function addAgencyMember() {
+  const slug = document.getElementById('ma-agency-slug').value.trim().toLowerCase();
+  const errEl = document.getElementById('ma-agency-error');
+  errEl.textContent = '';
+  if (!slug) { errEl.textContent = 'Ingresa el slug del modelo'; return; }
+  const data = await apiFetch('/sa-agency-members', 'POST', { agency_id: selectedModelId, member_slug: slug });
+  if (data.error) { errEl.textContent = data.error; return; }
+  document.getElementById('ma-agency-slug').value = '';
+  toast('Miembro añadido', 'success');
+  loadAgencyMembers(selectedModelId);
+}
+
+async function removeAgencyMember(memberId) {
+  if (!confirm('¿Eliminar este miembro de la agencia?')) return;
+  const data = await apiFetch('/sa-agency-members', 'DELETE', { agency_id: selectedModelId, member_id: memberId });
+  if (data.error) { toast(data.error, 'error'); return; }
+  toast('Miembro eliminado', 'success');
+  loadAgencyMembers(selectedModelId);
 }
 
 // ============================
@@ -1183,14 +1362,6 @@ async function loadBillingCommissions() {
       <td>✅ Saldo a favor</td>
     </tr>`;
   }).join('');
-}
-
-async function payCommission(commissionId) {
-  if (!confirm('¿Marcar esta comisión como pagada?')) return;
-  const data = await apiFetch('/sa-commission-pay', 'POST', { commission_id: commissionId });
-  if (data.error) { toast(data.error, 'error'); return; }
-  toast('Comisión marcada como pagada', 'success');
-  loadBillingCommissions();
 }
 
 // ============================

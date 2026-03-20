@@ -73,6 +73,10 @@ exports.handler = async (event) => {
 
     const prefix = cleanSlug.replace(/[^a-z]/g, '').slice(0, 4).toUpperCase().padEnd(4, 'X');
 
+    // Next billing date: 1 month from now
+    const nextBillingDate = new Date(now);
+    nextBillingDate.setMonth(nextBillingDate.getMonth() + 1);
+
     const { data: model, error: modelError } = await supabase
       .from('models')
       .insert({
@@ -83,8 +87,10 @@ exports.handler = async (event) => {
         code_prefix: prefix,
         referral_code: 'REF-' + cleanSlug.toUpperCase(),
         subscription_expires_at: expiresAt.toISOString(),
+        next_billing_date: nextBillingDate.toISOString().slice(0, 10),
         supabase_user_id: authData.user.id,
         referred_by: req.referral_code?.toUpperCase() || null,
+        must_change_password: true,
         active: true,
       })
       .select()
@@ -100,6 +106,20 @@ exports.handler = async (event) => {
       .from('registration_requests')
       .update({ status: 'approved', notes: notes || null, reviewed_at: new Date().toISOString() })
       .eq('id', request_id);
+
+    // Enviar welcome email (no bloquea la respuesta si falla)
+    try {
+      const { sendWelcomeEmail } = require('./send-welcome-email');
+      await sendWelcomeEmail({
+        email: req.email.trim(),
+        display_name: req.display_name || req.artistic_name || cleanSlug,
+        slug: cleanSlug,
+        password: tempPassword,
+        admin_url: `https://playofans.com/${cleanSlug}/admin`,
+      });
+    } catch (emailErr) {
+      console.error('Welcome email error:', emailErr);
+    }
 
     return json(200, {
       message: 'Solicitud aprobada y cuenta creada',

@@ -41,6 +41,7 @@ a:hover { text-decoration: underline; }
   background: rgba(255,255,255,0.05); color: var(--text); font-family: inherit; font-size: .95rem;
   transition: border-color .3s;
 }
+select.form-input { color-scheme: dark; }
 .form-input:focus { outline: none; border-color: var(--accent); }
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
@@ -116,9 +117,9 @@ a:hover { text-decoration: underline; }
 
 /* ===== TABLE ===== */
 .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--glass); }
-.table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+.table { width: 100%; border-collapse: collapse; font-size: .85rem; min-width: 500px; }
 .table th { text-align: left; padding: 12px 16px; font-weight: 600; color: var(--text-soft); border-bottom: 1px solid var(--glass-border); white-space: nowrap; }
-.table td { padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+.table td { padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; word-break: break-word; }
 .table tr:last-child td { border-bottom: none; }
 .table tr:hover td { background: rgba(255,255,255,0.02); }
 .badge {
@@ -195,6 +196,7 @@ textarea.form-input { min-height: 100px; resize: vertical; }
 .theme-card .lock { position: absolute; top: 8px; right: 8px; font-size: .9rem; }
 .theme-preview { display: flex; gap: 4px; margin-bottom: 8px; justify-content: center; }
 .theme-dot { width: 20px; height: 20px; border-radius: 50%; border: 1px solid rgba(255,255,255,.2); }
+.theme-gradient { height: 8px; border-radius: 4px; flex: 1; }
 .theme-name { font-size: .75rem; font-weight: 600; }
 .theme-emoji { font-size: 1.5rem; margin-bottom: 4px; }
 
@@ -247,9 +249,9 @@ textarea.form-input { min-height: 100px; resize: vertical; }
 .qr-img { display: block; margin: 16px auto; max-width: 300px; border-radius: 12px; background: #fff; padding: 12px; }
 
 /* ===== SETTINGS ===== */
-.info-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: .9rem; }
+.info-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: .9rem; gap: 16px; }
 .info-row:last-child { border-bottom: none; }
-.info-label { color: var(--text-soft); }
+.info-label { color: var(--text-soft); flex-shrink: 0; min-width: 140px; }
 .copyable { display: flex; align-items: center; gap: 8px; }
 .copyable code { background: rgba(255,255,255,0.06); padding: 4px 10px; border-radius: 6px; font-size: .85rem; font-family: monospace; }
 
@@ -298,6 +300,24 @@ textarea.form-input { min-height: 100px; resize: vertical; }
   <button class="btn btn-primary" id="login-btn">Iniciar Sesión</button>
   <div class="login-error" id="login-error"></div>
   <span class="login-forgot" id="forgot-btn">¿Olvidaste tu contraseña?</span>
+</div>
+</div>
+
+<!-- ===== CHANGE PASSWORD SCREEN ===== -->
+<div class="login-screen" id="change-pass-screen" style="display:none;">
+<div class="login-card">
+  <h1>🔑 Cambiar Contraseña</h1>
+  <p>Por seguridad, debes cambiar tu contraseña temporal antes de continuar.</p>
+  <div class="form-group">
+    <label>Nueva Contraseña</label>
+    <input type="password" id="new-pass" class="form-input" placeholder="Mínimo 8 caracteres" autocomplete="new-password">
+  </div>
+  <div class="form-group">
+    <label>Confirmar Contraseña</label>
+    <input type="password" id="new-pass-confirm" class="form-input" placeholder="Repite la contraseña" autocomplete="new-password">
+  </div>
+  <button class="btn btn-primary" id="change-pass-btn">Cambiar Contraseña</button>
+  <div class="login-error" id="change-pass-error"></div>
 </div>
 </div>
 
@@ -656,14 +676,14 @@ let premiosModificados = false;
 
 const THEMES = {
   dark_luxury:  { name:'Dark Luxury',   emoji:'💎',   plan:'solo', colors:['#ff0066','#b300ff','#1a0a1e'] },
-  rose_gold:    { name:'Rose Gold',     emoji:'🌹',   plan:'solo', colors:['#ff69b4','#ffd700','#1a0a10'] },
-  neon_cyber:   { name:'Neon Cyber',    emoji:'⚡',   plan:'solo', colors:['#00f5ff','#7700ff','#000814'] },
-  gold_vip:     { name:'Gold VIP',      emoji:'👑',   plan:'solo', colors:['#ffd700','#ff8c00','#0d0d00'] },
-  red_hot:      { name:'Red Hot',       emoji:'🔥',   plan:'solo', colors:['#ff2200','#ff6600','#1a0000'] },
-  halloween:    { name:'Halloween',     emoji:'🎃',   plan:'pro',  colors:['#ff6600','#8b00ff','#0a0510'] },
-  navidad:      { name:'Navidad',       emoji:'❄️',   plan:'pro',  colors:['#ff0000','#00aa00','#0a1a0a'] },
-  san_valentin: { name:'San Valentín',  emoji:'❤️‍🔥', plan:'pro',  colors:['#ff1493','#ff69b4','#1a0510'] },
-  summer:       { name:'Summer',        emoji:'🌴',   plan:'pro',  colors:['#00d4aa','#ff8c00','#001a1a'] },
+  rose_gold:    { name:'Rose Gold',     emoji:'🌹',   plan:'solo', colors:['#ff6b9d','#ffd700','#1a0a10'] },
+  neon_cyber:   { name:'Neon Cyber',    emoji:'⚡',   plan:'solo', colors:['#00f5ff','#7c3aed','#000814'] },
+  gold_vip:     { name:'Gold VIP',      emoji:'👑',   plan:'solo', colors:['#ffd700','#ff6b35','#0d0d00'] },
+  red_hot:      { name:'Red Hot',       emoji:'🔥',   plan:'solo', colors:['#ff2d2d','#ff8c42','#1a0000'] },
+  halloween:    { name:'Halloween',     emoji:'🎃',   plan:'pro',  colors:['#ff6a00','#9b30ff','#0a0510'] },
+  navidad:      { name:'Navidad',       emoji:'❄️',   plan:'pro',  colors:['#ff1744','#00e676','#0a1a0a'] },
+  san_valentin: { name:'San Valentín',  emoji:'❤️‍🔥', plan:'pro',  colors:['#ff1493','#ff6eb4','#1a0510'] },
+  summer:       { name:'Summer',        emoji:'🌴',   plan:'pro',  colors:['#00d4aa','#ffb347','#001a1a'] },
   galaxy:       { name:'Galaxy',        emoji:'🌙',   plan:'pro',  colors:['#7c4dff','#00e5ff','#0a0020'] },
 };
 
@@ -732,6 +752,26 @@ async function doForgot() {
   toast('Se envió un email para restablecer tu contraseña', 'success');
 }
 
+async function doChangePassword() {
+  const pass = document.getElementById('new-pass').value;
+  const confirm = document.getElementById('new-pass-confirm').value;
+  const err = document.getElementById('change-pass-error');
+  err.textContent = '';
+
+  if (!pass || pass.length < 8) { err.textContent = 'La contraseña debe tener al menos 8 caracteres'; return; }
+  if (pass !== confirm) { err.textContent = 'Las contraseñas no coinciden'; return; }
+
+  const { error } = await sb.auth.updateUser({ password: pass });
+  if (error) { err.textContent = error.message || 'Error al cambiar contraseña'; return; }
+
+  // Clear the flag
+  await sb.from('models').update({ must_change_password: false }).eq('slug', SLUG);
+
+  document.getElementById('change-pass-screen').style.display = 'none';
+  toast('Contraseña actualizada correctamente', 'success');
+  await initPanel();
+}
+
 async function doLogout() {
   await sb.auth.signOut();
   session = null;
@@ -753,7 +793,18 @@ async function initPanel() {
     return;
   }
 
+  // Check must_change_password flag
+  const { data: myModel } = await sb.from('models').select('must_change_password').eq('slug', SLUG).single();
+  if (myModel && myModel.must_change_password) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('change-pass-screen').style.display = 'flex';
+    document.getElementById('change-pass-btn').addEventListener('click', doChangePassword);
+    document.getElementById('new-pass-confirm').addEventListener('keypress', e => { if (e.key === 'Enter') doChangePassword(); });
+    return;
+  }
+
   document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('change-pass-screen').style.display = 'none';
   document.getElementById('admin-panel').style.display = 'flex';
   document.getElementById('sidebar-name').textContent = modelConfig.display_name || SLUG;
   document.getElementById('sidebar-slug').textContent = '/' + SLUG;
@@ -1249,7 +1300,7 @@ function renderThemeGrid() {
     return `<div class="theme-card ${active ? 'active' : ''} ${locked ? 'locked' : ''}" data-theme="${id}" ${locked ? '' : `onclick="selectTheme('${id}')"`}>
       ${locked ? '<span class="lock">🔒</span>' : ''}
       <div class="theme-emoji">${t.emoji}</div>
-      <div class="theme-preview">${t.colors.map(c => `<div class="theme-dot" style="background:${c}"></div>`).join('')}</div>
+      <div class="theme-preview"><div class="theme-gradient" style="background:linear-gradient(135deg,${t.colors[0]},${t.colors[1]})"></div></div>
       <div class="theme-name">${t.name}</div>
     </div>`;
   }).join('');
@@ -1379,7 +1430,8 @@ async function loadAfiliados() {
       .select('id, display_name, plan, created_at')
       .eq('referred_by', refCode)
       .eq('active', true);
-    const activeRefs = (referrals || []).filter(r => new Date(r.created_at) > new Date(Date.now() - 183*24*60*60*1000));
+    const sixMonthsAgo = new Date(); sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    const activeRefs = (referrals || []).filter(r => new Date(r.created_at) > sixMonthsAgo);
     const refCount = activeRefs.length;
 
     // Affiliate record

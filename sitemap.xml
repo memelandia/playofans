@@ -16,6 +16,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://playofans.com/registro</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://playofans.com/guia</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
