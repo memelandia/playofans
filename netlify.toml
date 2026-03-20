@@ -44,31 +44,36 @@
   to = "/superadmin.html"
   status = 200
 
-# Bloquear archivos sensibles (no deben ser accesibles públicamente)
+# Bloquear archivos sensibles (force=true para que prevalezca sobre el archivo físico)
 [[redirects]]
   from = "/*.sql"
   to = "/404.html"
   status = 404
+  force = true
 
 [[redirects]]
   from = "/*.md"
   to = "/404.html"
   status = 404
+  force = true
 
 [[redirects]]
   from = "/package.json"
   to = "/404.html"
   status = 404
+  force = true
 
 [[redirects]]
   from = "/package-lock.json"
   to = "/404.html"
   status = 404
+  force = true
 
 [[redirects]]
   from = "/netlify.toml"
   to = "/404.html"
   status = 404
+  force = true
 
 
 
