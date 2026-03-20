@@ -466,47 +466,47 @@ Todos los hallazgos organizados por prioridad. Incluye bugs, seguridad, inconsis
 
 ## FASE 4 — INCONSISTENCIAS Y CÓDIGO MUERTO
 
-### ⬜ I1 · `escapeHtml()` definida pero casi sin usar
+### ✅ I1 · `escapeHtml()` definida pero casi sin usar
 - **Archivo**: `ruleta.html` L1276
-- **Problema**: Función `escapeHtml()` existe y se usa SOLO para el historial. Todas las otras inyecciones de texto de usuario (`mostrarMensaje`, welcome, error) la ignoran. Inconsistencia de patrón de seguridad.
-- **Fix**: Usar `escapeHtml()` en todos los puntos donde se inyecta `nombreUsuario` o datos del API.
-- **Prioridad**: 🟡 MEDIA
+- **Problema**: Función `escapeHtml()` existe y se usa SOLO para el historial. Las otras inyecciones de texto de usuario la ignoran.
+- **Fix**: Revisado — tras el fix C1 (innerHTML→textContent en mostrarMensaje), TODAS las inyecciones de `nombreUsuario` ya usan `textContent` (seguro por defecto). `escapeHtml()` solo se necesita en el historial que usa innerHTML. No hay vector XSS.
+- **Estado**: CORREGIDO (resuelto indirectamente por C1)
 
-### ⬜ I2 · Naming inconsistente para grace period
+### ✅ I2 · Naming inconsistente para grace period
 - **Archivos**: `prepare-spin.js` usa `inGrace`, `tenant-config.js` retorna `grace`, `confirm-spin.js` usa `inGrace`
 - **Problema**: El mismo concepto tiene 2 nombres diferentes cruzando archivos. Confuso para mantenimiento.
-- **Fix**: Estandarizar a `inGrace` en todas las funciones.
-- **Prioridad**: 🔵 BAJA
+- **Fix**: Renombrado campo de respuesta de `grace` a `inGrace` en `tenant-config.js`. Actualizada referencia en `admin.html` (`modelConfig.inGrace`). Ahora consistente en todos los archivos.
+- **Estado**: CORREGIDO
 
-### ⬜ I3 · `robots.txt` bloquea ruta inexistente
+### ✅ I3 · `robots.txt` bloquea ruta inexistente
 - **Archivo**: `robots.txt` L6
 - **Problema**: `Disallow: /afiliados` — esta ruta ya no existe (eliminada en auditoría #1).
-- **Fix**: Eliminar la línea.
-- **Prioridad**: 🔵 BAJA
+- **Fix**: Eliminada la línea `Disallow: /afiliados`.
+- **Estado**: CORREGIDO
 
-### ⬜ I4 · Afiliados error silencioso
+### ✅ I4 · Afiliados error silencioso
 - **Archivo**: `admin.html` L1500
 - **Problema**: `loadAfiliados()` solo hace `console.error()` — usuario no ve ningún feedback si falla.
-- **Fix**: Añadir `toast('Error cargando datos de afiliados', 'error')`.
-- **Prioridad**: 🔵 BAJA
+- **Fix**: Añadido `toast('Error cargando datos de afiliados', 'error')` en el catch.
+- **Estado**: CORREGIDO
 
-### ⬜ I5 · Clipboard copy falla silenciosamente
+### ✅ I5 · Clipboard copy falla silenciosamente
 - **Archivo**: `admin.html` L1552
-- **Problema**: `.catch(() => {})` — si copiar al portapapeles falla, usuario ve toast "copiado" de todas formas. Feedback falso.
-- **Fix**: `.catch(() => { toast('No se pudo copiar', 'error'); })`.
-- **Prioridad**: 🔵 BAJA
+- **Problema**: `.catch(() => {})` — si copiar al portapapeles falla, usuario no ve ningún feedback.
+- **Fix**: Cambiado a `.catch(() => { toast('No se pudo copiar', 'error'); })`.
+- **Estado**: CORREGIDO
 
-### ⬜ I6 · Scroll reveal classes sin usar
+### ✅ I6 · Scroll reveal classes sin usar
 - **Archivo**: `index.html`
 - **Problema**: CSS define `reveal-delay-1`, `reveal-delay-2`, `reveal-delay-3` pero ningún elemento HTML las usa. CSS muerto.
-- **Fix**: Eliminar las clases CSS o aplicarlas a elementos de la landing.
-- **Prioridad**: 🔵 BAJA
+- **Fix**: Eliminadas las 3 clases CSS.
+- **Estado**: CORREGIDO
 
-### ⬜ I7 · demos `prepare-spin.js` modo abusable
+### ✅ I7 · demos `prepare-spin.js` modo abusable
 - **Archivo**: `prepare-spin.js` L28
 - **Problema**: Slug `demo` con código `DEMO2025` retorna `remaining_spins: 999` sin límite. Cualquiera puede hacer requests infinitos, potencial DoS.
-- **Fix**: Limitar demo a 50 spins por IP por hora, o retornar 5 spins y resetear periódicamente.
-- **Prioridad**: 🟡 MEDIA
+- **Fix**: Añadido rate limiting: máx 20 spins por IP por hora usando la tabla `rate_limits` existente con action `demo_spin`. Supera el límite → error 429 con mensaje invitando a registrarse.
+- **Estado**: CORREGIDO
 
 ---
 

@@ -7,7 +7,6 @@ Allow: /contacto
 
 Disallow: /superadmin
 Disallow: /registro
-Disallow: /afiliados
 Disallow: /api/
 Disallow: /.netlify/
 

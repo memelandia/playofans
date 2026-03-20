@@ -48,7 +48,7 @@ exports.handler = async (event) => {
       prizes: model.prizes,
       spins_per_code: model.spins_per_code,
       active_games: activeGames,
-      grace: inGrace || false,
+      inGrace: inGrace || false,
     });
   } catch (err) {
     return json(500, { error: 'Error interno del servidor' });

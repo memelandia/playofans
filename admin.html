@@ -903,7 +903,7 @@ async function loadDashboard() {
       document.getElementById('codes-limit-bar').style.display = '';
       document.getElementById('codes-progress').style.width = Math.min(100, (data.codes.created_this_month / data.codes.limit) * 100) + '%';
     }
-    if (modelConfig.grace) document.getElementById('grace-banner').style.display = '';
+    if (modelConfig.inGrace) document.getElementById('grace-banner').style.display = '';
   } catch(e) { console.error('Dashboard error:', e); }
 
   await loadLiveSpins();
@@ -1509,7 +1509,7 @@ async function loadAfiliados() {
         </tr>`;
       }).join('');
     }
-  } catch(e) { console.error('Afiliados error:', e); }
+  } catch(e) { console.error('Afiliados error:', e); toast('Error cargando datos de afiliados', 'error'); }
 }
 
 async function loadSettings() {
@@ -1565,7 +1565,7 @@ function setTemplate(elId, text) {
 }
 
 function copyText(text) {
-  navigator.clipboard.writeText(text).then(() => toast('Copiado al portapapeles', 'success')).catch(() => {});
+  navigator.clipboard.writeText(text).then(() => toast('Copiado al portapapeles', 'success')).catch(() => { toast('No se pudo copiar', 'error'); });
 }
 
 function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }

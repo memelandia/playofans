@@ -13,6 +13,19 @@ exports.handler = async (event) => {
 
     // --- DEMO MODE ---
     if (slug === 'demo' && codigoId.toUpperCase() === 'DEMO2025') {
+      // Rate limit demo: max 20 spins per IP per hour
+      const ip = event.headers['x-forwarded-for']?.split(',')[0]?.trim() || event.headers['client-ip'] || 'unknown';
+      const { count } = await supabase
+        .from('rate_limits')
+        .select('*', { count: 'exact', head: true })
+        .eq('ip_address', ip)
+        .eq('action', 'demo_spin')
+        .gte('created_at', new Date(Date.now() - 3600000).toISOString());
+      if (count >= 20) {
+        return json(429, { error: 'Demo limitada a 20 giros por hora. ¡Regístrate para tener tu propia ruleta!' });
+      }
+      await supabase.from('rate_limits').insert({ ip_address: ip, action: 'demo_spin' });
+
       const demoPrizes = [
         'Sexting 10min', 'Pack Fotos', 'Videollamada 5min',
         'Audio Exclusivo', 'Descuento 30%', 'Premio Sorpresa'
