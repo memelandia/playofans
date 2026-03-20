@@ -864,7 +864,8 @@ async function doChangePassword() {
   if (error) { err.textContent = error.message || 'Error al cambiar contraseña'; return; }
 
   // Clear the flag
-  await sb.from('models').update({ must_change_password: false }).eq('slug', SLUG);
+  const { error: flagErr } = await sb.from('models').update({ must_change_password: false }).eq('slug', SLUG);
+  if (flagErr) { err.textContent = 'Error al actualizar: ' + flagErr.message; return; }
 
   document.getElementById('change-pass-screen').style.display = 'none';
   toast('Contraseña actualizada correctamente', 'success');
@@ -892,13 +893,27 @@ async function initPanel() {
     return;
   }
 
+  // Verify current user owns this model
+  const { data: myModel } = await sb.from('models').select('must_change_password, supabase_user_id').eq('slug', SLUG).single();
+  if (!myModel || myModel.supabase_user_id !== session.user.id) {
+    await sb.auth.signOut();
+    session = null;
+    document.getElementById('admin-panel').style.display = 'none';
+    document.getElementById('change-pass-screen').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('login-error').textContent = 'Inicia sesión con las credenciales de este modelo';
+    return;
+  }
+
   // Check must_change_password flag
-  const { data: myModel } = await sb.from('models').select('must_change_password').eq('slug', SLUG).single();
-  if (myModel && myModel.must_change_password) {
+  if (myModel.must_change_password) {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('change-pass-screen').style.display = 'flex';
-    document.getElementById('change-pass-btn').addEventListener('click', doChangePassword);
-    document.getElementById('new-pass-confirm').addEventListener('keypress', e => { if (e.key === 'Enter') doChangePassword(); });
+    if (!document.getElementById('change-pass-btn').dataset.bound) {
+      document.getElementById('change-pass-btn').dataset.bound = '1';
+      document.getElementById('change-pass-btn').addEventListener('click', doChangePassword);
+      document.getElementById('new-pass-confirm').addEventListener('keypress', e => { if (e.key === 'Enter') doChangePassword(); });
+    }
     return;
   }
 
