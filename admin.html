@@ -921,7 +921,7 @@ async function loadLiveSpins() {
       const date = new Date(s.created_at).toLocaleString('es-ES', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
       return `<tr><td>${esc(s.fan_name)}</td><td>${esc(s.code)}</td><td>${esc(s.prize)}</td><td>${date}</td></tr>`;
     }).join('');
-  } catch(e) {}
+  } catch(e) { console.error('LiveSpins error:', e); toast('Error cargando spins en vivo', 'error'); }
 }
 
 // =============================================================================
@@ -1094,7 +1094,18 @@ async function doCreateCode() {
     // QR
     try {
       const qrData = await apiFetch(`/api/admin-get-qr?slug=${SLUG}&code=${data.code.code}`);
-      document.getElementById('created-qr').innerHTML = `<img src="${qrData.qr}" class="qr-img" alt="QR">`;
+      const qrUrl = qrData.qr || '';
+      if (qrUrl.startsWith('https://') || qrUrl.startsWith('data:image/')) {
+        const img = document.createElement('img');
+        img.src = qrUrl;
+        img.className = 'qr-img';
+        img.alt = 'QR';
+        const qrContainer = document.getElementById('created-qr');
+        qrContainer.innerHTML = '';
+        qrContainer.appendChild(img);
+      } else {
+        document.getElementById('created-qr').innerHTML = '';
+      }
     } catch(e) { document.getElementById('created-qr').innerHTML = ''; }
 
     // Templates
@@ -1289,7 +1300,8 @@ function renderPrizeList() {
 }
 
 async function doSavePrizes() {
-  if (premiosLocales.length < 2) { toast('Necesitas al menos 2 premios', 'error'); return; }
+  premiosLocales = premiosLocales.filter(p => p.trim().length > 0);
+  if (premiosLocales.length < 2) { toast('Necesitas al menos 2 premios', 'error'); renderPrizes(); return; }
   const btn = document.getElementById('save-prizes-btn');
   btn.disabled = true; btn.textContent = 'Guardando...';
   try {
@@ -1490,7 +1502,7 @@ async function loadAfiliados() {
         return `<tr>
           <td>${esc(c.period)}</td>
           <td>${esc(ref.name)}</td>
-          <td>${esc(ref.plan?.toUpperCase())}</td>
+          <td>${esc((ref.plan || '—').toUpperCase())}</td>
           <td>€${Number(c.base_amount).toFixed(2)}</td>
           <td>€${Number(c.commission_amount).toFixed(2)}</td>
           <td>${badge}</td>

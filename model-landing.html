@@ -101,7 +101,10 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min
   const gamesEl = document.getElementById('games-view');
 
   try {
-    const res = await fetch('/api/model-landing?slug=' + encodeURIComponent(slug));
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    const res = await fetch('/api/model-landing?slug=' + encodeURIComponent(slug), { signal: controller.signal });
+    clearTimeout(timeoutId);
     const data = await res.json();
 
     if (!res.ok) {
@@ -145,7 +148,9 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min
   } catch (err) {
     loadingEl.style.display = 'none';
     errorEl.style.display = 'block';
-    document.getElementById('error-msg').textContent = 'Hubo un error al cargar esta página. Inténtalo de nuevo más tarde.';
+    document.getElementById('error-msg').textContent = err.name === 'AbortError'
+      ? 'La carga tardó demasiado. Verifica tu conexión e inténtalo de nuevo.'
+      : 'Hubo un error al cargar esta página. Inténtalo de nuevo más tarde.';
   }
 })();
 

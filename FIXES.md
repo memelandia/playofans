@@ -402,65 +402,65 @@ Todos los hallazgos organizados por prioridad. Incluye bugs, seguridad, inconsis
 
 ## FASE 3 — BUGS FUNCIONALES
 
-### ⬜ F1 · LiveSpins catch vacío silencia errores
+### ✅ F1 · LiveSpins catch vacío silencia errores
 - **Archivo**: `admin.html` L924
 - **Problema**: `loadLiveSpins()` tiene `catch(e) {}` — errores de red/API pasan completamente silenciados. Dashboard muestra "Cargando..." indefinidamente si la API falla.
-- **Fix**: Añadir `catch(e) { console.error(e); toast('Error cargando spins', 'error'); }`.
-- **Prioridad**: 🟡 MEDIA
+- **Fix**: Cambiado a `catch(e) { console.error('LiveSpins error:', e); toast('Error cargando spins en vivo', 'error'); }`.
+- **Estado**: CORREGIDO
 
-### ⬜ F2 · QR data inyectada sin validar
+### ✅ F2 · QR data inyectada sin validar
 - **Archivo**: `admin.html` L1097
 - **Problema**: `innerHTML = '<img src="${qrData.qr}">'` — si el endpoint retorna una URL maliciosa en `qr`, se inyecta directo en el DOM sin validar protocolo (podría ser `javascript:` o data URI con HTML).
-- **Fix**: Validar que la URL empiece con `https://` o `data:image/` antes de inyectar.
-- **Prioridad**: 🟡 MEDIA
+- **Fix**: Validación de protocolo (`https://` o `data:image/`) + creación del `<img>` via `document.createElement` en vez de `innerHTML` para evitar inyección.
+- **Estado**: CORREGIDO
 
-### ⬜ F3 · Error con plan null en settings
+### ✅ F3 · Error con plan null en settings
 - **Archivo**: `admin.html` L1507
-- **Problema**: `plan.toUpperCase()` puede fallar si `plan` es null/undefined del API. `TypeError: null.toUpperCase()`.
-- **Fix**: `(plan || 'unknown').toUpperCase()`.
-- **Prioridad**: 🟡 MEDIA
+- **Problema**: `ref.plan?.toUpperCase()` retorna "UNDEFINED" como texto si plan es null. Y `plan.toUpperCase()` puede crashear si plan es null/undefined.
+- **Fix**: `loadSettings()` ya tenía `|| 'solo'`. Corregido en tabla de afiliados: `(ref.plan || '—').toUpperCase()` con fallback.
+- **Estado**: CORREGIDO
 
-### ⬜ F4 · Premios vacíos/whitespace se pueden guardar
+### ✅ F4 · Premios vacíos/whitespace se pueden guardar
 - **Archivo**: `admin.html` L1293
 - **Problema**: `doSavePrizes()` verifica `premiosLocales.length < 2` pero no filtra strings vacíos o solo espacios. Un premio `"   "` se guarda válido.
-- **Fix**: Filtrar: `premiosLocales.filter(p => p.trim().length > 0)` antes de validar longitud.
-- **Prioridad**: 🟡 MEDIA
+- **Fix**: Añadido `premiosLocales = premiosLocales.filter(p => p.trim().length > 0)` antes de validar longitud. Si quedan <2, muestra error y re-renderiza.
+- **Estado**: CORREGIDO
 
-### ⬜ F5 · confetti() sin fallback si CDN falla
+### ✅ F5 · confetti() sin fallback si CDN falla
 - **Archivo**: `ruleta.html` L1366-1374
 - **Problema**: `confetti()` se llama 3 veces sin try-catch. Si la librería confetti.js del CDN no cargó, `ReferenceError: confetti is not defined` rompe todo el flujo post-premio.
-- **Fix**: Envolver en `if (typeof confetti === 'function')` o try-catch.
-- **Prioridad**: 🟡 MEDIA
+- **Fix**: Envueltas las 3 llamadas en `if (typeof confetti === 'function')`. Si no cargó la librería, el premio se muestra igual pero sin confetti.
+- **Estado**: CORREGIDO
 
-### ⬜ F6 · localStorage sin try-catch
+### ✅ F6 · localStorage sin try-catch
 - **Archivo**: `ruleta.html` L1318
 - **Problema**: `localStorage.setItem(...)` puede lanzar excepción en Safari private mode o quota exceeded. Sin catch, el flujo de validación se interrumpe.
-- **Fix**: Envolver en try-catch con fallback silencioso.
-- **Prioridad**: 🟡 MEDIA
+- **Fix**: Envueltos `setItem` y `getItem`/`removeItem` (recovery section) en try-catch con fallback silencioso. El flujo de la ruleta no se rompe aunque localStorage no esté disponible.
+- **Estado**: CORREGIDO
 
-### ⬜ F7 · Demo mode usa premios reales
+### ✅ F7 · Demo mode usa premios reales
 - **Archivo**: `ruleta.html` L1651-1659
 - **Problema**: Banner dice "premios son ejemplos" pero carga configuración real de la API. Si alguien configura el slug "demo" con premios reales, se regalan.
-- **Fix**: Hardcodear premios demo en el frontend cuando `SLUG === 'demo'`.
-- **Prioridad**: 🟡 MEDIA
+- **Fix**: Hardcodeados 8 premios demo en el frontend cuando `SLUG === 'demo'`: Foto exclusiva, Video personalizado, Chat privado, Pack de fotos, Saludo especial, Contenido sorpresa, Descuento VIP, Regalo misterioso.
+- **Estado**: CORREGIDO
 
-### ⬜ F8 · `iniciarCountdown()` nunca se llama
+### ✅ F8 · `iniciarCountdown()` nunca se llama
 - **Archivo**: `ruleta.html` L1590-1600
 - **Problema**: Función definida pero nunca invocada. El temporizador de expiración no actualiza en tiempo real — el usuario no ve cuánto tiempo le queda.
-- **Fix**: Llamar `iniciarCountdown()` después de `validarCodigo()` exitoso, pasando `expiresAt`.
-- **Prioridad**: 🟡 MEDIA
+- **Fix**: Añadida llamada `iniciarCountdown()` justo después de `mostrarInfoTiradas()` en el bloque de éxito de `validarCodigo()`. Ahora el countdown se actualiza cada 60s.
+- **Estado**: CORREGIDO
 
-### ⬜ F9 · model-landing.html sin timeout de carga
+### ✅ F9 · model-landing.html sin timeout de carga
 - **Archivo**: `model-landing.html` L293
 - **Problema**: Si la API `/api/model-landing` cuelga, el usuario ve "Cargando..." para siempre sin error.
-- **Fix**: Añadir `AbortController` con timeout de 10s y mostrar mensaje de error.
-- **Prioridad**: 🟡 MEDIA
+- **Fix**: Añadido `AbortController` con timeout de 10s. Si se excede, muestra "La carga tardó demasiado. Verifica tu conexión e inténtalo de nuevo."
+- **Estado**: CORREGIDO
 
-### ⬜ F10 · CSV export sin validación de respuesta
+### ✅ F10 · CSV export sin validación de respuesta
 - **Archivo**: `superadmin.html` L1564
 - **Problema**: `exportCSV()` hace fetch y llama `res.blob()` sin verificar `res.ok`. Si el server retorna error, se descarga un blob de error como CSV.
-- **Fix**: Añadir `if (!res.ok) { toast('Error al exportar', 'error'); return; }`.
-- **Prioridad**: 🟡 MEDIA
+- **Fix**: Ya tenía `if (!res.ok) { toast('Error al exportar', 'error'); return; }` implementado. No requirió cambios.
+- **Estado**: CORREGIDO (ya existía)
 
 ---
 
