@@ -56,7 +56,10 @@ body.force-dark { color-scheme: dark; }
 /* Floating particles background */
 .particles-bg{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;}
 .bg-particle{position:absolute;border-radius:50%;opacity:0;animation:bgParticleFloat linear infinite;}
-@keyframes bgParticleFloat{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:.5}90%{opacity:.5}100%{transform:translateY(-20px) scale(1);opacity:0}}
+.bg-particle.emoji-particle{border-radius:0;background:none !important;font-size:inherit;line-height:1;text-align:center;filter:drop-shadow(0 0 4px rgba(255,255,255,0.15));}
+@keyframes bgParticleFloat{0%{transform:translateY(100vh) scale(0) rotate(0deg);opacity:0}10%{opacity:.45}50%{transform:translateY(50vh) scale(.8) rotate(180deg);opacity:.35}90%{opacity:.3}100%{transform:translateY(-20px) scale(1) rotate(360deg);opacity:0}}
+/* Themed background pattern overlay */
+.theme-pattern{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.035;background-repeat:repeat;background-size:60px 60px;}
 
 
 .container {
@@ -284,6 +287,40 @@ background: radial-gradient(circle, transparent 55%, var(--accent-soft) 70%, tra
 animation: glowPulse 2.5s ease-in-out infinite alternate;
 }
 @keyframes glowPulse { 0%{opacity:.4;transform:translate(-50%,-50%) scale(1)} 100%{opacity:.8;transform:translate(-50%,-50%) scale(1.04)} }
+
+/* Themed ring border variations */
+.ruleta-ring.ring-neon {
+  background: conic-gradient(from 0deg, #00f5ff, #7700ff, #ff00ff, #00f5ff, #7700ff, #ff00ff, #00f5ff);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #fff calc(100% - 3px), #fff calc(100% - 1px), transparent 100%);
+  mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #fff calc(100% - 3px), #fff calc(100% - 1px), transparent 100%);
+  filter: blur(2px) brightness(1.5);
+  opacity: 1;
+  animation: ringRotate 2.5s linear infinite;
+}
+.ruleta-ring.ring-double-gold {
+  background: conic-gradient(from 0deg, #ffd700, #ff8c00, #ffd700, #fff3b0, #ffd700, #ff8c00, #ffd700);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 8px), #fff calc(100% - 7px), #fff calc(100% - 5px), transparent calc(100% - 4px), transparent calc(100% - 3px), #fff calc(100% - 2px), #fff calc(100% - 1px), transparent 100%);
+  mask: radial-gradient(farthest-side, transparent calc(100% - 8px), #fff calc(100% - 7px), #fff calc(100% - 5px), transparent calc(100% - 4px), transparent calc(100% - 3px), #fff calc(100% - 2px), #fff calc(100% - 1px), transparent 100%);
+  filter: blur(0.5px);
+  opacity: 1;
+  animation: ringRotate 6s linear infinite;
+}
+.ruleta-ring.ring-fire {
+  background: conic-gradient(from 0deg, #ff0000, #ff6600, #ffcc00, #ff0000, #ff4400, #ffaa00, #ff0000);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #fff calc(100% - 6px), #fff calc(100% - 1px), transparent 100%);
+  mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #fff calc(100% - 6px), #fff calc(100% - 1px), transparent 100%);
+  filter: blur(2px);
+  opacity: .9;
+  animation: ringRotate 1.8s linear infinite;
+}
+.ruleta-ring.ring-garland {
+  background: repeating-conic-gradient(from 0deg, #ff0000 0deg 15deg, #00aa00 15deg 30deg, #ffd700 30deg 45deg, #ff0000 45deg 60deg);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #fff calc(100% - 5px), #fff calc(100% - 1px), transparent 100%);
+  mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #fff calc(100% - 5px), #fff calc(100% - 1px), transparent 100%);
+  filter: blur(0.5px);
+  opacity: .9;
+  animation: ringRotate 8s linear infinite;
+}
 
 /* Confetti */
 .confetti-container {
@@ -952,6 +989,7 @@ font-size: 2rem;
 </div>
 
 <div class="particles-bg" id="particles-bg"></div>
+<div class="theme-pattern" id="theme-pattern"></div>
 
 <div id="popup-overlay" class="popup-overlay">
 <div class="popup-content">
@@ -1031,6 +1069,9 @@ const THEMES = {
     accentSoft:'rgba(255,0,102,0.15)',
     accentBorder:'rgba(255,0,102,0.5)',
     emoji:'💎',
+    particles:['♦','♠','♣','♥'],
+    pattern:'diamonds',
+    borderStyle:'default',
     sliceColors:['#ff6b9d','#c44569','#f8b500','#ff9ff3','#54a0ff','#5f27cd','#ff9f43','#10ac84','#ee5a24','#0abde3','#feca57','#ff6348']
   },
   rose_gold: {
@@ -1042,6 +1083,9 @@ const THEMES = {
     accentSoft:'rgba(255,105,180,0.15)',
     accentBorder:'rgba(255,105,180,0.5)',
     emoji:'🌹',
+    particles:['🌹','✨','💫','🌸'],
+    pattern:'roses',
+    borderStyle:'default',
     sliceColors:['#ff69b4','#ffd700','#ff85a2','#ffcc00','#ff1493','#ffa500','#ff77aa','#ffb300','#ff4499','#ff8c00','#ff99bb','#ffc107']
   },
   neon_cyber: {
@@ -1053,6 +1097,9 @@ const THEMES = {
     accentSoft:'rgba(0,245,255,0.1)',
     accentBorder:'rgba(119,0,255,0.5)',
     emoji:'⚡',
+    particles:['⚡','✦','◈','▹'],
+    pattern:'circuit',
+    borderStyle:'neon',
     sliceColors:['#00f5ff','#7700ff','#0099ff','#ff00ff','#00ccff','#3300ff','#00ffcc','#ff0066','#0066ff','#ff3399','#00e5ff','#cc00ff']
   },
   gold_vip: {
@@ -1064,6 +1111,9 @@ const THEMES = {
     accentSoft:'rgba(255,215,0,0.1)',
     accentBorder:'rgba(255,140,0,0.5)',
     emoji:'👑',
+    particles:['👑','⭐','💰','✦'],
+    pattern:'crowns',
+    borderStyle:'double-gold',
     sliceColors:['#ffd700','#ff8c00','#ffcc00','#ff6600','#ffb300','#ff4500','#ffa500','#ff3300','#ffaa00','#ff2200','#ff9900','#ff1100']
   },
   red_hot: {
@@ -1075,6 +1125,9 @@ const THEMES = {
     accentSoft:'rgba(255,34,0,0.1)',
     accentBorder:'rgba(255,102,0,0.5)',
     emoji:'🔥',
+    particles:['🔥','💥','✦','🔥'],
+    pattern:'flames',
+    borderStyle:'fire',
     sliceColors:['#ff0000','#cc0000','#ff3300','#990000','#ff6600','#cc3300','#ff2200','#aa0000','#ff4400','#880000','#ff1100','#ff5500']
   },
   halloween: {
@@ -1086,6 +1139,9 @@ const THEMES = {
     accentSoft:'rgba(255,102,0,0.1)',
     accentBorder:'rgba(139,0,255,0.5)',
     emoji:'🎃',
+    particles:['🎃','🦇','👻','🕷️'],
+    pattern:'bats',
+    borderStyle:'default',
     sliceColors:['#ff6600','#8b00ff','#ff8800','#6a0dad','#ffaa00','#4b0082','#ff9933','#7722aa','#cc5500','#9933ff','#ff7700','#6600cc']
   },
   navidad: {
@@ -1097,6 +1153,9 @@ const THEMES = {
     accentSoft:'rgba(255,0,0,0.1)',
     accentBorder:'rgba(0,170,0,0.5)',
     emoji:'❄️',
+    particles:['❄️','🎄','⭐','❄️'],
+    pattern:'snowflakes',
+    borderStyle:'garland',
     sliceColors:['#ff0000','#00aa00','#ffd700','#cc0000','#008800','#ffcc00','#ee0000','#006600','#ffb800','#dd0000','#004400','#ff9900']
   },
   san_valentin: {
@@ -1108,6 +1167,9 @@ const THEMES = {
     accentSoft:'rgba(255,20,147,0.1)',
     accentBorder:'rgba(255,105,180,0.5)',
     emoji:'❤️‍🔥',
+    particles:['❤️','💕','💖','💗'],
+    pattern:'hearts',
+    borderStyle:'default',
     sliceColors:['#ff1493','#ff69b4','#ff007f','#ff85a2','#ff3385','#ff5599','#e6005c','#ff4d94','#cc0066','#ff77aa','#ff2277','#ff99bb']
   },
   summer: {
@@ -1119,6 +1181,9 @@ const THEMES = {
     accentSoft:'rgba(0,212,170,0.1)',
     accentBorder:'rgba(255,140,0,0.5)',
     emoji:'🌴',
+    particles:['🌴','🌊','☀️','🍃'],
+    pattern:'palms',
+    borderStyle:'default',
     sliceColors:['#00d4aa','#ff8c00','#00bfa5','#ff6347','#20b2aa','#ffa500','#48d1cc','#ff7f50','#00ced1','#ffb347','#00a896','#ff9933']
   },
   galaxy: {
@@ -1130,6 +1195,9 @@ const THEMES = {
     accentSoft:'rgba(124,77,255,0.1)',
     accentBorder:'rgba(0,229,255,0.5)',
     emoji:'🌙',
+    particles:['🌙','⭐','✨','💫'],
+    pattern:'stars',
+    borderStyle:'default',
     sliceColors:['#7c4dff','#00e5ff','#e040fb','#18ffff','#b388ff','#84ffff','#ea80fc','#a7ffeb','#d500f9','#1de9b6','#aa00ff','#00b8d4']
   }
 };
@@ -1153,6 +1221,13 @@ function aplicarTema(themeId) {
   r.setProperty('--accent-border', t.accentBorder);
   // Actualizar colores de la ruleta con los del tema
   coloresPremios.splice(0, coloresPremios.length, ...t.sliceColors);
+  // Aplicar estilo de borde del ring
+  const ring = document.querySelector('.ruleta-ring');
+  if (ring) {
+    ring.className = 'ruleta-ring';
+    const borderMap = {'neon':'ring-neon','double-gold':'ring-double-gold','fire':'ring-fire','garland':'ring-garland'};
+    if (t.borderStyle && borderMap[t.borderStyle]) ring.classList.add(borderMap[t.borderStyle]);
+  }
   // Redibujar la ruleta con los nuevos colores
   if (premiosDisponibles.length > 0) dibujarRuletaCompleta();
   // Regenerar partículas del fondo con los colores del tema
@@ -1893,25 +1968,70 @@ function showError(msg) {
 // =============================================================================
 // FONDO INTERACTIVO REACTIVO AL MOUSE
 // =============================================================================
+
+// SVG background patterns per theme
+const THEME_PATTERNS = {
+  diamonds:  `url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5L55 30L30 55L5 30Z' fill='none' stroke='white' stroke-width='.5' opacity='.5'/%3E%3C/svg%3E")`,
+  roses:     `url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='8' fill='none' stroke='white' stroke-width='.5' opacity='.5'/%3E%3Ccircle cx='30' cy='30' r='15' fill='none' stroke='white' stroke-width='.3' opacity='.3'/%3E%3C/svg%3E")`,
+  circuit:   `url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 30h20M40 30h20M30 0v20M30 40v20' stroke='white' stroke-width='.5' opacity='.5'/%3E%3Ccircle cx='30' cy='30' r='3' fill='none' stroke='white' stroke-width='.5' opacity='.5'/%3E%3C/svg%3E")`,
+  crowns:    `url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15 40l5-15 10 8 10-8 5 15z' fill='none' stroke='white' stroke-width='.5' opacity='.4'/%3E%3C/svg%3E")`,
+  flames:    `url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 10c5 10-5 15 0 25s10-5 5-15c5 8 0 20-5 25-5-5-10-17-5-25-5 10-10 5 0-10z' fill='none' stroke='white' stroke-width='.4' opacity='.3'/%3E%3C/svg%3E")`,
+  bats:      `url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 25c-5-8-15-5-15 0s10 5 15 10c5-5 15-5 15-10s-10-8-15 0z' fill='none' stroke='white' stroke-width='.5' opacity='.3'/%3E%3C/svg%3E")`,
+  snowflakes:`url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 10v40M14 20l32 20M14 40l32-20' stroke='white' stroke-width='.4' opacity='.3'/%3E%3Ccircle cx='30' cy='30' r='3' fill='none' stroke='white' stroke-width='.4' opacity='.4'/%3E%3C/svg%3E")`,
+  hearts:    `url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 45c-10-10-20-15-15-25s15 0 15 5c0-5 10-15 15-5s-5 15-15 25z' fill='none' stroke='white' stroke-width='.5' opacity='.3'/%3E%3C/svg%3E")`,
+  palms:     `url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 55v-30M20 15c3 5 10 10 10 10M40 15c-3 5-10 10-10 10M15 20c5 3 15 5 15 5M45 20c-5 3-15 5-15 5' stroke='white' stroke-width='.4' opacity='.3'/%3E%3C/svg%3E")`,
+  stars:     `url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 10l4 12h12l-10 7 4 12-10-7-10 7 4-12-10-7h12z' fill='none' stroke='white' stroke-width='.4' opacity='.35'/%3E%3C/svg%3E")`
+};
+
+function aplicarPatronFondo(t) {
+  const el = document.getElementById('theme-pattern');
+  if (!el) return;
+  const pat = THEME_PATTERNS[t.pattern];
+  if (pat) {
+    el.style.backgroundImage = pat;
+    el.style.display = '';
+  } else {
+    el.style.backgroundImage = 'none';
+    el.style.display = 'none';
+  }
+}
+
 function crearParticulasFondo() {
     const container = document.getElementById('particles-bg');
     if (!container) return;
     container.innerHTML = '';
     const t = temaActual || THEMES.dark_luxury;
     const colors = [t.accent, t.accent2, t.sliceColors[2] || '#ffd700'];
+    const emojis = t.particles || [];
+    const useEmoji = emojis.length > 0;
     for (let i = 0; i < 40; i++) {
         const p = document.createElement('div');
-        p.className = 'bg-particle';
-        const size = Math.random() * 5 + 2;
-        p.style.width = size + 'px';
-        p.style.height = size + 'px';
-        p.style.left = Math.random() * 100 + '%';
-        p.style.background = colors[i % colors.length];
-        p.style.boxShadow = '0 0 ' + (size * 2) + 'px ' + colors[i % colors.length];
-        p.style.animationDuration = (Math.random() * 10 + 6) + 's';
-        p.style.animationDelay = (Math.random() * 12) + 's';
+        if (useEmoji && i % 3 !== 0) {
+            // Emoji-shaped particle (2 of every 3)
+            const emoji = emojis[i % emojis.length];
+            const size = Math.random() * 16 + 10;
+            p.className = 'bg-particle emoji-particle';
+            p.textContent = emoji;
+            p.style.fontSize = size + 'px';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.animationDuration = (Math.random() * 14 + 8) + 's';
+            p.style.animationDelay = (Math.random() * 14) + 's';
+        } else {
+            // Classic circle particle (every 3rd)
+            const size = Math.random() * 5 + 2;
+            p.className = 'bg-particle';
+            p.style.width = size + 'px';
+            p.style.height = size + 'px';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.background = colors[i % colors.length];
+            p.style.boxShadow = '0 0 ' + (size * 2) + 'px ' + colors[i % colors.length];
+            p.style.animationDuration = (Math.random() * 10 + 6) + 's';
+            p.style.animationDelay = (Math.random() * 12) + 's';
+        }
         container.appendChild(p);
     }
+    // Themed background pattern
+    aplicarPatronFondo(t);
 }
 
 // =============================================================================

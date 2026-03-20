@@ -188,17 +188,28 @@ textarea.form-input { min-height: 100px; resize: vertical; }
 .themes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
 .theme-card {
   border: 2px solid var(--glass-border); border-radius: 12px; padding: 12px; cursor: pointer;
-  transition: all .2s; text-align: center; position: relative;
+  transition: all .3s; text-align: center; position: relative; overflow: hidden;
+  background: rgba(255,255,255,.03);
 }
-.theme-card:hover { border-color: var(--accent2); }
-.theme-card.active { border-color: var(--accent); box-shadow: 0 0 20px rgba(255,0,102,.2); }
+.theme-card::before {
+  content: ''; position: absolute; inset: 0; border-radius: 10px;
+  background: radial-gradient(circle at 50% 0%, var(--card-accent, transparent) 0%, transparent 70%);
+  opacity: 0; transition: opacity .3s;
+}
+.theme-card:hover { border-color: var(--accent2); transform: translateY(-2px); }
+.theme-card:hover::before { opacity: .15; }
+.theme-card.active { border-color: var(--accent); box-shadow: 0 0 20px rgba(255,0,102,.2), 0 4px 15px rgba(0,0,0,.3); }
+.theme-card.active::before { opacity: .2; }
 .theme-card.locked { opacity: .5; cursor: not-allowed; }
+.theme-card.locked:hover { transform: none; }
 .theme-card .lock { position: absolute; top: 8px; right: 8px; font-size: .9rem; }
+.theme-badge { position: absolute; top: 6px; left: 6px; font-size: .55rem; padding: 2px 6px; border-radius: 6px; background: rgba(255,215,0,.15); color: #ffd700; font-weight: 700; letter-spacing: .3px; white-space: nowrap; }
 .theme-preview { display: flex; gap: 4px; margin-bottom: 8px; justify-content: center; }
 .theme-dot { width: 20px; height: 20px; border-radius: 50%; border: 1px solid rgba(255,255,255,.2); }
 .theme-gradient { height: 8px; border-radius: 4px; flex: 1; }
 .theme-name { font-size: .75rem; font-weight: 600; }
-.theme-emoji { font-size: 1.5rem; margin-bottom: 4px; }
+.theme-emoji { font-size: 1.8rem; margin-bottom: 6px; transition: transform .3s; }
+.theme-card:hover .theme-emoji { transform: scale(1.15); }
 
 /* Preview ruleta */
 .preview-wrap { display: flex; justify-content: center; padding: 20px; }
@@ -680,16 +691,16 @@ let premiosOriginales = [];
 let premiosModificados = false;
 
 const THEMES = {
-  dark_luxury:  { name:'Dark Luxury',   emoji:'💎',   plan:'solo', colors:['#ff0066','#b300ff','#1a0a1e'] },
-  rose_gold:    { name:'Rose Gold',     emoji:'🌹',   plan:'solo', colors:['#ff6b9d','#ffd700','#1a0a10'] },
-  neon_cyber:   { name:'Neon Cyber',    emoji:'⚡',   plan:'solo', colors:['#00f5ff','#7c3aed','#000814'] },
-  gold_vip:     { name:'Gold VIP',      emoji:'👑',   plan:'solo', colors:['#ffd700','#ff6b35','#0d0d00'] },
-  red_hot:      { name:'Red Hot',       emoji:'🔥',   plan:'solo', colors:['#ff2d2d','#ff8c42','#1a0000'] },
-  halloween:    { name:'Halloween',     emoji:'🎃',   plan:'pro',  colors:['#ff6a00','#9b30ff','#0a0510'] },
-  navidad:      { name:'Navidad',       emoji:'❄️',   plan:'pro',  colors:['#ff1744','#00e676','#0a1a0a'] },
-  san_valentin: { name:'San Valentín',  emoji:'❤️‍🔥', plan:'pro',  colors:['#ff1493','#ff6eb4','#1a0510'] },
-  summer:       { name:'Summer',        emoji:'🌴',   plan:'pro',  colors:['#00d4aa','#ffb347','#001a1a'] },
-  galaxy:       { name:'Galaxy',        emoji:'🌙',   plan:'pro',  colors:['#7c4dff','#00e5ff','#0a0020'] },
+  dark_luxury:  { name:'Dark Luxury',   emoji:'💎',   plan:'solo', colors:['#ff0066','#b300ff','#1a0a1e'], badge:'' },
+  rose_gold:    { name:'Rose Gold',     emoji:'🌹',   plan:'solo', colors:['#ff6b9d','#ffd700','#1a0a10'], badge:'' },
+  neon_cyber:   { name:'Neon Cyber',    emoji:'⚡',   plan:'solo', colors:['#00f5ff','#7c3aed','#000814'], badge:'' },
+  gold_vip:     { name:'Gold VIP',      emoji:'👑',   plan:'solo', colors:['#ffd700','#ff6b35','#0d0d00'], badge:'⭐ Premium' },
+  red_hot:      { name:'Red Hot',       emoji:'🔥',   plan:'solo', colors:['#ff2d2d','#ff8c42','#1a0000'], badge:'' },
+  halloween:    { name:'Halloween',     emoji:'🎃',   plan:'pro',  colors:['#ff6a00','#9b30ff','#0a0510'], badge:'🎃 Temporada' },
+  navidad:      { name:'Navidad',       emoji:'❄️',   plan:'pro',  colors:['#ff1744','#00e676','#0a1a0a'], badge:'🎄 Temporada' },
+  san_valentin: { name:'San Valentín',  emoji:'❤️‍🔥', plan:'pro',  colors:['#ff1493','#ff6eb4','#1a0510'], badge:'💘 Temporada' },
+  summer:       { name:'Summer',        emoji:'🌴',   plan:'pro',  colors:['#00d4aa','#ffb347','#001a1a'], badge:'☀️ Temporada' },
+  galaxy:       { name:'Galaxy',        emoji:'🌙',   plan:'pro',  colors:['#7c4dff','#00e5ff','#0a0020'], badge:'🪐 Especial' },
 };
 
 // =============================================================================
@@ -1302,8 +1313,10 @@ function renderThemeGrid() {
   grid.innerHTML = Object.entries(THEMES).map(([id, t]) => {
     const locked = plan === 'solo' && !soloThemes.includes(id);
     const active = id === current;
-    return `<div class="theme-card ${active ? 'active' : ''} ${locked ? 'locked' : ''}" data-theme="${id}" ${locked ? '' : `onclick="selectTheme('${id}')"`}>
+    const badge = t.badge ? `<span class="theme-badge">${t.badge}</span>` : '';
+    return `<div class="theme-card ${active ? 'active' : ''} ${locked ? 'locked' : ''}" data-theme="${id}" style="--card-accent:${t.colors[0]}" ${locked ? '' : `onclick="selectTheme('${id}')"`}>
       ${locked ? '<span class="lock">🔒</span>' : ''}
+      ${badge}
       <div class="theme-emoji">${t.emoji}</div>
       <div class="theme-preview"><div class="theme-gradient" style="background:linear-gradient(135deg,${t.colors[0]},${t.colors[1]})"></div></div>
       <div class="theme-name">${t.name}</div>
