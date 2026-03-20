@@ -1681,7 +1681,7 @@ async function girarRuleta() {
             // Mostrar popup INMEDIATAMENTE (sin esperar confirm-spin)
             const postMsg = (mensajePremio || '').replace(/\{nombre\}/gi, nombreUsuario);
             mostrarPopupPremio(premioGanado, postMsg);
-            mostrarMensaje(`🎉 ¡Felicidades ${nombreUsuario}! Ganaste: <b>${premioGanado}</b>`);
+            mostrarMensaje(`🎉 ¡Felicidades ${nombreUsuario}! Ganaste: ${premioGanado}`);
             agregarPremioAlHistorial(premioGanado);
 
             // Confirmar spin en segundo plano (no bloquea popup)
@@ -1848,7 +1848,7 @@ function cerrarPopup() {
 
 function mostrarMensaje(msg) {
 const mensajeElement = document.getElementById('mensaje');
-mensajeElement.innerHTML = msg;
+mensajeElement.textContent = msg;
 
 mensajeElement.classList.add('mensaje-update');
 setTimeout(() => {

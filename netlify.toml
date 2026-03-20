@@ -44,6 +44,32 @@
   to = "/superadmin.html"
   status = 200
 
+# Bloquear archivos sensibles (no deben ser accesibles públicamente)
+[[redirects]]
+  from = "/*.sql"
+  to = "/404.html"
+  status = 404
+
+[[redirects]]
+  from = "/*.md"
+  to = "/404.html"
+  status = 404
+
+[[redirects]]
+  from = "/package.json"
+  to = "/404.html"
+  status = 404
+
+[[redirects]]
+  from = "/package-lock.json"
+  to = "/404.html"
+  status = 404
+
+[[redirects]]
+  from = "/netlify.toml"
+  to = "/404.html"
+  status = 404
+
 
 
 # API — Netlify Functions

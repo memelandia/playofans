@@ -5,8 +5,13 @@ const RATE_LIMIT = 10;
 const RATE_WINDOW_SECONDS = 60;
 
 async function isRateLimited(ip) {
-  const windowStart = new Date(Date.now() - RATE_WINDOW_SECONDS * 1000).toISOString();
+  // INSERT first to avoid TOCTOU race condition
+  await supabase.from('rate_limits').insert({
+    ip_address: ip,
+    action: 'validate-code',
+  });
 
+  const windowStart = new Date(Date.now() - RATE_WINDOW_SECONDS * 1000).toISOString();
   const { count } = await supabase
     .from('rate_limits')
     .select('id', { count: 'exact', head: true })
@@ -14,14 +19,7 @@ async function isRateLimited(ip) {
     .eq('action', 'validate-code')
     .gte('created_at', windowStart);
 
-  if ((count || 0) >= RATE_LIMIT) return true;
-
-  await supabase.from('rate_limits').insert({
-    ip_address: ip,
-    action: 'validate-code',
-  });
-
-  return false;
+  return (count || 0) > RATE_LIMIT;
 }
 
 exports.handler = async (event) => {

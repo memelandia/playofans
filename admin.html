@@ -522,9 +522,9 @@ textarea.form-input { min-height: 100px; resize: vertical; }
     <div class="card-title">🔑 Cambiar contraseña</div>
     <div class="form-group">
       <label>Nueva contraseña</label>
-      <input type="password" id="new-pass" class="form-input" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+      <input type="password" id="settings-new-pass" class="form-input" placeholder="Mínimo 8 caracteres" autocomplete="new-password">
     </div>
-    <button class="btn btn-primary btn-sm" id="change-pass-btn" style="margin-top:12px">Actualizar contraseña</button>
+    <button class="btn btn-primary btn-sm" id="settings-change-pass-btn" style="margin-top:12px">Actualizar contraseña</button>
   </div>
 </section>
 
@@ -1429,7 +1429,7 @@ function drawPreview() {
 // AJUSTES
 // =============================================================================
 function registerSettingsEvents() {
-  document.getElementById('change-pass-btn').addEventListener('click', doChangePassword);
+  document.getElementById('settings-change-pass-btn').addEventListener('click', doSettingsChangePassword);
 }
 
 async function loadAfiliados() {
@@ -1515,16 +1515,16 @@ function loadSettings() {
   document.getElementById('set-reflink').textContent = 'https://playofans.com/registro?ref=' + refCode;
 }
 
-async function doChangePassword() {
-  const pass = document.getElementById('new-pass').value;
-  if (!pass || pass.length < 6) { toast('La contraseña debe tener al menos 6 caracteres', 'error'); return; }
-  const btn = document.getElementById('change-pass-btn');
+async function doSettingsChangePassword() {
+  const pass = document.getElementById('settings-new-pass').value;
+  if (!pass || pass.length < 8) { toast('La contraseña debe tener al menos 8 caracteres', 'error'); return; }
+  const btn = document.getElementById('settings-change-pass-btn');
   btn.disabled = true;
   try {
     const { error } = await sb.auth.updateUser({ password: pass });
     if (error) throw error;
     toast('Contraseña actualizada', 'success');
-    document.getElementById('new-pass').value = '';
+    document.getElementById('settings-new-pass').value = '';
   } catch(e) { toast(e.message || 'Error al actualizar', 'error'); }
   btn.disabled = false;
 }

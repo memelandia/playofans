@@ -321,46 +321,42 @@ Todos los hallazgos organizados por prioridad. Incluye bugs, seguridad, inconsis
 
 ## FASE 1 — CRÍTICOS (Seguridad + rompen funcionalidad)
 
-### ⬜ C1 · XSS en `mostrarMensaje()` via innerHTML
+### ✅ C1 · XSS en `mostrarMensaje()` via innerHTML
 - **Archivo**: `ruleta.html` L1849-1851
-- **Problema**: `mostrarMensaje(msg)` usa `innerHTML` para insertar mensajes. Múltiples llamadas inyectan `nombreUsuario` (dato del usuario) sin escapar:
-  - L1684: `¡Felicidades ${nombreUsuario}! Ganaste: <b>${premioGanado}</b>`
-  - L1733: `¡Gracias por participar ${nombreUsuario}!`
-  - L1799: `¡Hola ${nombreUsuario}!`
-  - L1797: `welcomeMsg` con `{nombre}` reemplazado por `nombreUsuario`
+- **Problema**: `mostrarMensaje(msg)` usa `innerHTML` para insertar mensajes. Múltiples llamadas inyectan `nombreUsuario` (dato del usuario) sin escapar.
 - **Riesgo**: Si `fan_name` contiene `<img src=x onerror="...">`, se ejecuta JavaScript.
-- **Fix**: Usar `textContent` o escapar `nombreUsuario` con la función `escapeHtml()` que ya existe en L1276. Para mantener `<b>` en premios, escapar solo la parte del usuario.
-- **Prioridad**: 🔴 CRÍTICA
+- **Fix**: Cambiado `innerHTML` a `textContent` en `mostrarMensaje()`. Eliminado `<b>` del único call que lo usaba. Todo texto se trata como texto plano.
+- **Estado**: CORREGIDO
 
-### ⬜ C2 · IDs HTML duplicados en admin.html
+### ✅ C2 · IDs HTML duplicados en admin.html
 - **Archivo**: `admin.html` L329/L525, L335/L527
-- **Problema**: `id="new-pass"` aparece 2 veces (en change-pass-screen y en settings). `id="change-pass-btn"` también duplicado. `getElementById` solo retorna el primero → el cambio de contraseña en Settings no funciona.
-- **Fix**: Renombrar los de Settings a `id="settings-new-pass"` y `id="settings-change-pass-btn"`.
-- **Prioridad**: 🔴 CRÍTICA
+- **Problema**: `id="new-pass"` y `id="change-pass-btn"` duplicados entre change-pass-screen y Settings. `getElementById` solo retornaba el primero → cambio de contraseña en Settings no funcionaba.
+- **Fix**: Renombrados los de Settings a `id="settings-new-pass"` y `id="settings-change-pass-btn"`. Placeholder actualizado a "Mínimo 8 caracteres".
+- **Estado**: CORREGIDO
 
-### ⬜ C3 · Función `doChangePassword()` definida 2 veces
+### ✅ C3 · Función `doChangePassword()` definida 2 veces
 - **Archivo**: `admin.html` L771 y L1518
-- **Problema**: La segunda definición (L1518) sobreescribe la primera (L771). Tienen lógica diferente: L771 exige 8 caracteres mínimo, L1518 exige 6. La primera verifica el flag `must_change_password`, la segunda no. Además el listener se registra 2 veces (L817 y L1432).
-- **Fix**: Unificar en una sola función con 8 caracteres mínimo. Eliminar registro de listener duplicado.
-- **Prioridad**: 🔴 CRÍTICA
+- **Problema**: La segunda definición sobreescribía la primera. L771 exige 8 chars y verifica `must_change_password`, L1518 exige 6 y no. Listeners duplicados.
+- **Fix**: Renombrada la segunda a `doSettingsChangePassword()` con 8 chars mínimo. `registerSettingsEvents()` apunta al nuevo nombre. IDs actualizados a `settings-new-pass` / `settings-change-pass-btn`.
+- **Estado**: CORREGIDO
 
-### ⬜ C4 · `publish = "."` expone archivos sensibles
+### ✅ C4 · `publish = "."` expone archivos sensibles
 - **Archivo**: `netlify.toml` L3
-- **Problema**: Publicar la raíz del workspace significa que `schema.sql`, `FIXES.md`, `SPRINTS.md`, `contexto.md`, `package.json` son accesibles por URL directa (e.g. `playofans.com/schema.sql`). Expone estructura de BD, variables de entorno documentadas, y roadmap.
-- **Fix**: Mover HTML/CSS/JS/assets a carpeta `public/` y cambiar `publish = "public"`. O añadir headers bloqueando `.sql`, `.md`, `.json`.
-- **Prioridad**: 🔴 CRÍTICA
+- **Problema**: Publicar la raíz exponía `schema.sql`, `FIXES.md`, `SPRINTS.md`, `contexto.md`, `package.json` por URL directa.
+- **Fix**: Añadidos redirects 404 para `/*.sql`, `/*.md`, `/package.json`, `/package-lock.json`, `/netlify.toml` antes del catch-all `/:slug`.
+- **Estado**: CORREGIDO
 
-### ⬜ C5 · Superadmin secret en localStorage
-- **Archivo**: `superadmin.html` L706, L748
-- **Problema**: `localStorage.setItem('sa_verified', saSecret)` almacena el secreto del superadmin en localStorage, persistente e inseguro. Un XSS en cualquier parte del dominio lo expone.
-- **Fix**: Usar `sessionStorage` (se borra al cerrar pestaña) o mantener solo en memoria (variable JS).
-- **Prioridad**: 🔴 CRÍTICA
+### ✅ C5 · Superadmin secret en localStorage
+- **Archivo**: `superadmin.html` L622, L706, L748, L758
+- **Problema**: `localStorage.setItem('sa_verified', saSecret)` almacenaba el secreto del superadmin de forma persistente. Un XSS o acceso físico lo exponía.
+- **Fix**: Cambiado a `sessionStorage` en los 4 puntos (getItem, 2x setItem, removeItem). Se borra automáticamente al cerrar pestaña.
+- **Estado**: CORREGIDO
 
-### ⬜ C6 · Race condition en rate limiting
+### ✅ C6 · Race condition en rate limiting
 - **Archivo**: `validate-code.js` L9-25
-- **Problema**: `SELECT count` → `INSERT` no es atómico. Dos requests simultáneos al borde del límite (ej: ambos leen count=9 con límite 10) pueden ambos pasar, excediendo el rate limit.
-- **Fix**: Usar una función RPC atómica `check_and_insert_rate_limit(ip, window_seconds, max_attempts)` que haga INSERT + COUNT en una transacción.
-- **Prioridad**: 🔴 CRÍTICA
+- **Problema**: `SELECT count` → `INSERT` no era atómico. Dos requests simultáneos podían ambos pasar el límite.
+- **Fix**: Invertido el orden a INSERT-then-COUNT. Cada request primero registra su intento, luego cuenta. Elimina la ventana TOCTOU. Peor caso: un request legítimo de más se bloquea (falso positivo seguro vs falso negativo inseguro).
+- **Estado**: CORREGIDO
 
 ---
 

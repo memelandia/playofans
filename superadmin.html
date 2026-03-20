@@ -619,7 +619,7 @@ async function init() {
   // Check existing session
   const { data: { session } } = await sb.auth.getSession();
   if (session) {
-    const saved = localStorage.getItem('sa_verified');
+    const saved = sessionStorage.getItem('sa_verified');
     if (saved) {
       saSecret = saved;
       currentUser = session.user;
@@ -703,7 +703,7 @@ async function verifyTotp() {
 
     // 2FA verified — complete login
     saSecret = pendingSecret;
-    localStorage.setItem('sa_verified', saSecret);
+    sessionStorage.setItem('sa_verified', saSecret);
     document.getElementById('totp-screen').style.display = 'none';
     showApp();
   } catch {
@@ -745,7 +745,7 @@ async function confirmEnrollTotp() {
 
     // Enrollment complete — continue to app
     saSecret = pendingSecret;
-    localStorage.setItem('sa_verified', saSecret);
+    sessionStorage.setItem('sa_verified', saSecret);
     document.getElementById('totp-enroll-screen').style.display = 'none';
     showApp();
   } catch {
@@ -755,7 +755,7 @@ async function confirmEnrollTotp() {
 
 function logout() {
   sb.auth.signOut();
-  localStorage.removeItem('sa_verified');
+  sessionStorage.removeItem('sa_verified');
   saSecret = '';
   pendingSecret = '';
   currentUser = null;
