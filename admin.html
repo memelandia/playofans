@@ -606,11 +606,9 @@ textarea.form-input { min-height: 100px; resize: vertical; }
 
   <div class="card">
     <div class="card-title">➕ Añadir modelo al equipo</div>
-    <div style="display:flex;gap:8px;align-items:flex-end">
-      <div style="flex:1">
-        <input type="text" class="form-input" id="eq-add-slug" placeholder="Slug del modelo (ej: vickyluna)" maxlength="40">
-      </div>
-      <button class="btn btn-primary btn-sm" id="eq-add-btn" style="height:42px">Añadir</button>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input type="text" class="form-input" id="eq-add-slug" placeholder="Slug del modelo (ej: vickyluna)" maxlength="40" style="flex:1">
+      <button class="btn btn-primary" id="eq-add-btn" style="white-space:nowrap;height:42px;padding:0 20px">Añadir</button>
     </div>
     <div id="eq-add-error" style="color:var(--danger);font-size:.85rem;margin-top:8px"></div>
     <p style="font-size:.82rem;color:var(--text-soft);margin-top:12px">Máximo 8 modelos. Escribe el slug exacto del modelo que quieres añadir.</p>
@@ -873,6 +871,22 @@ async function initPanel() {
     document.getElementById('overlay').classList.remove('show');
   });
 
+  // Agency plan: only show Equipo + Ajustes
+  if (modelConfig.plan === 'agency') {
+    ['dashboard','codes','config','afiliados'].forEach(s => {
+      const nav = document.querySelector(`.nav-item[data-section="${s}"]`);
+      if (nav) nav.style.display = 'none';
+      const sec = document.getElementById('section-' + s);
+      if (sec) sec.style.display = 'none';
+    });
+    document.getElementById('nav-equipo').style.display = '';
+    document.getElementById('sidebar-name').textContent = '🏢 ' + (modelConfig.display_name || SLUG);
+    registerEquipoEvents();
+    registerSettingsEvents();
+    switchSection('equipo');
+    return;
+  }
+
   // Load dashboard
   await loadDashboard();
 
@@ -883,12 +897,6 @@ async function initPanel() {
   registerCodeEvents();
   registerConfigEvents();
   registerSettingsEvents();
-
-  // Show Equipo tab only for agency plan
-  if (modelConfig.plan === 'agency') {
-    document.getElementById('nav-equipo').style.display = '';
-    registerEquipoEvents();
-  }
 }
 
 // =============================================================================
