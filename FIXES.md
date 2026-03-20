@@ -362,41 +362,41 @@ Todos los hallazgos organizados por prioridad. Incluye bugs, seguridad, inconsis
 
 ## FASE 2 — SEGURIDAD ALTA
 
-### ⬜ S1 · tenant-config.js expone datos sensibles
+### ✅ S1 · tenant-config.js expone datos sensibles
 - **Archivo**: `tenant-config.js` L14-55
-- **Problema**: Endpoint público (sin auth) retorna `subscription_expires_at`, `codes_created_this_month`, `codes_limit` al cliente. Cualquier persona puede ver el estado de suscripción y uso de cualquier modelo conociendo su slug.
-- **Fix**: Remover estos 3 campos de la respuesta pública. Solo retornarlos en endpoints autenticados (admin).
-- **Prioridad**: 🟠 ALTA
+- **Problema**: Endpoint público retornaba `subscription_expires_at`, `codes_created_this_month`, `codes_limit` a cualquier visitante.
+- **Fix**: Eliminados los 3 campos de la respuesta pública y del SELECT. `admin.html` ahora obtiene `subscription_expires_at` y `codes_created_this_month` directamente de Supabase (authenticated), y calcula `codes_limit` a partir del plan.
+- **Estado**: CORREGIDO
 
-### ⬜ S2 · Timing attack en comparación de secreto
+### ✅ S2 · Timing attack en comparación de secreto
 - **Archivo**: `_shared.js` L67
-- **Problema**: `secret !== process.env.SUPERADMIN_SECRET` usa comparación estándar de strings, vulnerable a timing attacks.
-- **Fix**: Usar `crypto.timingSafeEqual(Buffer.from(secret), Buffer.from(process.env.SUPERADMIN_SECRET))`.
-- **Prioridad**: 🟠 ALTA
+- **Problema**: `secret !== process.env.SUPERADMIN_SECRET` vulnerable a timing attacks por comparación carácter a carácter.
+- **Fix**: Importado `crypto` de Node.js. Comparación via `crypto.timingSafeEqual(Buffer.from(secret), Buffer.from(expected))` con verificación previa de longitud.
+- **Estado**: CORREGIDO
 
-### ⬜ S3 · Falta Content-Security-Policy
-- **Archivo**: `netlify.toml` L76-81 (headers)
-- **Problema**: Headers de seguridad incluyen `X-Frame-Options`, `X-Content-Type-Options`, etc. pero NO incluyen `Content-Security-Policy`. Sin CSP, scripts inline y recursos externos no están restringidos.
-- **Fix**: Añadir CSP header con `script-src 'self' 'unsafe-inline' cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' fonts.googleapis.com;`
-- **Prioridad**: 🟠 ALTA
+### ✅ S3 · Falta Content-Security-Policy
+- **Archivo**: `netlify.toml` headers section
+- **Problema**: Sin CSP, scripts/estilos/iframes de cualquier origen podían cargarse sin restricción.
+- **Fix**: Añadido header CSP completo: `script-src 'self' 'unsafe-inline' cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' *.supabase.co; frame-ancestors 'self'`.
+- **Estado**: CORREGIDO
 
-### ⬜ S4 · Falta CAPTCHA/bot protection en registro
-- **Archivo**: `registro.html`
-- **Problema**: Formulario de registro sin CAPTCHA, honeypot ni rate limiting. Bots pueden spamear registros infinitamente.
-- **Fix**: Añadir hCaptcha o al menos un honeypot field invisible + validación server-side.
-- **Prioridad**: 🟠 ALTA
+### ✅ S4 · Falta CAPTCHA/bot protection en registro
+- **Archivo**: `registro.html`, `submit-registration.js`
+- **Problema**: Formulario sin protección anti-bot. Bots podían enviar registros infinitos.
+- **Fix**: Añadido campo honeypot invisible (`name="website"`) en el formulario. Backend verifica: si `website` tiene valor, retorna 200 silencioso (el bot cree que funcionó pero no se guarda nada).
+- **Estado**: CORREGIDO
 
-### ⬜ S5 · Replace con user input inyectable
-- **Archivo**: `validate-code.js` L108
-- **Problema**: `.replace(/\{nombre\}/gi, name)` donde `name` es input del usuario. Si `name` contiene `$&` o `$'`, JS `replace()` interpreta patrones especiales de reemplazo.
-- **Fix**: Usar callback: `.replace(/\{nombre\}/gi, () => name)` para tratar como literal.
-- **Prioridad**: 🟠 ALTA
+### ✅ S5 · Replace con user input inyectable
+- **Archivos**: `validate-code.js` L108, `ruleta.html` L1682 y L1795
+- **Problema**: `.replace(/\{nombre\}/gi, name)` interpreta patrones `$&`, `$'`, `` $\` `` en user input.
+- **Fix**: Cambiado a callback `.replace(/\{nombre\}/gi, () => name)` en las 3 instancias. El callback retorna el string literal siempre.
+- **Estado**: CORREGIDO
 
-### ⬜ S6 · Lista de slugs reservados triplicada
-- **Archivos**: `registro.html` L278, `sa-create-model.js` L24, `submit-registration.js` L34
-- **Problema**: Misma lista hardcodeada en 3 archivos. Si se agrega una ruta nueva, hay que actualizar 3 lugares manualmente. Riesgo de olvido = slug colisiona con ruta.
-- **Fix**: Centralizar en `_shared.js` como `RESERVED_SLUGS` y exportar. O mejor: endpoint `/api/check-slug`.
-- **Prioridad**: 🟠 ALTA
+### ✅ S6 · Lista de slugs reservados triplicada
+- **Archivos**: `_shared.js`, `sa-create-model.js`, `submit-registration.js`, `registro.html`
+- **Problema**: Lista hardcodeada en 3 archivos. Riesgo de desincronización al añadir rutas.
+- **Fix**: Centralizado como `RESERVED_SLUGS` en `_shared.js` (array exportado). Backend lo importa. Frontend mantiene copia con comentario "keep in sync". Añadidos `blog` y `404` preventivamente.
+- **Estado**: CORREGIDO
 
 ---
 

@@ -101,7 +101,7 @@ exports.handler = async (event) => {
 
     // Preparar mensaje de bienvenida con nombre reemplazado
     const name = fanName || code.fan_name;
-    const welcomeMessage = (model.welcome_message || '').replace(/\{nombre\}/gi, name);
+    const welcomeMessage = (model.welcome_message || '').replace(/\{nombre\}/gi, () => name);
 
     // Premios: los del código si existen, si no los globales del modelo
     const prizes = code.prizes || model.prizes;

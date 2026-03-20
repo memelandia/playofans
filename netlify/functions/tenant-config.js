@@ -11,7 +11,7 @@ exports.handler = async (event) => {
     // Buscar modelo por slug
     const { data: model, error } = await supabase
       .from('models')
-      .select('id, slug, display_name, plan, active, theme, welcome_message, post_prize_message, sound_enabled_default, force_dark_mode, prizes, spins_per_code, subscription_expires_at, grace_period_until, codes_created_this_month')
+      .select('id, slug, display_name, plan, active, theme, welcome_message, post_prize_message, sound_enabled_default, force_dark_mode, prizes, spins_per_code, subscription_expires_at, grace_period_until')
       .eq('slug', slug)
       .single();
 
@@ -49,9 +49,6 @@ exports.handler = async (event) => {
       spins_per_code: model.spins_per_code,
       active_games: activeGames,
       grace: inGrace || false,
-      subscription_expires_at: model.subscription_expires_at,
-      codes_created_this_month: model.codes_created_this_month,
-      codes_limit: codesLimit,
     });
   } catch (err) {
     return json(500, { error: 'Error interno del servidor' });

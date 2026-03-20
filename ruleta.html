@@ -1679,7 +1679,7 @@ async function girarRuleta() {
             opcionesCanvas.style.transition = 'none';
 
             // Mostrar popup INMEDIATAMENTE (sin esperar confirm-spin)
-            const postMsg = (mensajePremio || '').replace(/\{nombre\}/gi, nombreUsuario);
+            const postMsg = (mensajePremio || '').replace(/\{nombre\}/gi, () => nombreUsuario);
             mostrarPopupPremio(premioGanado, postMsg);
             mostrarMensaje(`🎉 ¡Felicidades ${nombreUsuario}! Ganaste: ${premioGanado}`);
             agregarPremioAlHistorial(premioGanado);
@@ -1792,7 +1792,7 @@ if (result.expires_at) expiresAt = new Date(result.expires_at);
 mostrarNotificacion(`¡Bienvenid@ ${nombreUsuario}! Código válido con ${tiradasRestantes} tirada(s) 🎉`, 'success');
 
 // Mostrar mensaje de bienvenida personalizado
-const welcomeMsg = (mensajeBienvenida || '').replace(/\{nombre\}/gi, nombreUsuario);
+const welcomeMsg = (mensajeBienvenida || '').replace(/\{nombre\}/gi, () => nombreUsuario);
 if (welcomeMsg) {
     mostrarMensaje('💖 ' + welcomeMsg);
 } else {

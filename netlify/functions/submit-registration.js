@@ -1,4 +1,4 @@
-const { supabase, json, handleOptions } = require('./_shared');
+const { supabase, json, handleOptions, RESERVED_SLUGS } = require('./_shared');
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return handleOptions();
@@ -10,8 +10,11 @@ exports.handler = async (event) => {
       email, display_name, slug, country, plan,
       monthly_revenue, has_agency, active_fans,
       acquisition_channel, telegram_or_instagram,
-      referral_code, discount_code,
+      referral_code, discount_code, website,
     } = body;
+
+    // Honeypot: if filled, it's a bot — reject silently
+    if (website) return json(200, { success: true });
 
     // Validaciones obligatorias
     if (!email?.trim()) return json(400, { error: 'El email es obligatorio' });
@@ -31,8 +34,7 @@ exports.handler = async (event) => {
       return json(400, { error: 'El slug debe tener entre 3 y 30 caracteres' });
     }
 
-    const reserved = ['admin', 'superadmin', 'api', 'demo', 'precios', 'guia', 'registro', 'contacto', 'afiliados', 'sounds', 'netlify'];
-    if (reserved.includes(cleanSlug)) {
+    if (RESERVED_SLUGS.includes(cleanSlug)) {
       return json(400, { error: 'Este slug está reservado' });
     }
 

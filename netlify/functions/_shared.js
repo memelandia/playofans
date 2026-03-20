@@ -1,4 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
+const crypto = require('crypto');
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -57,11 +58,15 @@ async function authenticateSuperAdmin(event) {
   if (auth.error) return auth;
 
   const secret = event.headers['x-superadmin-secret'] || '';
-  if (!secret || secret !== process.env.SUPERADMIN_SECRET) {
+  const expected = process.env.SUPERADMIN_SECRET || '';
+  if (!secret || secret.length !== expected.length || !crypto.timingSafeEqual(Buffer.from(secret), Buffer.from(expected))) {
     return { error: json(403, { error: 'Acceso denegado' }) };
   }
 
   return { user: auth.user };
 }
 
-module.exports = { supabase, CORS_HEADERS, json, handleOptions, planCanAccess, PLAN_RANK, PLAN_PRICES, authenticateAdmin, authenticateSuperAdmin };
+// Slugs reservados (rutas del sistema). Actualizar también en registro.html si se cambian.
+const RESERVED_SLUGS = ['admin', 'superadmin', 'api', 'demo', 'precios', 'guia', 'registro', 'contacto', 'afiliados', 'sounds', 'netlify', 'blog', '404'];
+
+module.exports = { supabase, CORS_HEADERS, json, handleOptions, planCanAccess, PLAN_RANK, PLAN_PRICES, authenticateAdmin, authenticateSuperAdmin, RESERVED_SLUGS };

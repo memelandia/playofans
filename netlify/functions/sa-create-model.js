@@ -1,4 +1,4 @@
-const { supabase, json, handleOptions, authenticateSuperAdmin } = require('./_shared');
+const { supabase, json, handleOptions, authenticateSuperAdmin, RESERVED_SLUGS } = require('./_shared');
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return handleOptions();
@@ -21,8 +21,7 @@ exports.handler = async (event) => {
     }
 
     // Check slug is not reserved
-    const reserved = ['admin', 'superadmin', 'api', 'demo', 'precios', 'guia', 'registro', 'contacto', 'afiliados', 'sounds', 'netlify'];
-    if (reserved.includes(cleanSlug)) {
+    if (RESERVED_SLUGS.includes(cleanSlug)) {
       return json(400, { error: 'Este slug está reservado' });
     }
 

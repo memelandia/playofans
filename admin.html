@@ -1500,16 +1500,20 @@ async function loadAfiliados() {
   } catch(e) { console.error('Afiliados error:', e); }
 }
 
-function loadSettings() {
+async function loadSettings() {
   if (!modelConfig) return;
   document.getElementById('set-slug').textContent = SLUG;
   const plan = (modelConfig.plan || 'solo');
   document.getElementById('set-plan').innerHTML = `<span class="plan-badge ${plan}">${plan.toUpperCase()}</span>`;
-  document.getElementById('set-expires').textContent = modelConfig.subscription_expires_at
-    ? new Date(modelConfig.subscription_expires_at).toLocaleDateString('es-ES')
+
+  // Fetch subscription info directly from Supabase (authenticated)
+  const { data: myModel } = await sb.from('models').select('subscription_expires_at, codes_created_this_month').eq('slug', SLUG).single();
+  document.getElementById('set-expires').textContent = myModel?.subscription_expires_at
+    ? new Date(myModel.subscription_expires_at).toLocaleDateString('es-ES')
     : 'No definida';
-  const codesUsed = modelConfig.codes_created_this_month || 0;
-  document.getElementById('set-codes-month').textContent = codesUsed + (modelConfig.codes_limit ? '/' + modelConfig.codes_limit : '');
+  const codesUsed = myModel?.codes_created_this_month || 0;
+  const codesLimit = plan === 'solo' ? 100 : null;
+  document.getElementById('set-codes-month').textContent = codesUsed + (codesLimit ? '/' + codesLimit : '');
   const refCode = 'REF-' + SLUG.toUpperCase();
   document.getElementById('set-refcode').textContent = refCode;
   document.getElementById('set-reflink').textContent = 'https://playofans.com/registro?ref=' + refCode;

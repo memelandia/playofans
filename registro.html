@@ -224,6 +224,7 @@ a:hover{color:var(--accent);}
     </div>
 
     <div class="submit-row">
+      <input type="text" name="website" id="website" style="position:absolute;left:-9999px;opacity:0;height:0;width:0;" tabindex="-1" autocomplete="off">
       <button type="submit" class="btn-submit" id="btnSubmit">Enviar solicitud 🚀</button>
     </div>
   </form>
@@ -275,7 +276,8 @@ slugInput.addEventListener('input', () => {
     if (raw.length > 0) { slugStatus.textContent = 'Mínimo 3 caracteres'; slugStatus.className = 'slug-status err'; }
     return;
   }
-  const reserved = ['admin','superadmin','api','demo','precios','guia','registro','contacto','afiliados','sounds','netlify'];
+  // IMPORTANT: Keep in sync with _shared.js RESERVED_SLUGS
+  const reserved = ['admin','superadmin','api','demo','precios','guia','registro','contacto','afiliados','sounds','netlify','blog','404'];
   if (reserved.includes(raw)) { slugStatus.textContent = 'Reservado'; slugStatus.className = 'slug-status err'; return; }
   slugStatus.textContent = '...'; slugStatus.className = 'slug-status checking';
   slugTimer = setTimeout(async () => {
@@ -308,6 +310,7 @@ form.addEventListener('submit', async (e) => {
     telegram_or_instagram: form.telegram_or_instagram.value.trim(),
     referral_code: form.referral_code.value.trim(),
     discount_code: form.discount_code.value.trim(),
+    website: form.website.value,
   };
 
   if (!data.display_name || !data.email || !data.country || !data.slug) {
