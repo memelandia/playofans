@@ -49,7 +49,8 @@ select.form-input { color-scheme: dark; }
   font-weight: 600; font-size: .95rem; cursor: pointer; transition: all .2s;
 }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
-.btn-primary { background: linear-gradient(135deg,var(--accent),var(--accent2)); color: #fff; width: 100%; }
+.btn-primary { background: linear-gradient(135deg,var(--accent),var(--accent2)); color: #fff; }
+.login-card .btn-primary { width: 100%; }
 .btn-primary:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
 .btn-sm { padding: 6px 14px; font-size: .8rem; border-radius: 8px; }
 .btn-outline { background: transparent; border: 1px solid var(--glass-border); color: var(--text); }
@@ -282,6 +283,14 @@ textarea.form-input { min-height: 100px; resize: vertical; }
 .toast.success { border-color: var(--success); }
 .toast.error { border-color: var(--danger); }
 @keyframes toastIn { from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)} }
+
+/* ===== AGENCY ===== */
+.eq-tabs { display: flex; gap: 4px; margin-bottom: 20px; background: rgba(255,255,255,0.04); border-radius: 10px; padding: 4px; }
+.eq-tab { flex: 1; padding: 10px 16px; border: none; border-radius: 8px; background: transparent; color: var(--text-soft); font-family: inherit; font-size: .85rem; font-weight: 600; cursor: pointer; transition: all .2s; }
+.eq-tab.active { background: linear-gradient(135deg,var(--accent),var(--accent2)); color: #fff; }
+.eq-tab:not(.active):hover { color: var(--text); background: rgba(255,255,255,0.06); }
+.member-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg,var(--accent),var(--accent2)); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .9rem; flex-shrink: 0; }
+.member-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
@@ -596,22 +605,65 @@ textarea.form-input { min-height: 100px; resize: vertical; }
 
 <!-- ===== EQUIPO (Agency) ===== -->
 <section id="section-equipo" style="display:none">
-  <div class="page-title">👥 Mi Equipo</div>
+  <div class="page-title">🏢 Mi Agencia</div>
 
   <div class="stats-grid" id="team-stats">
-    <div class="stat-card"><div class="label">Modelos</div><div class="value accent" id="eq-count">—</div></div>
-    <div class="stat-card"><div class="label">Giros totales</div><div class="value" id="eq-spins">—</div></div>
-    <div class="stat-card"><div class="label">Códigos activos</div><div class="value success" id="eq-codes">—</div></div>
+    <div class="stat-card">
+      <div class="label">👥 Modelos</div>
+      <div class="value accent" id="eq-count">—</div>
+      <div class="progress-bar"><div class="progress-fill" id="eq-progress" style="width:0%"></div></div>
+    </div>
+    <div class="stat-card"><div class="label">🎰 Giros totales</div><div class="value" id="eq-spins">—</div></div>
+    <div class="stat-card"><div class="label">🎫 Códigos activos</div><div class="value success" id="eq-codes">—</div></div>
+    <div class="stat-card"><div class="label">✅ Modelos activos</div><div class="value accent2" id="eq-active">—</div></div>
   </div>
 
   <div class="card">
-    <div class="card-title">➕ Añadir modelo al equipo</div>
-    <div style="display:flex;gap:8px;align-items:center">
-      <input type="text" class="form-input" id="eq-add-slug" placeholder="Slug del modelo (ej: vickyluna)" maxlength="40" style="flex:1">
-      <button class="btn btn-primary" id="eq-add-btn" style="white-space:nowrap;height:42px;padding:0 20px">Añadir</button>
+    <div class="eq-tabs">
+      <button class="eq-tab active" data-eqtab="create" onclick="switchEqTab('create')">➕ Crear Modelo</button>
+      <button class="eq-tab" data-eqtab="link" onclick="switchEqTab('link')">🔗 Vincular Existente</button>
     </div>
-    <div id="eq-add-error" style="color:var(--danger);font-size:.85rem;margin-top:8px"></div>
-    <p style="font-size:.82rem;color:var(--text-soft);margin-top:12px">Máximo 8 modelos. Escribe el slug exacto del modelo que quieres añadir.</p>
+    <div class="eq-tab-content" id="eqtab-create">
+      <div class="form-row">
+        <div class="form-group">
+          <label>📧 Email *</label>
+          <input type="email" class="form-input" id="eq-create-email" placeholder="modelo@email.com" maxlength="100">
+        </div>
+        <div class="form-group">
+          <label>👤 Nombre *</label>
+          <input type="text" class="form-input" id="eq-create-name" placeholder="Nombre de la modelo" maxlength="60">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>🔗 Slug * <span style="font-size:.75rem;color:var(--text-soft)">(URL: playofans.com/<strong id="eq-slug-preview">slug</strong>)</span></label>
+        <input type="text" class="form-input" id="eq-create-slug" placeholder="nombre-modelo (sin espacios)" maxlength="30" style="font-family:monospace">
+      </div>
+      <div id="eq-create-error" style="color:var(--danger);font-size:.85rem;margin-top:8px"></div>
+      <button class="btn btn-primary" id="eq-create-btn" style="width:auto;margin-top:12px;padding:12px 32px">✨ Crear modelo</button>
+    </div>
+    <div class="eq-tab-content" id="eqtab-link" style="display:none">
+      <p style="font-size:.85rem;color:var(--text-soft);margin-bottom:12px">Vincula un modelo que ya tiene cuenta en PlayOFans a tu agencia.</p>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="text" class="form-input" id="eq-add-slug" placeholder="Slug del modelo (ej: vickyluna)" maxlength="40" style="flex:1">
+        <button class="btn btn-primary" id="eq-add-btn" style="width:auto;white-space:nowrap;padding:0 20px;height:42px">Vincular</button>
+      </div>
+      <div id="eq-add-error" style="color:var(--danger);font-size:.85rem;margin-top:8px"></div>
+    </div>
+  </div>
+
+  <div class="card" id="eq-credentials" style="display:none">
+    <div class="card-title">🔑 Credenciales del nuevo modelo</div>
+    <div style="background:rgba(16,172,132,.08);border:1px solid rgba(16,172,132,.3);border-radius:12px;padding:16px;margin-bottom:12px">
+      <div style="font-size:.85rem;color:var(--text-soft);margin-bottom:4px">📧 Email</div>
+      <div style="font-weight:600;font-size:1rem;margin-bottom:12px" id="eq-cred-email"></div>
+      <div style="font-size:.85rem;color:var(--text-soft);margin-bottom:4px">🔒 Contraseña temporal</div>
+      <div style="font-weight:600;font-size:1rem;font-family:monospace" id="eq-cred-pass"></div>
+    </div>
+    <p style="font-size:.82rem;color:var(--warning)">⚠️ Guarda estas credenciales. La contraseña temporal solo se muestra una vez.</p>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn btn-outline btn-sm" onclick="copyCredentials()">📋 Copiar credenciales</button>
+      <button class="btn btn-outline btn-sm" onclick="document.getElementById('eq-credentials').style.display='none'">Cerrar</button>
+    </div>
   </div>
 
   <div class="card">
@@ -1620,18 +1672,32 @@ function copyText(text) {
 // =============================================================================
 // EQUIPO (Agency)
 // =============================================================================
+function switchEqTab(tab) {
+  document.querySelectorAll('.eq-tab').forEach(t => t.classList.toggle('active', t.dataset.eqtab === tab));
+  document.querySelectorAll('.eq-tab-content').forEach(c => c.style.display = 'none');
+  document.getElementById('eqtab-' + tab).style.display = '';
+}
+
 function registerEquipoEvents() {
   document.getElementById('eq-add-btn').addEventListener('click', addAgencyMember);
   document.getElementById('eq-add-slug').addEventListener('keypress', e => { if (e.key === 'Enter') addAgencyMember(); });
+  document.getElementById('eq-create-btn').addEventListener('click', createAgencyModel);
+  document.getElementById('eq-create-slug').addEventListener('input', e => {
+    document.getElementById('eq-slug-preview').textContent = e.target.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '') || 'slug';
+  });
 }
 
 async function loadEquipo() {
   try {
     const data = await apiFetch('/api/admin-agency-team?slug=' + SLUG);
-    document.getElementById('eq-count').textContent = data.totals.members + '/8';
-    document.getElementById('eq-spins').textContent = data.totals.spins;
-    document.getElementById('eq-codes').textContent = data.totals.codes_active;
-    document.getElementById('eq-member-count').textContent = '(' + data.totals.members + '/8)';
+    const t = data.totals;
+    document.getElementById('eq-count').textContent = t.members + '/8';
+    document.getElementById('eq-spins').textContent = t.spins;
+    document.getElementById('eq-codes').textContent = t.codes_active;
+    document.getElementById('eq-progress').style.width = ((t.members / 8) * 100) + '%';
+    const activeCount = data.members ? data.members.filter(m => m.active).length : 0;
+    document.getElementById('eq-active').textContent = activeCount;
+    document.getElementById('eq-member-count').textContent = '(' + t.members + '/8)';
     renderTeamMembers(data.members);
   } catch(e) { toast(e.message, 'error'); }
 }
@@ -1639,25 +1705,67 @@ async function loadEquipo() {
 function renderTeamMembers(members) {
   const container = document.getElementById('eq-members-list');
   if (!members || members.length === 0) {
-    container.innerHTML = '<div style="text-align:center;color:var(--text-soft);padding:24px">No hay miembros en tu equipo todavía.<br>Usa el formulario de arriba para añadir modelos.</div>';
+    container.innerHTML = '<div style="text-align:center;color:var(--text-soft);padding:24px">No hay miembros en tu equipo todavía.<br>Crea un modelo o vincula uno existente usando las opciones de arriba.</div>';
     return;
   }
-  container.innerHTML = members.map(m => `
+  container.innerHTML = members.map(m => {
+    const initials = (m.display_name || m.slug).split(/[\s_-]+/).map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    return `
     <div class="team-member-card">
+      <div class="member-avatar">${esc(initials)}</div>
       <div style="flex:1;min-width:0">
         <div style="font-weight:600;font-size:1rem">${esc(m.display_name)}</div>
-        <div style="font-size:.82rem;color:var(--text-soft)">/${esc(m.slug)} · ${m.active ? '<span style="color:var(--success)">Activa</span>' : '<span style="color:var(--danger)">Inactiva</span>'}</div>
+        <div style="font-size:.82rem;color:var(--text-soft)">/${esc(m.slug)} · ${m.active ? '<span class="badge badge-active">Activa</span>' : '<span class="badge badge-expired">Inactiva</span>'}</div>
         <div style="display:flex;gap:16px;margin-top:6px;font-size:.82rem;color:var(--text-soft)">
           <span>🎰 ${m.spins || 0} giros</span>
           <span>🎫 ${m.codes_active || 0} códigos</span>
         </div>
       </div>
-      <div style="display:flex;gap:8px;align-items:center">
+      <div class="member-actions">
+        <a href="/${esc(m.slug)}" target="_blank" class="btn btn-outline btn-sm" title="Ver ruleta">🎰</a>
         <a href="/${esc(m.slug)}/admin" target="_blank" class="btn btn-outline btn-sm" title="Abrir panel">📊</a>
         <button class="btn btn-sm" style="background:var(--danger);color:#fff" onclick="removeAgencyMember('${m.id}','${esc(m.display_name)}')">✕</button>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
+}
+
+async function createAgencyModel() {
+  const email = document.getElementById('eq-create-email').value.trim();
+  const name = document.getElementById('eq-create-name').value.trim();
+  const slug = document.getElementById('eq-create-slug').value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+  const errEl = document.getElementById('eq-create-error');
+  const btn = document.getElementById('eq-create-btn');
+  errEl.textContent = '';
+  if (!email || !name || !slug) { errEl.textContent = 'Todos los campos son obligatorios'; return; }
+  if (slug.length < 3) { errEl.textContent = 'El slug debe tener al menos 3 caracteres'; return; }
+  btn.disabled = true; btn.textContent = 'Creando...';
+  try {
+    const data = await apiFetch('/api/admin-agency-create-model?slug=' + SLUG, {
+      method: 'POST',
+      body: JSON.stringify({ email, display_name: name, slug }),
+    });
+    document.getElementById('eq-cred-email').textContent = data.credentials.email;
+    document.getElementById('eq-cred-pass').textContent = data.credentials.password;
+    document.getElementById('eq-credentials').style.display = '';
+    document.getElementById('eq-create-email').value = '';
+    document.getElementById('eq-create-name').value = '';
+    document.getElementById('eq-create-slug').value = '';
+    document.getElementById('eq-slug-preview').textContent = 'slug';
+    toast('Modelo creada exitosamente', 'success');
+    await loadEquipo();
+  } catch(e) {
+    errEl.textContent = e.message;
+  } finally {
+    btn.disabled = false; btn.textContent = '✨ Crear modelo';
+  }
+}
+
+function copyCredentials() {
+  const email = document.getElementById('eq-cred-email').textContent;
+  const pass = document.getElementById('eq-cred-pass').textContent;
+  copyText('Email: ' + email + '\nContraseña: ' + pass);
+  toast('Credenciales copiadas', 'success');
 }
 
 async function addAgencyMember() {
@@ -1667,19 +1775,19 @@ async function addAgencyMember() {
   const slug = input.value.trim().toLowerCase();
   errEl.textContent = '';
   if (!slug) { errEl.textContent = 'Escribe un slug'; return; }
-  btn.disabled = true; btn.textContent = 'Añadiendo...';
+  btn.disabled = true; btn.textContent = 'Vinculando...';
   try {
     await apiFetch('/api/admin-agency-team?slug=' + SLUG, {
       method: 'POST',
       body: JSON.stringify({ member_slug: slug }),
     });
     input.value = '';
-    toast('Modelo añadida al equipo', 'success');
+    toast('Modelo vinculada al equipo', 'success');
     await loadEquipo();
   } catch(e) {
     errEl.textContent = e.message;
   } finally {
-    btn.disabled = false; btn.textContent = 'Añadir';
+    btn.disabled = false; btn.textContent = 'Vincular';
   }
 }
 
