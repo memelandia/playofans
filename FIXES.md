@@ -344,7 +344,7 @@ Todos los hallazgos organizados por prioridad. Incluye bugs, seguridad, inconsis
 - **Archivo**: `netlify.toml` L3
 - **Problema**: Publicar la raíz exponía `schema.sql`, `FIXES.md`, `SPRINTS.md`, `contexto.md`, `package.json` por URL directa.
 - **Fix**: Añadidos redirects 404 con `force = true` para `/*.sql`, `/*.md`, `/package.json`, `/package-lock.json`, `/netlify.toml`. El `force = true` es necesario porque Netlify sirve archivos estáticos existentes ANTES de evaluar redirects por defecto.
-- **Estado**: CORREGIDO (v2 — fix inicial sin force=true no funcionaba)
+- **Estado**: CORREGIDO (v3 — v1 sin force=true no funcionaba, v2 con wildcards /*.md /*.sql tampoco — Netlify splat no soporta filtrado por extensión — v3 lista cada archivo explícitamente)
 
 ### ✅ C5 · Superadmin secret en localStorage
 - **Archivo**: `superadmin.html` L622, L706, L748, L758

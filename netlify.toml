@@ -44,15 +44,83 @@
   to = "/superadmin.html"
   status = 200
 
-# Bloquear archivos sensibles (force=true para que prevalezca sobre el archivo físico)
+# Bloquear archivos sensibles — rutas explícitas porque el splat * de Netlify
+# no soporta filtrado por extensión (/*.md captura todo, no deja .md para matchear)
+
 [[redirects]]
-  from = "/*.sql"
+  from = "/schema.sql"
   to = "/404.html"
   status = 404
   force = true
 
 [[redirects]]
-  from = "/*.md"
+  from = "/migration.sql"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/patch-affiliate-v2.sql"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/patch-billing.sql"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/patch-fase2.sql"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/patch-fase3.sql"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/patch-fase4.sql"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/patch-fase5.sql"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/patch-fase6.sql"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/contexto.md"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/FIXES.md"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/README.md"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/SPRINTS.md"
   to = "/404.html"
   status = 404
   force = true
@@ -71,6 +139,12 @@
 
 [[redirects]]
   from = "/netlify.toml"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/.gitignore"
   to = "/404.html"
   status = 404
   force = true
