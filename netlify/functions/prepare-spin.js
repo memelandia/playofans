@@ -87,11 +87,12 @@ exports.handler = async (event) => {
     // Elegir premio ALEATORIAMENTE en el servidor (sin repetir)
     const prizes = code.prizes || model.prizes;
 
-    // Obtener premios ya otorgados para este código (verificados + pendientes)
+    // Obtener premios ya otorgados para este código (solo verificados)
     const { data: previousSpins } = await supabase
       .from('spins')
       .select('prize')
-      .eq('code_id', code.id);
+      .eq('code_id', code.id)
+      .eq('verified', true);
 
     const wonPrizes = (previousSpins || []).map(s => s.prize);
 

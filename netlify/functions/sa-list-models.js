@@ -17,9 +17,14 @@ exports.handler = async (event) => {
 
     const now = new Date();
 
-    // Enrich with computed status and spin counts
-    const enriched = await Promise.all((models || []).map(async (m) => {
-      // Status: active, grace, expired, suspended
+    // Single grouped query for all spin counts (avoids N+1)
+    const modelIds = (models || []).map(m => m.id);
+    const { data: spinCounts } = modelIds.length
+      ? await supabase.rpc('count_spins_by_models', { model_ids: modelIds })
+      : { data: [] };
+    const spinMap = Object.fromEntries((spinCounts || []).map(r => [r.model_id, r.cnt]));
+
+    const enriched = (models || []).map(m => {
       let status = 'suspended';
       if (m.active) {
         if (!m.subscription_expires_at || new Date(m.subscription_expires_at) > now) {
@@ -30,15 +35,8 @@ exports.handler = async (event) => {
           status = 'expired';
         }
       }
-
-      const { count: totalSpins } = await supabase
-        .from('spins')
-        .select('id', { count: 'exact', head: true })
-        .eq('model_id', m.id)
-        .eq('verified', true);
-
-      return { ...m, status, total_spins: totalSpins || 0 };
-    }));
+      return { ...m, status, total_spins: spinMap[m.id] || 0 };
+    });
 
     return json(200, { models: enriched });
   } catch (err) {
