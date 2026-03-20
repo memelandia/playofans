@@ -44,10 +44,7 @@
   to = "/superadmin.html"
   status = 200
 
-[[redirects]]
-  from = "/afiliados"
-  to = "/afiliados.html"
-  status = 200
+
 
 # API — Netlify Functions
 [[redirects]]

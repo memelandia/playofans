@@ -1,6 +1,4 @@
-const { supabase, json, handleOptions, authenticateSuperAdmin } = require('./_shared');
-
-const PLAN_PRICES = { solo: 49, pro: 89, agency: 349 };
+const { supabase, json, handleOptions, authenticateSuperAdmin, PLAN_PRICES } = require('./_shared');
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return handleOptions();

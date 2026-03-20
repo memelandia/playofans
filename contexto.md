@@ -105,7 +105,7 @@ Agency: 349€/mes · hasta 8 modelos · panel unificado
 - Variable {nombre} en mensajes → reemplaza con fan_name
 - Máximo 10 premios por ruleta, mínimo 2
 - Slug permanente (no se puede cambiar)
-- Afiliados: 20% recurrente 12 meses
+- Afiliados: 10% recurrente 6 meses
 - Código referido: REF-[SLUG en mayúsculas]
 - Solo español en fase 1
 - Polling en admin cada 30 segundos para historial en vivo
@@ -139,7 +139,6 @@ playofans/
 ├── registro.html           ← Formulario de alta
 ├── guia.html               ← Onboarding
 ├── contacto.html           ← Contacto
-├── afiliados.html          ← Panel afiliados
 ├── robots.txt
 ├── sitemap.xml
 ├── netlify.toml
@@ -170,6 +169,7 @@ playofans/
 ### Variables de entorno (ya configuradas en Netlify)
 SUPABASE_URL=
 SUPABASE_SERVICE_KEY=
+SUPABASE_ANON_KEY=
 SUPERADMIN_SECRET=
 RESEND_API_KEY=
 

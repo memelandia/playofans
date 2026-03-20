@@ -46,7 +46,7 @@ declare
 begin
   select * into v_model from models where id = p_model_id;
   v_monthly := case v_model.plan when 'solo' then 49 when 'pro' then 89 when 'agency' then 349 else 49 end;
-  v_annual := case v_model.plan when 'solo' then 399 when 'pro' then 699 when 'agency' then 2800 else 399 end;
+  v_annual := case v_model.plan when 'solo' then 468 when 'pro' then 852 when 'agency' then 3348 else 468 end;
   v_base := case v_model.billing_cycle when 'annual' then v_annual else v_monthly end;
   if v_model.billing_cycle = 'annual' then
     v_ann_amt := (v_monthly * 12) - v_annual;
