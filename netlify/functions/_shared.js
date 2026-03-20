@@ -6,8 +6,8 @@ const supabase = createClient(
 );
 
 const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Origin': 'https://playofans.com',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Superadmin-Secret',
   'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
 };
 
@@ -25,6 +25,9 @@ function handleOptions() {
 
 // Jerarquía de planes: solo < pro < agency
 const PLAN_RANK = { solo: 0, pro: 1, agency: 2 };
+
+// Precios mensuales por plan (fuente única de verdad para funciones JS)
+const PLAN_PRICES = { solo: 49, pro: 89, agency: 349 };
 
 function planCanAccess(userPlan, requiredPlan) {
   return (PLAN_RANK[userPlan] ?? 0) >= (PLAN_RANK[requiredPlan] ?? 0);
@@ -61,4 +64,4 @@ async function authenticateSuperAdmin(event) {
   return { user: auth.user };
 }
 
-module.exports = { supabase, CORS_HEADERS, json, handleOptions, planCanAccess, PLAN_RANK, authenticateAdmin, authenticateSuperAdmin };
+module.exports = { supabase, CORS_HEADERS, json, handleOptions, planCanAccess, PLAN_RANK, PLAN_PRICES, authenticateAdmin, authenticateSuperAdmin };

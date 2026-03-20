@@ -1,21 +1,26 @@
 const { supabase, json, handleOptions } = require('./_shared');
 
-// Rate limiting en memoria (por instancia de función)
-const rateLimitMap = new Map();
+// Rate limiting persistente via Supabase
 const RATE_LIMIT = 10;
-const RATE_WINDOW_MS = 60_000;
+const RATE_WINDOW_SECONDS = 60;
 
-function isRateLimited(ip) {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
+async function isRateLimited(ip) {
+  const windowStart = new Date(Date.now() - RATE_WINDOW_SECONDS * 1000).toISOString();
 
-  if (!entry || now - entry.windowStart > RATE_WINDOW_MS) {
-    rateLimitMap.set(ip, { windowStart: now, count: 1 });
-    return false;
-  }
+  const { count } = await supabase
+    .from('rate_limits')
+    .select('id', { count: 'exact', head: true })
+    .eq('ip_address', ip)
+    .eq('action', 'validate-code')
+    .gte('created_at', windowStart);
 
-  entry.count++;
-  if (entry.count > RATE_LIMIT) return true;
+  if ((count || 0) >= RATE_LIMIT) return true;
+
+  await supabase.from('rate_limits').insert({
+    ip_address: ip,
+    action: 'validate-code',
+  });
+
   return false;
 }
 
@@ -24,9 +29,9 @@ exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return json(405, { error: 'Método no permitido' });
 
   try {
-    // Rate limiting por IP
+    // Rate limiting por IP (persistente en Supabase)
     const ip = event.headers['x-forwarded-for']?.split(',')[0]?.trim() || event.headers['client-ip'] || 'unknown';
-    if (isRateLimited(ip)) {
+    if (await isRateLimited(ip)) {
       return json(429, { error: 'Demasiados intentos. Espera un momento antes de volver a intentar.' });
     }
 

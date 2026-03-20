@@ -1,4 +1,4 @@
-const { supabase, json, handleOptions } = require('./_shared');
+const { supabase, json, handleOptions, authenticateSuperAdmin } = require('./_shared');
 
 // Función interna reutilizable (llamada por daily-cron o manualmente)
 async function sendExpiryEmail(model, daysLeft) {
@@ -71,12 +71,15 @@ async function sendExpiryEmail(model, daysLeft) {
   return { sent: true };
 }
 
-// Endpoint HTTP: enviar manualmente un aviso de vencimiento
+// Endpoint HTTP: enviar manualmente un aviso de vencimiento (solo superadmin)
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return handleOptions();
   if (event.httpMethod !== 'POST') return json(405, { error: 'Método no permitido' });
 
   try {
+    const auth = await authenticateSuperAdmin(event);
+    if (auth.error) return auth.error;
+
     const body = JSON.parse(event.body || '{}');
     const { model_id, days_left } = body;
 

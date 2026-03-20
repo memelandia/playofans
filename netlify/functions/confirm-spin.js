@@ -39,43 +39,17 @@ exports.handler = async (event) => {
       });
     }
 
-    // Marcar spin como verificado
-    const { error: updateSpinError } = await supabase
-      .from('spins')
-      .update({ verified: true })
-      .eq('id', spin.id);
+    // Confirmar spin y decrementar tiradas atómicamente via RPC
+    const { data: result, error: rpcError } = await supabase
+      .rpc('confirm_spin_atomic', { p_spin_id: spin.id, p_code_id: spin.code_id });
 
-    if (updateSpinError) {
+    if (rpcError) {
       return json(500, { error: 'Error al confirmar la tirada' });
-    }
-
-    // Decrementar remaining_spins y marcar used si llega a 0
-    const { data: code, error: codeError } = await supabase
-      .from('codes')
-      .select('remaining_spins')
-      .eq('id', spin.code_id)
-      .single();
-
-    if (codeError || !code) {
-      return json(500, { error: 'Error al actualizar el código' });
-    }
-
-    const newRemaining = Math.max(0, code.remaining_spins - 1);
-    const updateData = { remaining_spins: newRemaining };
-    if (newRemaining === 0) updateData.used = true;
-
-    const { error: updateCodeError } = await supabase
-      .from('codes')
-      .update(updateData)
-      .eq('id', spin.code_id);
-
-    if (updateCodeError) {
-      return json(500, { error: 'Error al actualizar tiradas restantes' });
     }
 
     return json(200, {
       success: true,
-      remaining_spins: newRemaining,
+      remaining_spins: result.remaining_spins,
     });
   } catch (err) {
     return json(500, { error: 'Error interno del servidor' });
