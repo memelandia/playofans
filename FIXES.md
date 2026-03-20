@@ -512,37 +512,37 @@ Todos los hallazgos organizados por prioridad. Incluye bugs, seguridad, inconsis
 
 ## FASE 5 — SQL Y SCHEMA
 
-### ⬜ DB1 · Índice faltante en `models(active)`
+### ✅ DB1 · Índice faltante en `models(active)`
 - **Archivo**: `schema.sql` L44
 - **Problema**: Queries frecuentes filtran `WHERE active = true` (billing, cron, grace) sin índice.
 - **Fix**: `CREATE INDEX idx_models_active ON models(active);`
 - **Prioridad**: 🟡 MEDIA
 
-### ⬜ DB2 · Índice faltante en `models(subscription_expires_at)`
+### ✅ DB2 · Índice faltante en `models(subscription_expires_at)`
 - **Archivo**: `schema.sql` L44
 - **Problema**: Checks de expiración y grace period consultan esta columna repetidamente.
 - **Fix**: `CREATE INDEX idx_models_sub_expires ON models(subscription_expires_at);`
 - **Prioridad**: 🟡 MEDIA
 
-### ⬜ DB3 · Índice faltante en `codes(deleted)`
+### ✅ DB3 · Índice faltante en `codes(deleted)`
 - **Archivo**: `schema.sql` L74
 - **Problema**: Todas las queries de códigos filtran `WHERE deleted = false` sin índice.
 - **Fix**: `CREATE INDEX idx_codes_deleted ON codes(deleted);`
 - **Prioridad**: 🟡 MEDIA
 
-### ⬜ DB4 · Slug inmutabilidad no forzada
+### ✅ DB4 · Slug inmutabilidad no forzada
 - **Archivo**: `schema.sql`
 - **Problema**: `slug` es UNIQUE NOT NULL pero puede cambiarse con UPDATE. Contexto.md dice "slug permanente, no se puede cambiar". Sin constraint ni trigger que lo impida.
 - **Fix**: Crear trigger `BEFORE UPDATE ON models` que lance excepción si `NEW.slug != OLD.slug`.
 - **Prioridad**: 🟡 MEDIA
 
-### ⬜ DB5 · Sin constraint de límite de miembros de agencia
+### ✅ DB5 · Sin constraint de límite de miembros de agencia
 - **Archivo**: `schema.sql` L275
 - **Problema**: `agency_members` no tiene CHECK constraint limitando a 8 miembros por agencia. La validación solo está en la función JS.
 - **Fix**: Crear trigger `BEFORE INSERT ON agency_members` que cuente existentes y lance error si >= 8.
 - **Prioridad**: 🔵 BAJA
 
-### ⬜ DB6 · Sin tabla de auditoría para cambios de modelo
+### ✅ DB6 · Sin tabla de auditoría para cambios de modelo
 - **Archivo**: `schema.sql`
 - **Problema**: No hay tabla que registre quién cambió qué en un modelo (password, plan, premios). Imposible auditar cambios para soporte o compliance.
 - **Fix**: Crear tabla `model_audit_log(id, model_id, action, changed_by, old_value, new_value, created_at)`.

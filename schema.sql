@@ -159,11 +159,14 @@ create index idx_models_slug on models(slug);
 create index idx_models_email on models(email);
 create index idx_models_supabase_user on models(supabase_user_id);
 create index idx_models_referral on models(referral_code);
+create index idx_models_active on models(active);
+create index idx_models_sub_expires on models(subscription_expires_at);
 
 create index idx_codes_model on codes(model_id);
 create index idx_codes_code on codes(code);
 create index idx_codes_model_code on codes(model_id, code) where deleted = false;
 create index idx_codes_game_type on codes(game_type);
+create index idx_codes_deleted on codes(deleted);
 
 create index idx_spins_code on spins(code_id);
 create index idx_spins_model on spins(model_id);
@@ -747,3 +750,62 @@ language sql stable security definer as $$
     and s.verified = true
   group by s.model_id;
 $$;
+
+-- ============================================
+-- AUDIT #2 — FASE 5: TRIGGERS Y AUDITORÍA
+-- ============================================
+
+-- DB4: Trigger que impide cambiar el slug de un modelo
+create or replace function prevent_slug_change()
+returns trigger
+language plpgsql as $$
+begin
+  if OLD.slug is distinct from NEW.slug then
+    raise exception 'El slug no puede ser modificado una vez creado';
+  end if;
+  return NEW;
+end;
+$$;
+
+create trigger trg_models_slug_immutable
+  before update on models
+  for each row
+  execute function prevent_slug_change();
+
+-- DB5: Trigger que limita a 8 miembros por agencia
+create or replace function enforce_agency_member_limit()
+returns trigger
+language plpgsql as $$
+declare
+  member_count int;
+begin
+  select count(*) into member_count
+  from agency_members
+  where agency_model_id = NEW.agency_model_id;
+
+  if member_count >= 8 then
+    raise exception 'Una agencia no puede tener más de 8 miembros';
+  end if;
+
+  return NEW;
+end;
+$$;
+
+create trigger trg_agency_member_limit
+  before insert on agency_members
+  for each row
+  execute function enforce_agency_member_limit();
+
+-- DB6: Tabla de auditoría para cambios de modelo
+create table model_audit_log (
+  id uuid primary key default gen_random_uuid(),
+  model_id uuid not null references models(id) on delete cascade,
+  action text not null,
+  changed_by text,
+  old_value jsonb,
+  new_value jsonb,
+  created_at timestamptz not null default now()
+);
+
+create index idx_audit_model on model_audit_log(model_id);
+create index idx_audit_created on model_audit_log(created_at);
