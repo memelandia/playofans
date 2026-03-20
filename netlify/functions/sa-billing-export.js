@@ -29,11 +29,12 @@ exports.handler = async (event) => {
     return s.includes(',') || s.includes('"') || s.includes('\n') ? '"' + s.replace(/"/g, '""') + '"' : s;
   };
 
-  let csv = 'Tipo,Período,Modelo,Plan,Ciclo,Precio Base,Desc. Referidos %,Desc. Referidos €,Total,Estado,Método Pago,Referencia,Fecha Pago\n';
+  let csv = 'Tipo,Período,Modelo,Plan,Ciclo,Precio Base,Desc. Referidos %,Desc. Referidos €,Crédito Aplicado,Total,Estado,Método Pago,Referencia,Fecha Pago\n';
   (billingData || []).forEach(r => {
     csv += [
       'Cobro', r.period, r.model?.display_name, r.plan, r.billing_cycle,
       r.base_price, r.referral_discount_pct + '%', r.referral_discount_amount,
+      r.credit_applied || 0,
       r.total_amount, r.status, r.payment_method, r.payment_reference, r.paid_at
     ].map(escCsv).join(',') + '\n';
   });

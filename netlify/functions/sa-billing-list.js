@@ -4,8 +4,9 @@ exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return handleOptions();
   if (event.httpMethod !== 'GET') return json(405, { error: 'Método no permitido' });
 
-  const auth = await authenticateSuperAdmin(event);
-  if (auth.error) return auth.error;
+  try {
+    const auth = await authenticateSuperAdmin(event);
+    if (auth.error) return auth.error;
 
   const params = event.queryStringParameters || {};
   const month = params.month || new Date().toISOString().slice(0, 7);
@@ -30,4 +31,7 @@ exports.handler = async (event) => {
   };
 
   return json(200, { records: all, totals });
+  } catch (err) {
+    return json(500, { error: 'Error interno del servidor' });
+  }
 };

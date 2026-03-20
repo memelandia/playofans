@@ -1,5 +1,9 @@
 const { supabase, json, handleOptions } = require('./_shared');
 
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return handleOptions();
   if (event.httpMethod !== 'POST') return json(405, { error: 'Método no permitido' });
@@ -21,6 +25,17 @@ exports.handler = async (event) => {
       return json(400, { error: 'El mensaje es demasiado largo (máximo 2000 caracteres)' });
     }
 
+    // Guardar mensaje de contacto en Supabase
+    const { error: dbError } = await supabase.from('contact_messages').insert({
+      name: name.trim(),
+      email: email.trim(),
+      message: message.trim(),
+    });
+
+    if (dbError) {
+      console.error('DB error saving contact:', dbError);
+    }
+
     // Enviar email a Franco via Resend
     if (process.env.RESEND_API_KEY) {
       try {
@@ -37,10 +52,10 @@ exports.handler = async (event) => {
             reply_to: email.trim(),
             html: `
               <h2>Nuevo mensaje de contacto</h2>
-              <p><strong>Nombre:</strong> ${name.trim()}</p>
-              <p><strong>Email:</strong> ${email.trim()}</p>
+              <p><strong>Nombre:</strong> ${escapeHtml(name.trim())}</p>
+              <p><strong>Email:</strong> ${escapeHtml(email.trim())}</p>
               <hr>
-              <p>${message.trim().replace(/\n/g, '<br>')}</p>
+              <p>${escapeHtml(message.trim()).replace(/\n/g, '<br>')}</p>
             `,
           }),
         });
