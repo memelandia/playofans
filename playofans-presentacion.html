@@ -155,13 +155,27 @@ section{padding:100px 0;position:relative;}
 .stack-card p{font-size:.78rem;color:var(--text-soft);}
 
 /* ——— ROADMAP ——— */
-.roadmap-cols{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:48px;}
-.roadmap-col h3{font-size:1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
-.roadmap-col .status-done{color:var(--success);}
-.roadmap-col .status-pending{color:var(--gold);}
-.roadmap-list{list-style:none;}
-.roadmap-list li{font-size:.85rem;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:flex-start;gap:10px;color:var(--text-soft);}
-.roadmap-list li .ico{flex-shrink:0;font-size:.85rem;}
+.done-summary{background:linear-gradient(135deg,rgba(16,172,132,0.06),rgba(16,172,132,0.02));border:1px solid rgba(16,172,132,0.2);border-radius:20px;padding:36px 40px;margin-top:48px;}
+.done-summary h3{font-size:1.2rem;font-weight:800;margin-bottom:20px;color:var(--success);display:flex;align-items:center;gap:10px;}
+.done-summary .done-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+.done-stat{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:rgba(16,172,132,0.06);border:1px solid rgba(16,172,132,0.1);font-size:.88rem;color:var(--text-soft);}
+.done-stat .ds-icon{font-size:1.1rem;flex-shrink:0;}
+.done-stat .ds-num{font-weight:800;color:var(--success);font-size:1rem;min-width:28px;}
+
+.dev-section-title{font-size:1.6rem;font-weight:800;margin:56px 0 12px;text-align:center;color:var(--text);}
+.dev-section-subtitle{font-size:1rem;color:var(--text-soft);text-align:center;max-width:600px;margin:0 auto 36px;line-height:1.6;}
+.dev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.dev-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:32px 28px;transition:all .3s;position:relative;overflow:hidden;}
+.dev-card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 12px 40px rgba(255,31,142,0.08);}
+.dev-card .dev-priority{position:absolute;top:16px;right:16px;padding:3px 10px;border-radius:50px;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;}
+.dev-card .dev-priority.critical{background:rgba(255,31,142,0.12);color:var(--accent);border:1px solid rgba(255,31,142,0.25);}
+.dev-card .dev-priority.high{background:rgba(255,215,0,0.1);color:var(--gold);border:1px solid rgba(255,215,0,0.2);}
+.dev-card .dev-priority.medium{background:rgba(179,0,255,0.1);color:var(--accent2);border:1px solid rgba(179,0,255,0.2);}
+.dev-card .dev-icon{font-size:2.2rem;margin-bottom:16px;display:block;}
+.dev-card h4{font-size:1.1rem;font-weight:700;margin-bottom:10px;color:#fff;}
+.dev-card p{font-size:.92rem;color:var(--text-soft);line-height:1.65;}
+.dev-card .dev-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;}
+.dev-card .dev-tag{padding:3px 10px;border-radius:50px;font-size:.65rem;font-weight:600;background:rgba(255,255,255,0.04);color:var(--text-muted);border:1px solid rgba(255,255,255,0.06);}
 
 /* ——— EXPANSIÓN ——— */
 .expansion-section{background:var(--bg2);}
@@ -185,6 +199,7 @@ section{padding:100px 0;position:relative;}
   .hero-content h1{font-size:2.8rem;}
   .metrics-grid{grid-template-columns:repeat(2,1fr);}
   .pricing-grid,.panels-grid,.stack-grid{grid-template-columns:1fr 1fr;}
+  .dev-grid{grid-template-columns:1fr 1fr;}
 }
 @media(max-width:768px){
   .nav-links{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(10,6,18,0.98);flex-direction:column;justify-content:center;align-items:center;gap:16px;z-index:999;}
@@ -192,9 +207,9 @@ section{padding:100px 0;position:relative;}
   .nav-toggle{display:block;z-index:1001;}
   .hero-content h1{font-size:2.2rem;}
   .metrics-grid{grid-template-columns:1fr 1fr;}
-  .context-grid,.pricing-grid,.panels-grid,.stack-grid,.expansion-grid{grid-template-columns:1fr;}
+  .context-grid,.pricing-grid,.panels-grid,.stack-grid,.expansion-grid,.dev-grid{grid-template-columns:1fr;}
   .affiliate-highlight{grid-template-columns:1fr;}
-  .roadmap-cols{grid-template-columns:1fr;}
+  .dev-grid{grid-template-columns:1fr;}
   .section-title{font-size:1.9rem;}
   .steps-flow::before{left:31px;}
 }
@@ -688,45 +703,146 @@ section{padding:100px 0;position:relative;}
 <div class="container">
   <div class="text-center">
     <span class="section-tag">Estado Actual</span>
-    <h2 class="section-title">Qué hay <span class="hl" style="color:var(--success);">hecho</span> y qué <span class="hl-gold">necesita un dev</span></h2>
-    <p class="section-subtitle mx-auto">Todo el código funcional está escrito: 30+ funciones serverless, 9 páginas HTML, schema SQL completo. Lo que queda requiere manos humanas: revisión de seguridad, testing real, pagos y despliegue final.</p>
+    <h2 class="section-title">El código está <span class="hl" style="color:var(--success);">escrito</span>. Ahora necesita un <span class="hl">dev</span>.</h2>
+    <p class="section-subtitle mx-auto">El 100% del código funcional existe: 35 funciones serverless, 9 páginas HTML y un schema SQL con 13 tablas. Lo que falta es trabajo humano especializado.</p>
   </div>
-  <div class="roadmap-cols">
 
-    <!-- COMPLETADO -->
-    <div class="reveal">
-      <h3><span class="status-done">✅</span> Completado (100% del código)</h3>
-      <ul class="roadmap-list">
-        <li><span class="ico">🗄️</span> Schema SQL: 13 tablas, 13 funciones PL/pgSQL, triggers, RLS policies</li>
-        <li><span class="ico">⚡</span> 5 funciones core: tenant-config, validate-code, prepare-spin, confirm-spin, model-landing</li>
-        <li><span class="ico">⚡</span> 8 funciones admin: get-codes, create-code, delete-code, reactivate-code, get-analytics, get-spins-live, update-config, get-qr</li>
-        <li><span class="ico">🛡️</span> 11 funciones superadmin: dashboard, list-models, update-model, create-model, review-registration, CRUD descuentos</li>
-        <li><span class="ico">💰</span> 6 funciones billing + afiliados: generate, pay, list, export CSV, comisiones</li>
-        <li><span class="ico">🏢</span> 2 funciones agencia: agency-create-model, agency-team</li>
-        <li><span class="ico">📧</span> 3 funciones email: welcome, expiry-warning, daily-cron (9AM: avisos, suspensión, reset)</li>
-        <li><span class="ico">🎰</span> ruleta.html: animación SVG 2 fases, 10 temas, sonidos, recovery tokens (2.182 líneas)</li>
-        <li><span class="ico">⚙️</span> admin.html: CRUD códigos, QR, plantillas, analytics, preview, gestión agencia</li>
-        <li><span class="ico">🛡️</span> superadmin.html: clientes, registro, descuentos, facturación, comisiones, export</li>
-        <li><span class="ico">🏠</span> Landing + 5 páginas soporte: registro, guía, contacto, demo, model-landing</li>
-        <li><span class="ico">⚙️</span> netlify.toml: multi-tenant routing, headers seguridad, CSP, bloqueo archivos</li>
-        <li><span class="ico">🔒</span> Auditoría seguridad: 32 hallazgos detectados y corregidos en 6 fases</li>
-      </ul>
+  <!-- RESUMEN DE LO COMPLETADO -->
+  <div class="done-summary reveal">
+    <h3>✅ Todo el código está escrito</h3>
+    <div class="done-stats">
+      <div class="done-stat"><span class="ds-icon">⚡</span><span class="ds-num">35</span> funciones serverless</div>
+      <div class="done-stat"><span class="ds-icon">📄</span><span class="ds-num">9</span> páginas HTML</div>
+      <div class="done-stat"><span class="ds-icon">🗄️</span><span class="ds-num">13</span> tablas PostgreSQL</div>
+      <div class="done-stat"><span class="ds-icon">🔧</span><span class="ds-num">13</span> funciones PL/pgSQL</div>
+      <div class="done-stat"><span class="ds-icon">🎨</span><span class="ds-num">10</span> temas visuales</div>
+      <div class="done-stat"><span class="ds-icon">🔒</span><span class="ds-num">32</span> bugs corregidos</div>
+      <div class="done-stat"><span class="ds-icon">📧</span><span class="ds-num">3</span> emails automáticos</div>
+      <div class="done-stat"><span class="ds-icon">⏰</span><span class="ds-num">1</span> cron job diario</div>
+    </div>
+  </div>
+
+  <!-- LO QUE NECESITA UN DESARROLLADOR -->
+  <h3 class="dev-section-title reveal">🔶 Lo que necesita un desarrollador</h3>
+  <p class="dev-section-subtitle reveal">Estas tareas requieren criterio humano, acceso a entornos reales y conocimiento especializado que una IA no puede ejecutar.</p>
+
+  <div class="dev-grid">
+
+    <div class="dev-card reveal">
+      <span class="dev-priority critical">Crítico</span>
+      <span class="dev-icon">🔒</span>
+      <h4>Revisión de seguridad</h4>
+      <p>Auditar las 35 funciones serverless, validar que las Row Level Security policies de Supabase bloquean accesos cruzados entre modelos, pen-test de todos los endpoints públicos, verificar que el rate limiting funciona en producción real (no solo en memoria).</p>
+      <div class="dev-tags">
+        <span class="dev-tag">Pen-testing</span>
+        <span class="dev-tag">RLS audit</span>
+        <span class="dev-tag">CORS</span>
+        <span class="dev-tag">Rate limiting</span>
+      </div>
     </div>
 
-    <!-- LO QUE NECESITA UN DESARROLLADOR -->
-    <div class="reveal reveal-delay-1">
-      <h3><span class="status-pending">🔶</span> Necesita un desarrollador</h3>
-      <ul class="roadmap-list">
-        <li><span class="ico">🔒</span> <strong style="color:var(--accent)">Revisión de seguridad completa</strong>: auditar todas las funciones, validar RLS en Supabase, pen-test de endpoints, revisión de CORS y rate limiting real</li>
-        <li><span class="ico">💳</span> <strong style="color:var(--accent)">Integración Stripe</strong>: pagos automáticos, webhooks, suscripciones recurrentes, gestión de impagos (ahora es manual)</li>
-        <li><span class="ico">🧪</span> <strong style="color:var(--accent)">Testing E2E</strong>: flujo completo fan→código→spin→premio en entorno real, validar race conditions, tests automatizados (Playwright/Cypress)</li>
-        <li><span class="ico">📱</span> <strong style="color:var(--accent)">Testing cross-device</strong>: iOS Safari, Chrome Android, tablets, resoluciones edge-case, interacción táctil en ruleta</li>
-        <li><span class="ico">🌐</span> <strong style="color:var(--accent)">Deployment producción</strong>: verificar variables de entorno en Netlify, DNS/dominio, SSL, monitorización y alertas</li>
-        <li><span class="ico">🗄️</span> <strong style="color:var(--accent)">Verificar stored procedures</strong>: confirmar que las funciones RPC (generate_monthly_billing, mark_billing_paid, confirm_spin_atomic) existen en Supabase real</li>
-        <li><span class="ico">🔍</span> <strong style="color:var(--accent)">Code review general</strong>: revisión de calidad, edge cases, manejo de errores, optimización de queries, limpieza de código muerto</li>
-        <li><span class="ico">📊</span> <strong style="color:var(--accent)">Observabilidad</strong>: logging estructurado, monitorización de errores (Sentry/similar), alertas de billing fallido, métricas de uso</li>
-        <li><span class="ico">⚖️</span> <strong style="color:var(--accent)">Legal y compliance</strong>: GDPR, política de privacidad, términos de servicio, cookies, facturación fiscal</li>
-      </ul>
+    <div class="dev-card reveal reveal-delay-1">
+      <span class="dev-priority critical">Crítico</span>
+      <span class="dev-icon">💳</span>
+      <h4>Integración de pagos (Stripe)</h4>
+      <p>Actualmente la facturación es manual: el superadmin genera cobros y los marca como pagados. Falta implementar Stripe Checkout, webhooks para confirmar pagos, suscripciones recurrentes automáticas y gestión de impagos/reintentos.</p>
+      <div class="dev-tags">
+        <span class="dev-tag">Stripe Checkout</span>
+        <span class="dev-tag">Webhooks</span>
+        <span class="dev-tag">Suscripciones</span>
+        <span class="dev-tag">Gestión impagos</span>
+      </div>
+    </div>
+
+    <div class="dev-card reveal reveal-delay-2">
+      <span class="dev-priority critical">Crítico</span>
+      <span class="dev-icon">🧪</span>
+      <h4>Testing end-to-end</h4>
+      <p>Ejecutar el flujo completo (fan introduce código → gira ruleta → gana premio → modelo ve resultado) en un entorno real. Validar race conditions en confirm-spin, tests automatizados con Playwright o Cypress, y cobertura de todos los edge cases.</p>
+      <div class="dev-tags">
+        <span class="dev-tag">Playwright</span>
+        <span class="dev-tag">Cypress</span>
+        <span class="dev-tag">Race conditions</span>
+        <span class="dev-tag">Edge cases</span>
+      </div>
+    </div>
+
+    <div class="dev-card reveal">
+      <span class="dev-priority high">Alta</span>
+      <span class="dev-icon">🔍</span>
+      <h4>Code review completo</h4>
+      <p>Revisión de calidad del código generado por IA: identificar edge cases no cubiertos, optimizar queries N+1, eliminar código muerto, verificar manejo de errores en todas las funciones y asegurar consistencia de patrones.</p>
+      <div class="dev-tags">
+        <span class="dev-tag">Calidad código</span>
+        <span class="dev-tag">Queries</span>
+        <span class="dev-tag">Error handling</span>
+        <span class="dev-tag">Refactoring</span>
+      </div>
+    </div>
+
+    <div class="dev-card reveal reveal-delay-1">
+      <span class="dev-priority high">Alta</span>
+      <span class="dev-icon">🗄️</span>
+      <h4>Verificar stored procedures</h4>
+      <p>Confirmar que las funciones RPC existen en la base de datos real de Supabase: <code style="color:var(--accent);font-size:.82rem;">generate_monthly_billing()</code>, <code style="color:var(--accent);font-size:.82rem;">mark_billing_paid()</code>, <code style="color:var(--accent);font-size:.82rem;">confirm_spin_atomic()</code>. El billing depende de estos procedimientos.</p>
+      <div class="dev-tags">
+        <span class="dev-tag">PostgreSQL</span>
+        <span class="dev-tag">RPC</span>
+        <span class="dev-tag">Supabase</span>
+        <span class="dev-tag">Migrations</span>
+      </div>
+    </div>
+
+    <div class="dev-card reveal reveal-delay-2">
+      <span class="dev-priority high">Alta</span>
+      <span class="dev-icon">🌐</span>
+      <h4>Deployment a producción</h4>
+      <p>Verificar que todas las variables de entorno están configuradas en Netlify (Supabase keys, Resend API key, Superadmin secret). Configurar dominio personalizado, DNS, certificado SSL y sistema de monitorización/alertas.</p>
+      <div class="dev-tags">
+        <span class="dev-tag">Netlify</span>
+        <span class="dev-tag">DNS</span>
+        <span class="dev-tag">SSL</span>
+        <span class="dev-tag">Env vars</span>
+      </div>
+    </div>
+
+    <div class="dev-card reveal">
+      <span class="dev-priority medium">Media</span>
+      <span class="dev-icon">📱</span>
+      <h4>Testing cross-device</h4>
+      <p>Probar en dispositivos reales: iOS Safari (notoriamente problemático con animaciones CSS), Chrome Android, tablets, resoluciones edge. La interacción táctil con la ruleta debe funcionar sin lag ni bugs visuales.</p>
+      <div class="dev-tags">
+        <span class="dev-tag">iOS Safari</span>
+        <span class="dev-tag">Android</span>
+        <span class="dev-tag">Touch events</span>
+        <span class="dev-tag">Responsive</span>
+      </div>
+    </div>
+
+    <div class="dev-card reveal reveal-delay-1">
+      <span class="dev-priority medium">Media</span>
+      <span class="dev-icon">📊</span>
+      <h4>Observabilidad</h4>
+      <p>Implementar logging estructurado en todas las funciones serverless, integrar Sentry (o similar) para captura de errores, configurar alertas de billing fallido y métricas de uso (giros/día, modelos activas, revenue).</p>
+      <div class="dev-tags">
+        <span class="dev-tag">Sentry</span>
+        <span class="dev-tag">Logging</span>
+        <span class="dev-tag">Alertas</span>
+        <span class="dev-tag">Métricas</span>
+      </div>
+    </div>
+
+    <div class="dev-card reveal reveal-delay-2">
+      <span class="dev-priority medium">Media</span>
+      <span class="dev-icon">⚖️</span>
+      <h4>Legal y compliance</h4>
+      <p>Crear política de privacidad y términos de servicio adaptados al sector. Implementar banner de cookies conforme a GDPR. Configurar facturación fiscal (IVA intracomunitario, facturas automáticas).</p>
+      <div class="dev-tags">
+        <span class="dev-tag">GDPR</span>
+        <span class="dev-tag">Privacidad</span>
+        <span class="dev-tag">Cookies</span>
+        <span class="dev-tag">Facturación</span>
+      </div>
     </div>
 
   </div>
