@@ -123,7 +123,7 @@ section{padding:100px 0;position:relative;}
 .price-card ul li .no{color:var(--text-muted);font-size:.8rem;}
 
 /* ——— PANELES ——— */
-.panels-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;}
+.panels-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:48px;}
 .panel-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:32px;transition:all .3s;position:relative;overflow:hidden;}
 .panel-card:hover{border-color:var(--accent);transform:translateY(-4px);}
 .panel-card .panel-url{display:inline-block;margin-top:12px;padding:6px 14px;border-radius:8px;background:rgba(255,255,255,0.04);font-family:monospace;font-size:.78rem;color:var(--accent);border:1px solid rgba(255,31,142,0.15);word-break:break-all;}
@@ -457,7 +457,7 @@ section{padding:100px 0;position:relative;}
 <div class="container">
   <div class="text-center">
     <span class="section-tag">Arquitectura de Paneles</span>
-    <h2 class="section-title">Tres interfaces, tres <span class="hl">usuarios</span></h2>
+    <h2 class="section-title">Cuatro interfaces, cuatro <span class="hl">usuarios</span></h2>
     <p class="section-subtitle mx-auto">Cada tipo de usuario tiene su propia interfaz con funcionalidades específicas.</p>
   </div>
   <div class="panels-grid">
@@ -496,8 +496,25 @@ section{padding:100px 0;position:relative;}
       </ul>
     </div>
 
-    <!-- SUPERADMIN -->
+    <!-- PANEL AGENCIA -->
     <div class="panel-card reveal reveal-delay-2">
+      <span class="icon">🏢</span>
+      <h3>Panel Agencia (Agency)</h3>
+      <span class="panel-url">playofans.com/[slug-agencia]/admin</span>
+      <ul class="feature-list">
+        <li>Mismo admin.html, adaptado al plan Agency</li>
+        <li>Sección "Mi Agencia" con gestión de equipo</li>
+        <li>Hasta 8 modelos vinculadas bajo una cuenta</li>
+        <li>Crear modelo nueva directamente desde el panel</li>
+        <li>Vincular modelo existente por slug</li>
+        <li>Vista consolidada: giros y códigos por modelo</li>
+        <li>Facturación unificada (1 cobro por agencia)</li>
+        <li>Todos los temas y códigos ilimitados</li>
+      </ul>
+    </div>
+
+    <!-- SUPERADMIN -->
+    <div class="panel-card reveal reveal-delay-3">
       <span class="icon">🛡️</span>
       <h3>Superadmin (Propietario)</h3>
       <span class="panel-url">playofans.com/superadmin</span>
