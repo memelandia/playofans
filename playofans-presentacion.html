@@ -73,11 +73,14 @@ section{padding:100px 0;position:relative;}
 @keyframes shimmer{to{background-position:200% center}}
 .hero-content .tagline{font-size:1.25rem;color:var(--text-soft);max-width:680px;margin:0 auto 48px;line-height:1.7;}
 .hero-content .tagline strong{color:var(--gold);}
-.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:800px;margin:0 auto;}
-.metric-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;padding:28px 16px;text-align:center;transition:all .3s;}
-.metric-card:hover{border-color:var(--accent);transform:translateY(-4px);}
-.metric-card .num{font-size:2.2rem;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;display:block;line-height:1.2;}
-.metric-card .label{font-size:.75rem;color:var(--text-soft);margin-top:6px;display:block;}
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:900px;margin:0 auto;}
+.metric-card{background:linear-gradient(135deg,rgba(20,12,40,0.9),rgba(30,18,60,0.95));border:1px solid transparent;border-radius:20px;padding:36px 20px 32px;text-align:center;transition:all .4s;position:relative;overflow:hidden;}
+.metric-card::before{content:'';position:absolute;inset:0;border-radius:20px;padding:1px;background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent3));-webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;opacity:.5;transition:opacity .4s;}
+.metric-card:hover::before{opacity:1;}
+.metric-card:hover{transform:translateY(-6px);box-shadow:0 12px 40px rgba(255,31,142,0.12);}
+.metric-card .metric-icon{font-size:1.8rem;margin-bottom:12px;display:block;filter:drop-shadow(0 2px 8px rgba(255,31,142,0.3));}
+.metric-card .num{font-size:2.4rem;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;display:block;line-height:1.2;}
+.metric-card .label{font-size:.78rem;color:var(--text-soft);margin-top:8px;display:block;line-height:1.4;}
 .hero-glow-orb{position:absolute;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.15;pointer-events:none;}
 .hero-glow-orb.pink{background:var(--accent);top:-100px;right:-100px;}
 .hero-glow-orb.purple{background:var(--accent2);bottom:-150px;left:-80px;}
@@ -250,20 +253,24 @@ section{padding:100px 0;position:relative;}
       <p class="tagline">Plataforma SaaS multi-tenant que permite a modelos de contenido para adultos <strong>gamificar la relación con sus fans</strong> mediante ruletas de premios, códigos únicos y analíticas en tiempo real.</p>
       <div class="metrics-grid">
         <div class="metric-card reveal">
+          <span class="metric-icon">👩‍💻</span>
           <span class="num">3M+</span>
-          <span class="label">Modelos activas en OnlyFans</span>
+          <span class="label">Modelos activas<br>en OnlyFans</span>
         </div>
         <div class="metric-card reveal reveal-delay-1">
+          <span class="metric-icon">💰</span>
           <span class="num">49–349€</span>
-          <span class="label">Ticket mensual por modelo</span>
+          <span class="label">Ticket mensual<br>por modelo</span>
         </div>
         <div class="metric-card reveal reveal-delay-2">
+          <span class="metric-icon">🎮</span>
           <span class="num">6+</span>
-          <span class="label">Juegos planificados</span>
+          <span class="label">Juegos<br>planificados</span>
         </div>
         <div class="metric-card reveal reveal-delay-3">
+          <span class="metric-icon">🚀</span>
           <span class="num">MVP</span>
-          <span class="label">Listo para beta privada</span>
+          <span class="label">Listo para<br>beta privada</span>
         </div>
       </div>
     </div>
@@ -681,45 +688,44 @@ section{padding:100px 0;position:relative;}
 <div class="container">
   <div class="text-center">
     <span class="section-tag">Estado Actual</span>
-    <h2 class="section-title">Qué hay <span class="hl" style="color:var(--success);">hecho</span> y qué <span class="hl-gold">falta</span></h2>
-    <p class="section-subtitle mx-auto">El proyecto ha completado la infraestructura, todos los archivos HTML y las funciones backend core. Quedan fases de estabilización y funcionalidades avanzadas.</p>
+    <h2 class="section-title">Qué hay <span class="hl" style="color:var(--success);">hecho</span> y qué <span class="hl-gold">necesita un dev</span></h2>
+    <p class="section-subtitle mx-auto">Todo el código funcional está escrito: 30+ funciones serverless, 9 páginas HTML, schema SQL completo. Lo que queda requiere manos humanas: revisión de seguridad, testing real, pagos y despliegue final.</p>
   </div>
   <div class="roadmap-cols">
 
     <!-- COMPLETADO -->
     <div class="reveal">
-      <h3><span class="status-done">✅</span> Completado</h3>
+      <h3><span class="status-done">✅</span> Completado (100% del código)</h3>
       <ul class="roadmap-list">
-        <li><span class="ico">🗄️</span> Schema SQL completo: 13 tablas, 13 funciones PL/pgSQL, triggers, RLS</li>
-        <li><span class="ico">⚙️</span> netlify.toml: redirects multi-tenant, bloqueo archivos sensibles, headers seguridad</li>
-        <li><span class="ico">📦</span> package.json con dependencias (Supabase, Resend, QRCode)</li>
-        <li><span class="ico">⚡</span> 5 funciones backend core: tenant-config, validate-code, prepare-spin, confirm-spin, model-landing</li>
-        <li><span class="ico">🎰</span> ruleta.html: juego multi-tenant con SVG, temas, sonidos, recovery de tokens</li>
-        <li><span class="ico">⚙️</span> admin.html: panel completo con CRUD códigos, configuración, analytics, QR</li>
-        <li><span class="ico">🛡️</span> superadmin.html: dashboard, gestión clientes, registro, descuentos, facturación, afiliados</li>
-        <li><span class="ico">🏠</span> index.html: landing pública con SEO, precios, FAQ, schema.org</li>
-        <li><span class="ico">📄</span> Páginas soporte: registro, guía, contacto, demo, model-landing</li>
-        <li><span class="ico">📧</span> Emails: welcome, expiry-warning via Resend</li>
-        <li><span class="ico">⏰</span> daily-cron: suspensión, avisos, reset mensual códigos</li>
-        <li><span class="ico">💰</span> Sistema billing + afiliados: 6 funciones SA + schema SQL</li>
-        <li><span class="ico">🔒</span> Auditoría de seguridad: 32 hallazgos detectados y corregidos en 6 fases</li>
-        <li><span class="ico">🏢</span> Funciones agencia: admin-agency-create-model, admin-agency-team</li>
+        <li><span class="ico">🗄️</span> Schema SQL: 13 tablas, 13 funciones PL/pgSQL, triggers, RLS policies</li>
+        <li><span class="ico">⚡</span> 5 funciones core: tenant-config, validate-code, prepare-spin, confirm-spin, model-landing</li>
+        <li><span class="ico">⚡</span> 8 funciones admin: get-codes, create-code, delete-code, reactivate-code, get-analytics, get-spins-live, update-config, get-qr</li>
+        <li><span class="ico">🛡️</span> 11 funciones superadmin: dashboard, list-models, update-model, create-model, review-registration, CRUD descuentos</li>
+        <li><span class="ico">💰</span> 6 funciones billing + afiliados: generate, pay, list, export CSV, comisiones</li>
+        <li><span class="ico">🏢</span> 2 funciones agencia: agency-create-model, agency-team</li>
+        <li><span class="ico">📧</span> 3 funciones email: welcome, expiry-warning, daily-cron (9AM: avisos, suspensión, reset)</li>
+        <li><span class="ico">🎰</span> ruleta.html: animación SVG 2 fases, 10 temas, sonidos, recovery tokens (2.182 líneas)</li>
+        <li><span class="ico">⚙️</span> admin.html: CRUD códigos, QR, plantillas, analytics, preview, gestión agencia</li>
+        <li><span class="ico">🛡️</span> superadmin.html: clientes, registro, descuentos, facturación, comisiones, export</li>
+        <li><span class="ico">🏠</span> Landing + 5 páginas soporte: registro, guía, contacto, demo, model-landing</li>
+        <li><span class="ico">⚙️</span> netlify.toml: multi-tenant routing, headers seguridad, CSP, bloqueo archivos</li>
+        <li><span class="ico">🔒</span> Auditoría seguridad: 32 hallazgos detectados y corregidos en 6 fases</li>
       </ul>
     </div>
 
-    <!-- PENDIENTE -->
+    <!-- LO QUE NECESITA UN DESARROLLADOR -->
     <div class="reveal reveal-delay-1">
-      <h3><span class="status-pending">🔶</span> Pendiente / En progreso</h3>
+      <h3><span class="status-pending">🔶</span> Necesita un desarrollador</h3>
       <ul class="roadmap-list">
-        <li><span class="ico">🎰</span> Estabilizar animación de la ruleta SVG (transición visual y timing)</li>
-        <li><span class="ico">⚡</span> 8 funciones admin adicionales (Sprint 2-E): get-codes, create-code, delete-code, reactivate-code, get-analytics, get-spins-live, update-config, get-qr</li>
-        <li><span class="ico">📧</span> Emails automáticos completos (Sprint 2-D): templates responsive, daily-cron de aviso y suspensión</li>
-        <li><span class="ico">💰</span> Estabilizar flujo de facturación y comisiones (Sprint 2-F)</li>
-        <li><span class="ico">🛡️</span> Funciones superadmin adicionales: sa-dashboard, sa-list-models, sa-update-model</li>
-        <li><span class="ico">🧪</span> Testing end-to-end del flujo completo: fan → código → spin → premio</li>
-        <li><span class="ico">🌐</span> Deployment en producción: configurar variables de entorno, dominio, DNS</li>
-        <li><span class="ico">📱</span> Testing mobile exhaustivo (iOS Safari, Chrome Android)</li>
-        <li><span class="ico">💳</span> Integración de pagos (Stripe) — fase futura</li>
+        <li><span class="ico">🔒</span> <strong style="color:var(--accent)">Revisión de seguridad completa</strong>: auditar todas las funciones, validar RLS en Supabase, pen-test de endpoints, revisión de CORS y rate limiting real</li>
+        <li><span class="ico">💳</span> <strong style="color:var(--accent)">Integración Stripe</strong>: pagos automáticos, webhooks, suscripciones recurrentes, gestión de impagos (ahora es manual)</li>
+        <li><span class="ico">🧪</span> <strong style="color:var(--accent)">Testing E2E</strong>: flujo completo fan→código→spin→premio en entorno real, validar race conditions, tests automatizados (Playwright/Cypress)</li>
+        <li><span class="ico">📱</span> <strong style="color:var(--accent)">Testing cross-device</strong>: iOS Safari, Chrome Android, tablets, resoluciones edge-case, interacción táctil en ruleta</li>
+        <li><span class="ico">🌐</span> <strong style="color:var(--accent)">Deployment producción</strong>: verificar variables de entorno en Netlify, DNS/dominio, SSL, monitorización y alertas</li>
+        <li><span class="ico">🗄️</span> <strong style="color:var(--accent)">Verificar stored procedures</strong>: confirmar que las funciones RPC (generate_monthly_billing, mark_billing_paid, confirm_spin_atomic) existen en Supabase real</li>
+        <li><span class="ico">🔍</span> <strong style="color:var(--accent)">Code review general</strong>: revisión de calidad, edge cases, manejo de errores, optimización de queries, limpieza de código muerto</li>
+        <li><span class="ico">📊</span> <strong style="color:var(--accent)">Observabilidad</strong>: logging estructurado, monitorización de errores (Sentry/similar), alertas de billing fallido, métricas de uso</li>
+        <li><span class="ico">⚖️</span> <strong style="color:var(--accent)">Legal y compliance</strong>: GDPR, política de privacidad, términos de servicio, cookies, facturación fiscal</li>
       </ul>
     </div>
 
