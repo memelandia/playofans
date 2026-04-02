@@ -149,7 +149,11 @@
   status = 404
   force = true
 
-
+# Presentación técnica (página estática, no es un slug de modelo)
+[[redirects]]
+  from = "/presentacion"
+  to = "/playofans-presentacion.html"
+  status = 200
 
 # API — Netlify Functions
 [[redirects]]
