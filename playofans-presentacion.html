@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlayOFans — Presentación del Proyecto</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ——— VARIABLES & RESET ——— */
+:root {
+  --bg: #0a0612;
+  --bg2: #120e1f;
+  --bg3: #1a1230;
+  --accent: #FF1F8E;
+  --accent2: #b300ff;
+  --accent3: #7c3aed;
+  --gold: #ffd700;
+  --text: #f0e6ff;
+  --text-soft: #a89cc8;
+  --text-muted: #6b5f80;
+  --glass: rgba(20,12,40,0.85);
+  --glass-border: rgba(179,0,255,0.2);
+  --success: #10ac84;
+  --max-w: 1140px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.7;}
+a{color:var(--accent2);text-decoration:none;transition:color .2s;}
+a:hover{color:var(--accent);}
+
+/* ——— PARTICLES ——— */
+.particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.particle{position:absolute;border-radius:50%;opacity:.07;animation:pfloat linear infinite;}
+@keyframes pfloat{0%{transform:translateY(100vh) rotate(0deg)}100%{transform:translateY(-120px) rotate(360deg)}}
+
+/* ——— NAVBAR ——— */
+.navbar{position:fixed;top:0;left:0;right:0;z-index:1000;padding:14px 0;background:rgba(10,6,18,0.55);backdrop-filter:blur(16px);border-bottom:1px solid rgba(179,0,255,0.08);transition:all .4s;}
+.navbar.scrolled{background:rgba(10,6,18,0.97);box-shadow:0 2px 24px rgba(0,0,0,0.5);padding:10px 0;}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:var(--max-w);margin:0 auto;padding:0 24px;}
+.nav-logo{font-size:1.4rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;display:flex;align-items:center;gap:8px;}
+.nav-links{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.nav-links a{color:var(--text-soft);font-size:.72rem;font-weight:500;padding:6px 10px;border-radius:8px;transition:all .2s;white-space:nowrap;}
+.nav-links a:hover{color:#fff;background:rgba(255,255,255,0.05);text-decoration:none;}
+.nav-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.5rem;cursor:pointer;}
+
+/* ——— GENERAL ——— */
+.container{max-width:var(--max-w);margin:0 auto;padding:0 24px;position:relative;z-index:1;}
+section{padding:100px 0;position:relative;}
+.section-tag{display:inline-block;padding:5px 16px;border-radius:50px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;background:rgba(255,31,142,0.1);color:var(--accent);border:1px solid rgba(255,31,142,0.2);}
+.section-title{font-size:2.4rem;font-weight:800;margin-bottom:14px;line-height:1.2;}
+.section-title .hl{color:var(--accent);}
+.section-title .hl-gold{color:var(--gold);}
+.section-subtitle{font-size:1.05rem;color:var(--text-soft);max-width:680px;line-height:1.7;}
+.text-center{text-align:center;}
+.mx-auto{margin-left:auto;margin-right:auto;}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--glass-border),transparent);margin:0 auto;max-width:600px;}
+
+/* ——— REVEAL ANIMATIONS ——— */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-delay-1{transition-delay:.1s;}
+.reveal-delay-2{transition-delay:.2s;}
+.reveal-delay-3{transition-delay:.3s;}
+.reveal-delay-4{transition-delay:.4s;}
+
+/* ——— HERO ——— */
+.hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding:120px 0 80px;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(255,31,142,0.12),transparent 60%),radial-gradient(ellipse at 70% 80%,rgba(179,0,255,0.08),transparent 60%);pointer-events:none;}
+.hero-content{text-align:center;position:relative;z-index:1;}
+.hero-content h1{font-size:3.8rem;font-weight:900;line-height:1.08;margin-bottom:20px;}
+.hero-content h1 .gradient{background:linear-gradient(135deg,var(--accent),var(--gold),var(--accent2));background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite;}
+@keyframes shimmer{to{background-position:200% center}}
+.hero-content .tagline{font-size:1.25rem;color:var(--text-soft);max-width:680px;margin:0 auto 48px;line-height:1.7;}
+.hero-content .tagline strong{color:var(--gold);}
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:800px;margin:0 auto;}
+.metric-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;padding:28px 16px;text-align:center;transition:all .3s;}
+.metric-card:hover{border-color:var(--accent);transform:translateY(-4px);}
+.metric-card .num{font-size:2.2rem;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;display:block;line-height:1.2;}
+.metric-card .label{font-size:.75rem;color:var(--text-soft);margin-top:6px;display:block;}
+.hero-glow-orb{position:absolute;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.15;pointer-events:none;}
+.hero-glow-orb.pink{background:var(--accent);top:-100px;right:-100px;}
+.hero-glow-orb.purple{background:var(--accent2);bottom:-150px;left:-80px;}
+
+/* ——— CARDS GENÉRICAS ——— */
+.card{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:32px;transition:all .3s;}
+.card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 8px 30px rgba(255,31,142,0.08);}
+.card .icon{font-size:2.5rem;margin-bottom:16px;display:block;}
+.card h3{font-size:1.1rem;font-weight:700;margin-bottom:10px;}
+.card p{font-size:.88rem;color:var(--text-soft);line-height:1.65;}
+
+/* ——— CONTEXTO ——— */
+.context-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;}
+
+/* ——— FLUJO 5 PASOS ——— */
+.steps-flow{display:flex;flex-direction:column;gap:0;margin-top:48px;position:relative;}
+.steps-flow::before{content:'';position:absolute;left:32px;top:32px;bottom:32px;width:2px;background:linear-gradient(180deg,var(--accent),var(--accent2),var(--accent));opacity:.3;}
+.step-row{display:flex;align-items:flex-start;gap:24px;padding:24px 0;position:relative;}
+.step-num{min-width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800;color:#fff;flex-shrink:0;position:relative;z-index:1;}
+.step-body h3{font-size:1.05rem;font-weight:700;margin-bottom:6px;}
+.step-body p{font-size:.88rem;color:var(--text-soft);line-height:1.65;}
+.step-body .step-tag{display:inline-block;margin-top:8px;padding:3px 12px;border-radius:50px;font-size:.65rem;font-weight:700;background:rgba(255,31,142,0.1);color:var(--accent);border:1px solid rgba(255,31,142,0.2);}
+
+/* ——— PRICING ——— */
+.pricing-section{background:var(--bg2);}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;}
+.price-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:24px;padding:36px 28px;text-align:center;transition:all .3s;position:relative;}
+.price-card:hover{transform:translateY(-6px);box-shadow:0 12px 40px rgba(0,0,0,0.3);}
+.price-card.featured{border:2px solid var(--gold);box-shadow:0 0 40px rgba(255,215,0,0.08);}
+.price-card.featured::before{content:'⭐ POPULAR';position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--gold),#ff8c00);color:#000;padding:4px 20px;border-radius:50px;font-size:.68rem;font-weight:700;letter-spacing:1px;}
+.price-card .plan-name{font-size:1rem;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px;}
+.price-card.featured .plan-name{color:var(--gold);}
+.price-card.agency .plan-name{color:var(--accent2);}
+.price-card .price-row{margin-bottom:4px;}
+.price-card .plan-price{font-size:2.8rem;font-weight:900;}
+.price-card.featured .plan-price{background:linear-gradient(135deg,var(--gold),#ff8c00);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.price-card .plan-price span{font-size:.9rem;font-weight:400;color:var(--text-soft);}
+.price-card .annual{font-size:.82rem;color:var(--success);font-weight:600;margin-bottom:16px;display:block;}
+.price-card .plan-desc{font-size:.82rem;color:var(--text-soft);margin-bottom:20px;}
+.price-card ul{list-style:none;text-align:left;margin-bottom:0;}
+.price-card ul li{font-size:.82rem;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;gap:10px;}
+.price-card ul li .ck{color:var(--success);font-weight:700;font-size:.8rem;}
+.price-card ul li .no{color:var(--text-muted);font-size:.8rem;}
+
+/* ——— PANELES ——— */
+.panels-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;}
+.panel-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:32px;transition:all .3s;position:relative;overflow:hidden;}
+.panel-card:hover{border-color:var(--accent);transform:translateY(-4px);}
+.panel-card .panel-url{display:inline-block;margin-top:12px;padding:6px 14px;border-radius:8px;background:rgba(255,255,255,0.04);font-family:monospace;font-size:.78rem;color:var(--accent);border:1px solid rgba(255,31,142,0.15);word-break:break-all;}
+.panel-card .feature-list{margin-top:16px;list-style:none;}
+.panel-card .feature-list li{font-size:.82rem;color:var(--text-soft);padding:5px 0;display:flex;align-items:flex-start;gap:8px;}
+.panel-card .feature-list li::before{content:'›';color:var(--accent);font-weight:700;font-size:1rem;line-height:1.3;}
+
+/* ——— AFILIADOS ——— */
+.affiliate-section{background:var(--bg2);}
+.affiliate-highlight{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:48px;align-items:start;}
+.aff-rules{list-style:none;}
+.aff-rules li{font-size:.9rem;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:flex-start;gap:10px;}
+.aff-rules li .bullet{color:var(--accent);font-weight:700;font-size:1.1rem;flex-shrink:0;}
+.commission-table{width:100%;border-collapse:collapse;margin-top:8px;font-size:.82rem;}
+.commission-table th{text-align:left;padding:10px 12px;background:rgba(255,31,142,0.08);color:var(--accent);font-weight:700;border-bottom:2px solid rgba(255,31,142,0.15);font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;}
+.commission-table td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--text-soft);}
+.commission-table tr:hover td{background:rgba(255,255,255,0.02);}
+.commission-table .highlight-cell{color:var(--gold);font-weight:700;}
+
+/* ——— STACK ——— */
+.stack-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px;}
+.stack-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;padding:24px;text-align:center;transition:all .3s;}
+.stack-card:hover{border-color:var(--accent);transform:translateY(-3px);}
+.stack-card .stack-icon{font-size:2rem;margin-bottom:10px;display:block;}
+.stack-card h4{font-size:.9rem;font-weight:700;margin-bottom:4px;}
+.stack-card p{font-size:.78rem;color:var(--text-soft);}
+
+/* ——— ROADMAP ——— */
+.roadmap-cols{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:48px;}
+.roadmap-col h3{font-size:1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.roadmap-col .status-done{color:var(--success);}
+.roadmap-col .status-pending{color:var(--gold);}
+.roadmap-list{list-style:none;}
+.roadmap-list li{font-size:.85rem;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:flex-start;gap:10px;color:var(--text-soft);}
+.roadmap-list li .ico{flex-shrink:0;font-size:.85rem;}
+
+/* ——— EXPANSIÓN ——— */
+.expansion-section{background:var(--bg2);}
+.expansion-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:48px;}
+.expansion-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:28px;transition:all .3s;}
+.expansion-card:hover{border-color:var(--accent);transform:translateY(-4px);}
+.expansion-card h3{font-size:1rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.expansion-card .tag-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+.expansion-card .tag{padding:4px 12px;border-radius:50px;font-size:.7rem;font-weight:600;background:rgba(255,31,142,0.08);color:var(--accent);border:1px solid rgba(255,31,142,0.15);}
+
+/* ——— FOOTER ——— */
+.footer{background:var(--bg2);border-top:1px solid var(--glass-border);padding:48px 0 24px;text-align:center;}
+.footer .brand{font-size:1.4rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px;display:inline-block;}
+.footer p{font-size:.82rem;color:var(--text-muted);margin-bottom:6px;}
+.footer .contact-row{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-top:16px;margin-bottom:24px;}
+.footer .contact-item{font-size:.82rem;color:var(--text-soft);display:flex;align-items:center;gap:6px;}
+.footer .copy{font-size:.72rem;color:var(--text-muted);border-top:1px solid rgba(255,255,255,0.04);padding-top:20px;}
+
+/* ——— RESPONSIVE ——— */
+@media(max-width:1024px){
+  .hero-content h1{font-size:2.8rem;}
+  .metrics-grid{grid-template-columns:repeat(2,1fr);}
+  .pricing-grid,.panels-grid,.stack-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:768px){
+  .nav-links{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(10,6,18,0.98);flex-direction:column;justify-content:center;align-items:center;gap:16px;z-index:999;}
+  .nav-links.open{display:flex;}
+  .nav-toggle{display:block;z-index:1001;}
+  .hero-content h1{font-size:2.2rem;}
+  .metrics-grid{grid-template-columns:1fr 1fr;}
+  .context-grid,.pricing-grid,.panels-grid,.stack-grid,.expansion-grid{grid-template-columns:1fr;}
+  .affiliate-highlight{grid-template-columns:1fr;}
+  .roadmap-cols{grid-template-columns:1fr;}
+  .section-title{font-size:1.9rem;}
+  .steps-flow::before{left:31px;}
+}
+@media(max-width:480px){
+  .hero-content h1{font-size:1.7rem;}
+  .metric-card .num{font-size:1.7rem;}
+  .metrics-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== PARTICLES ===== -->
+<div class="particles" aria-hidden="true">
+  <div class="particle" style="width:6px;height:6px;background:var(--accent);left:8%;animation-duration:20s;animation-delay:0s;"></div>
+  <div class="particle" style="width:4px;height:4px;background:var(--accent2);left:22%;animation-duration:26s;animation-delay:3s;"></div>
+  <div class="particle" style="width:7px;height:7px;background:var(--accent);left:42%;animation-duration:24s;animation-delay:1s;"></div>
+  <div class="particle" style="width:5px;height:5px;background:var(--accent2);left:58%;animation-duration:22s;animation-delay:5s;"></div>
+  <div class="particle" style="width:3px;height:3px;background:var(--accent3);left:75%;animation-duration:30s;animation-delay:2s;"></div>
+  <div class="particle" style="width:5px;height:5px;background:var(--accent);left:88%;animation-duration:18s;animation-delay:4s;"></div>
+  <div class="particle" style="width:4px;height:4px;background:var(--accent3);left:35%;animation-duration:28s;animation-delay:6s;"></div>
+  <div class="particle" style="width:6px;height:6px;background:var(--accent2);left:68%;animation-duration:21s;animation-delay:7s;"></div>
+</div>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+<div class="nav-inner">
+  <div class="nav-logo">🎰 PlayOFans</div>
+  <div class="nav-links" id="nav-links">
+    <a href="#contexto">Contexto</a>
+    <a href="#como-funciona">Flujo</a>
+    <a href="#precios">Precios</a>
+    <a href="#paneles">Paneles</a>
+    <a href="#afiliados">Afiliados</a>
+    <a href="#stack">Stack</a>
+    <a href="#roadmap">Roadmap</a>
+    <a href="#expansion">Expansión</a>
+  </div>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú">☰</button>
+</div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     1. HERO
+     ═══════════════════════════════════════════════════════════════ -->
+<header class="hero" id="hero">
+  <div class="hero-glow-orb pink"></div>
+  <div class="hero-glow-orb purple"></div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="section-tag" style="margin-bottom:20px;">Presentación Técnica del Proyecto</div>
+      <h1>
+        <span class="gradient">PlayOFans</span><br>
+        Juegos Interactivos para Modelos de OnlyFans
+      </h1>
+      <p class="tagline">Plataforma SaaS multi-tenant que permite a modelos de contenido para adultos <strong>gamificar la relación con sus fans</strong> mediante ruletas de premios, códigos únicos y analíticas en tiempo real.</p>
+      <div class="metrics-grid">
+        <div class="metric-card reveal">
+          <span class="num">3M+</span>
+          <span class="label">Modelos activas en OnlyFans</span>
+        </div>
+        <div class="metric-card reveal reveal-delay-1">
+          <span class="num">49–349€</span>
+          <span class="label">Ticket mensual por modelo</span>
+        </div>
+        <div class="metric-card reveal reveal-delay-2">
+          <span class="num">6+</span>
+          <span class="label">Juegos planificados</span>
+        </div>
+        <div class="metric-card reveal reveal-delay-3">
+          <span class="num">MVP</span>
+          <span class="label">Listo para beta privada</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     2. CONTEXTO DEL NEGOCIO
+     ═══════════════════════════════════════════════════════════════ -->
+<section id="contexto">
+<div class="container">
+  <div class="text-center">
+    <span class="section-tag">Contexto del Negocio</span>
+    <h2 class="section-title">¿Qué problema resuelve <span class="hl">PlayOFans</span>?</h2>
+    <p class="section-subtitle mx-auto">Para entender el producto, primero hay que entender el ecosistema en el que opera.</p>
+  </div>
+  <div class="context-grid">
+
+    <div class="card reveal">
+      <span class="icon">🌐</span>
+      <h3>¿Qué es OnlyFans?</h3>
+      <p>OnlyFans es una plataforma de suscripción donde creadores de contenido (principalmente adulto) cobran una cuota mensual a sus seguidores ("fans") a cambio de contenido exclusivo. Hay más de <strong style="color:var(--gold)">3 millones de creadoras</strong> activas y genera miles de millones de dólares al año. Las modelos necesitan constantemente nuevas formas de mantener el engagement y retener suscriptores.</p>
+    </div>
+
+    <div class="card reveal reveal-delay-1">
+      <span class="icon">🏢</span>
+      <h3>¿Qué es una agencia OFM?</h3>
+      <p>Una agencia OFM (OnlyFans Management) gestiona múltiples modelos: les lleva la estrategia de contenido, responde chats con fans, gestiona precios y promociones. Suelen gestionar entre 3 y 30 modelos. Necesitan <strong style="color:var(--gold)">herramientas centralizadas</strong> para gestionar todo desde un solo panel. PlayOFans ofrece un plan Agency pensado para ellas.</p>
+    </div>
+
+    <div class="card reveal reveal-delay-2">
+      <span class="icon">🎯</span>
+      <h3>El problema que resolvemos</h3>
+      <p>Las modelos necesitan <strong style="color:var(--gold)">engagement</strong>: que los fans interactúen, gasten más y no se den de baja. Pero no existen herramientas de gamificación para este nicho. PlayOFans llena ese vacío con juegos como la ruleta de premios: la modelo envía un enlace, el fan juega, gana un premio (foto exclusiva, descuento, videollamada...) y así se genera una interacción emocional que fideliza.</p>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     3. CÓMO FUNCIONA — FLUJO COMPLETO EN 5 PASOS
+     ═══════════════════════════════════════════════════════════════ -->
+<section id="como-funciona">
+<div class="container">
+  <div class="text-center">
+    <span class="section-tag">Cómo Funciona</span>
+    <h2 class="section-title">El flujo completo en <span class="hl">5 pasos</span></h2>
+    <p class="section-subtitle mx-auto">Desde que la modelo configura su ruleta hasta que monetiza el engagement de su fan.</p>
+  </div>
+
+  <div class="steps-flow">
+
+    <div class="step-row reveal">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>🎨 La modelo crea un código en su panel</h3>
+        <p>Desde <code style="color:var(--accent);background:rgba(255,31,142,0.08);padding:2px 8px;border-radius:4px;font-size:.82rem;">playofans.com/[slug]/admin</code>, la modelo genera un código único para cada fan (ej: <strong>VICK8472</strong>). Puede asignar nombre del fan, número de tiradas (1-10) y premios personalizados.</p>
+        <span class="step-tag">Panel Admin → Sección Códigos</span>
+      </div>
+    </div>
+
+    <div class="step-row reveal">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>🔗 Envía el enlace al fan por chat</h3>
+        <p>Se genera automáticamente un enlace tipo <code style="color:var(--accent);background:rgba(255,31,142,0.08);padding:2px 8px;border-radius:4px;font-size:.82rem;">playofans.com/[slug]/ruleta?c=VICK8472</code> junto con un código QR y plantillas de mensaje prediseñadas para WhatsApp, Telegram o el chat de OnlyFans.</p>
+        <span class="step-tag">Enlace + QR + Plantillas automáticas</span>
+      </div>
+    </div>
+
+    <div class="step-row reveal">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>🎰 El fan abre el enlace y gira la ruleta</h3>
+        <p>El fan abre la URL en su móvil, introduce su código, ve una ruleta animada con efectos visuales y sonido. Al pulsar "Girar", la ruleta se anima hacia el premio que el <strong>servidor ya eligió</strong> (seguridad server-side). El resultado nunca se determina en el navegador del fan.</p>
+        <span class="step-tag">Seguridad: premio elegido en servidor, no en cliente</span>
+      </div>
+    </div>
+
+    <div class="step-row reveal">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h3>🎁 El fan gana un premio</h3>
+        <p>Tras la animación, se muestra el premio con un mensaje personalizado (ej: "¡Enhorabuena María! Has ganado un Pack Fotos Hot 📸"). Aparece un panel de "Mis Premios" con el historial. El fan puede seguir girando si le quedan tiradas.</p>
+        <span class="step-tag">Mensaje customizable con variable {nombre}</span>
+      </div>
+    </div>
+
+    <div class="step-row reveal">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h3>💰 La modelo monetiza</h3>
+        <p>La modelo ve en tiempo real (polling 30s) quién giró, qué ganó y cuántas tiradas quedan. Los premios son "promesas" que se entregan vía OF (fotos, vídeos, descuentos, videollamadas...), generando interacción directa con el fan, lo que se traduce en <strong>más propinas, renovaciones y ventas de PPV</strong>.</p>
+        <span class="step-tag">Dashboard con analíticas en tiempo real</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     4. PLANES Y PRECIOS
+     ═══════════════════════════════════════════════════════════════ -->
+<section id="precios" class="pricing-section">
+<div class="container">
+  <div class="text-center">
+    <span class="section-tag">Planes y Precios</span>
+    <h2 class="section-title">Tres planes, un solo <span class="hl-gold">objetivo</span></h2>
+    <p class="section-subtitle mx-auto">Precios en euros. Facturación mensual o anual con descuento.</p>
+  </div>
+  <div class="pricing-grid">
+
+    <!-- SOLO -->
+    <div class="price-card reveal">
+      <div class="plan-name">Solo</div>
+      <div class="price-row">
+        <span class="plan-price">49€<span>/mes</span></span>
+      </div>
+      <span class="annual">Anual: 399€/año (ahorra 32%)</span>
+      <p class="plan-desc">Para modelos independientes que empiezan.</p>
+      <ul>
+        <li><span class="ck">✓</span> 100 códigos/mes</li>
+        <li><span class="ck">✓</span> 5 temas visuales</li>
+        <li><span class="ck">✓</span> Premios personalizables</li>
+        <li><span class="ck">✓</span> Panel admin completo</li>
+        <li><span class="ck">✓</span> Códigos QR</li>
+        <li><span class="ck">✓</span> Analíticas básicas</li>
+        <li><span class="no">✗</span> Temas premium (5 extra)</li>
+        <li><span class="no">✗</span> Multi-modelo</li>
+      </ul>
+    </div>
+
+    <!-- PRO -->
+    <div class="price-card featured reveal reveal-delay-1">
+      <div class="plan-name">Pro</div>
+      <div class="price-row">
+        <span class="plan-price">89€<span>/mes</span></span>
+      </div>
+      <span class="annual">Anual: 699€/año (ahorra 35%)</span>
+      <p class="plan-desc">Para modelos top que necesitan todo.</p>
+      <ul>
+        <li><span class="ck">✓</span> Códigos ilimitados</li>
+        <li><span class="ck">✓</span> 10 temas visuales (todos)</li>
+        <li><span class="ck">✓</span> Premios personalizables</li>
+        <li><span class="ck">✓</span> Panel admin completo</li>
+        <li><span class="ck">✓</span> Códigos QR</li>
+        <li><span class="ck">✓</span> Analíticas avanzadas</li>
+        <li><span class="ck">✓</span> Temas premium incluidos</li>
+        <li><span class="no">✗</span> Multi-modelo</li>
+      </ul>
+    </div>
+
+    <!-- AGENCY -->
+    <div class="price-card agency reveal reveal-delay-2">
+      <div class="plan-name">Agency</div>
+      <div class="price-row">
+        <span class="plan-price">349€<span>/mes</span></span>
+      </div>
+      <span class="annual">Anual: 2.800€/año (ahorra 33%)</span>
+      <p class="plan-desc">Para agencias OFM con varios modelos.</p>
+      <ul>
+        <li><span class="ck">✓</span> Hasta 8 modelos</li>
+        <li><span class="ck">✓</span> Códigos ilimitados</li>
+        <li><span class="ck">✓</span> 10 temas visuales (todos)</li>
+        <li><span class="ck">✓</span> Panel unificado agencia</li>
+        <li><span class="ck">✓</span> Códigos QR</li>
+        <li><span class="ck">✓</span> Analíticas por modelo</li>
+        <li><span class="ck">✓</span> Gestión equipo</li>
+        <li><span class="ck">✓</span> Facturación consolidada</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     5. ARQUITECTURA DE PANELES
+     ═══════════════════════════════════════════════════════════════ -->
+<section id="paneles">
+<div class="container">
+  <div class="text-center">
+    <span class="section-tag">Arquitectura de Paneles</span>
+    <h2 class="section-title">Tres interfaces, tres <span class="hl">usuarios</span></h2>
+    <p class="section-subtitle mx-auto">Cada tipo de usuario tiene su propia interfaz con funcionalidades específicas.</p>
+  </div>
+  <div class="panels-grid">
+
+    <!-- RULETA PÚBLICA -->
+    <div class="panel-card reveal">
+      <span class="icon">🎰</span>
+      <h3>Ruleta Pública (Fan)</h3>
+      <span class="panel-url">playofans.com/[slug]/ruleta</span>
+      <ul class="feature-list">
+        <li>Input de código + nombre del fan</li>
+        <li>Ruleta SVG animada con sonidos</li>
+        <li>10 temas visuales con música</li>
+        <li>Panel "Mis Premios" lateral</li>
+        <li>Contador de tiradas restantes</li>
+        <li>Countdown si el código expira pronto</li>
+        <li>Compartir resultado (Canvas API)</li>
+        <li>100% responsive, mobile-first</li>
+      </ul>
+    </div>
+
+    <!-- PANEL ADMIN -->
+    <div class="panel-card reveal reveal-delay-1">
+      <span class="icon">⚙️</span>
+      <h3>Panel Admin (Modelo)</h3>
+      <span class="panel-url">playofans.com/[slug]/admin</span>
+      <ul class="feature-list">
+        <li>Login email + contraseña (Supabase Auth)</li>
+        <li>Dashboard: giros hoy/semana, códigos activos</li>
+        <li>CRUD códigos: crear, copiar link, QR, eliminar</li>
+        <li>Plantillas WhatsApp/Telegram/OF en 1 clic</li>
+        <li>Config: premios, mensajes, tema visual</li>
+        <li>Preview en vivo de la ruleta (250px)</li>
+        <li>Spins en tiempo real (polling 30s)</li>
+        <li>Código referido y link de afiliado</li>
+      </ul>
+    </div>
+
+    <!-- SUPERADMIN -->
+    <div class="panel-card reveal reveal-delay-2">
+      <span class="icon">🛡️</span>
+      <h3>Superadmin (Propietario)</h3>
+      <span class="panel-url">playofans.com/superadmin</span>
+      <ul class="feature-list">
+        <li>Triple auth: email + secret + 2FA TOTP</li>
+        <li>Dashboard: MRR, cuentas activas, giros</li>
+        <li>Tabla clientes con estado visual 🟢🟡🔴⚫</li>
+        <li>Crear cuentas + enviar email bienvenida</li>
+        <li>Aprobar/rechazar solicitudes de registro</li>
+        <li>Gestión de descuentos (CRUD)</li>
+        <li>Facturación: generar cobros, marcar pagados</li>
+        <li>Export CSV de billing y comisiones</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     6. SISTEMA DE AFILIADOS
+     ═══════════════════════════════════════════════════════════════ -->
+<section id="afiliados" class="affiliate-section">
+<div class="container">
+  <div class="text-center">
+    <span class="section-tag">Sistema de Afiliados</span>
+    <h2 class="section-title">Crecimiento <span class="hl-gold">orgánico</span> por referidos</h2>
+    <p class="section-subtitle mx-auto">Cada modelo puede referir a otras modelos y ganar comisiones recurrentes + descuentos en su propio plan.</p>
+  </div>
+  <div class="affiliate-highlight">
+
+    <div class="reveal">
+      <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:16px;">📌 Reglas del programa</h3>
+      <ul class="aff-rules">
+        <li><span class="bullet">→</span> <strong>10% de comisión recurrente</strong> durante 6 meses por cada modelo referida que pague su plan.</li>
+        <li><span class="bullet">→</span> Código de referido automático: <code style="color:var(--accent);background:rgba(255,31,142,0.08);padding:2px 8px;border-radius:4px;font-size:.82rem;">REF-[SLUG]</code></li>
+        <li><span class="bullet">→</span> Link de referido: <code style="color:var(--accent);background:rgba(255,31,142,0.08);padding:2px 8px;border-radius:4px;font-size:.82rem;">playofans.com/registro?ref=REF-SLUG</code></li>
+        <li><span class="bullet">→</span> Descuento en plan propio según referidos activos:
+          <br><strong style="color:var(--gold);">1 referido = 10%</strong> &nbsp;·&nbsp; <strong style="color:var(--gold);">2 referidos = 15%</strong> &nbsp;·&nbsp; <strong style="color:var(--gold);">3+ referidos = 20%</strong></li>
+        <li><span class="bullet">→</span> Las comisiones se calculan automáticamente al marcar un cobro como pagado en superadmin.</li>
+      </ul>
+    </div>
+
+    <div class="reveal reveal-delay-1">
+      <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:16px;">💰 Tabla de comisiones por plan</h3>
+      <table class="commission-table">
+        <thead>
+          <tr>
+            <th>Plan referido</th>
+            <th>Precio/mes</th>
+            <th>Comisión (10%)</th>
+            <th>Total 6 meses</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Solo</td>
+            <td>49€</td>
+            <td>4,90€/mes</td>
+            <td class="highlight-cell">29,40€</td>
+          </tr>
+          <tr>
+            <td>Pro</td>
+            <td>89€</td>
+            <td>8,90€/mes</td>
+            <td class="highlight-cell">53,40€</td>
+          </tr>
+          <tr>
+            <td>Agency</td>
+            <td>349€</td>
+            <td>34,90€/mes</td>
+            <td class="highlight-cell">209,40€</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:.78rem;color:var(--text-muted);margin-top:12px;">* La comisión se paga mensualmente durante 6 meses desde la primera factura del referido. Si el referido cancela, las comisiones futuras se detienen.</p>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     7. STACK TÉCNICO
+     ═══════════════════════════════════════════════════════════════ -->
+<section id="stack">
+<div class="container">
+  <div class="text-center">
+    <span class="section-tag">Stack Técnico</span>
+    <h2 class="section-title">Tecnologías y <span class="hl">arquitectura</span></h2>
+    <p class="section-subtitle mx-auto">Stack simple, serverless, sin frameworks pesados. Despliegue automático en cada push.</p>
+  </div>
+  <div class="stack-grid">
+
+    <div class="stack-card reveal">
+      <span class="stack-icon">🖥️</span>
+      <h4>Frontend</h4>
+      <p>HTML · CSS · JavaScript vanilla. Sin React, sin Vue, sin frameworks. Ficheros HTML multi-tenant con CSS variables para temas.</p>
+    </div>
+    <div class="stack-card reveal reveal-delay-1">
+      <span class="stack-icon">⚡</span>
+      <h4>Backend</h4>
+      <p>Netlify Functions (Node.js 18). Funciones serverless para toda la lógica de negocio. CORS configurado por dominio.</p>
+    </div>
+    <div class="stack-card reveal reveal-delay-2">
+      <span class="stack-icon">🗄️</span>
+      <h4>Base de datos</h4>
+      <p>Supabase (PostgreSQL). Auth + Row Level Security + funciones PL/pgSQL. 13 tablas, 13 funciones, triggers y RLS policies.</p>
+    </div>
+    <div class="stack-card reveal">
+      <span class="stack-icon">📧</span>
+      <h4>Email</h4>
+      <p>Resend API. Emails de bienvenida, aviso de expiración y notificaciones. Dominio <strong>hola@playofans.com</strong>.</p>
+    </div>
+    <div class="stack-card reveal reveal-delay-1">
+      <span class="stack-icon">🎨</span>
+      <h4>Gráficos</h4>
+      <p>SVG para la ruleta (antes Canvas). Canvas API para compartir resultados como imagen. CSS animations para partículas y efectos.</p>
+    </div>
+    <div class="stack-card reveal reveal-delay-2">
+      <span class="stack-icon">🚀</span>
+      <h4>CI/CD</h4>
+      <p>GitHub → Netlify. Cada push a main despliega automáticamente. Cron diario a las 9AM para facturación y expiración.</p>
+    </div>
+
+  </div>
+
+  <!-- Diagrama de arquitectura simplificado -->
+  <div class="card reveal" style="margin-top:32px;text-align:center;padding:40px;">
+    <p style="font-size:.9rem;font-weight:700;margin-bottom:20px;color:var(--accent);">Flujo de datos simplificado</p>
+    <div style="font-family:monospace;font-size:.78rem;color:var(--text-soft);line-height:2.2;max-width:600px;margin:0 auto;text-align:left;">
+      <span style="color:var(--gold);">Fan (browser)</span><br>
+      &nbsp;&nbsp;↓ POST /api/validate-code<br>
+      &nbsp;&nbsp;↓ POST /api/prepare-spin → <span style="color:var(--accent);">premio elegido en servidor</span><br>
+      &nbsp;&nbsp;↓ 🎰 animación de la ruleta...<br>
+      &nbsp;&nbsp;↓ POST /api/confirm-spin → <span style="color:var(--success);">spin verificado, tirada descontada</span><br>
+      <br>
+      <span style="color:var(--gold);">Modelo (admin)</span><br>
+      &nbsp;&nbsp;↓ Supabase Auth (login)<br>
+      &nbsp;&nbsp;↓ GET /api/admin-get-codes<br>
+      &nbsp;&nbsp;↓ POST /api/admin-create-code<br>
+      &nbsp;&nbsp;↓ GET /api/admin-get-spins-live (polling 30s)<br>
+      <br>
+      <span style="color:var(--gold);">Superadmin</span><br>
+      &nbsp;&nbsp;↓ Auth + Secret + 2FA TOTP<br>
+      &nbsp;&nbsp;↓ POST /api/sa-billing-generate<br>
+      &nbsp;&nbsp;↓ POST /api/sa-billing-pay → auto comisiones afiliados<br>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     8. ESTADO ACTUAL (ROADMAP)
+     ═══════════════════════════════════════════════════════════════ -->
+<section id="roadmap">
+<div class="container">
+  <div class="text-center">
+    <span class="section-tag">Estado Actual</span>
+    <h2 class="section-title">Qué hay <span class="hl" style="color:var(--success);">hecho</span> y qué <span class="hl-gold">falta</span></h2>
+    <p class="section-subtitle mx-auto">El proyecto ha completado la infraestructura, todos los archivos HTML y las funciones backend core. Quedan fases de estabilización y funcionalidades avanzadas.</p>
+  </div>
+  <div class="roadmap-cols">
+
+    <!-- COMPLETADO -->
+    <div class="reveal">
+      <h3><span class="status-done">✅</span> Completado</h3>
+      <ul class="roadmap-list">
+        <li><span class="ico">🗄️</span> Schema SQL completo: 13 tablas, 13 funciones PL/pgSQL, triggers, RLS</li>
+        <li><span class="ico">⚙️</span> netlify.toml: redirects multi-tenant, bloqueo archivos sensibles, headers seguridad</li>
+        <li><span class="ico">📦</span> package.json con dependencias (Supabase, Resend, QRCode)</li>
+        <li><span class="ico">⚡</span> 5 funciones backend core: tenant-config, validate-code, prepare-spin, confirm-spin, model-landing</li>
+        <li><span class="ico">🎰</span> ruleta.html: juego multi-tenant con SVG, temas, sonidos, recovery de tokens</li>
+        <li><span class="ico">⚙️</span> admin.html: panel completo con CRUD códigos, configuración, analytics, QR</li>
+        <li><span class="ico">🛡️</span> superadmin.html: dashboard, gestión clientes, registro, descuentos, facturación, afiliados</li>
+        <li><span class="ico">🏠</span> index.html: landing pública con SEO, precios, FAQ, schema.org</li>
+        <li><span class="ico">📄</span> Páginas soporte: registro, guía, contacto, demo, model-landing</li>
+        <li><span class="ico">📧</span> Emails: welcome, expiry-warning via Resend</li>
+        <li><span class="ico">⏰</span> daily-cron: suspensión, avisos, reset mensual códigos</li>
+        <li><span class="ico">💰</span> Sistema billing + afiliados: 6 funciones SA + schema SQL</li>
+        <li><span class="ico">🔒</span> Auditoría de seguridad: 32 hallazgos detectados y corregidos en 6 fases</li>
+        <li><span class="ico">🏢</span> Funciones agencia: admin-agency-create-model, admin-agency-team</li>
+      </ul>
+    </div>
+
+    <!-- PENDIENTE -->
+    <div class="reveal reveal-delay-1">
+      <h3><span class="status-pending">🔶</span> Pendiente / En progreso</h3>
+      <ul class="roadmap-list">
+        <li><span class="ico">🎰</span> Estabilizar animación de la ruleta SVG (transición visual y timing)</li>
+        <li><span class="ico">⚡</span> 8 funciones admin adicionales (Sprint 2-E): get-codes, create-code, delete-code, reactivate-code, get-analytics, get-spins-live, update-config, get-qr</li>
+        <li><span class="ico">📧</span> Emails automáticos completos (Sprint 2-D): templates responsive, daily-cron de aviso y suspensión</li>
+        <li><span class="ico">💰</span> Estabilizar flujo de facturación y comisiones (Sprint 2-F)</li>
+        <li><span class="ico">🛡️</span> Funciones superadmin adicionales: sa-dashboard, sa-list-models, sa-update-model</li>
+        <li><span class="ico">🧪</span> Testing end-to-end del flujo completo: fan → código → spin → premio</li>
+        <li><span class="ico">🌐</span> Deployment en producción: configurar variables de entorno, dominio, DNS</li>
+        <li><span class="ico">📱</span> Testing mobile exhaustivo (iOS Safari, Chrome Android)</li>
+        <li><span class="ico">💳</span> Integración de pagos (Stripe) — fase futura</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     9. POTENCIAL DE EXPANSIÓN
+     ═══════════════════════════════════════════════════════════════ -->
+<section id="expansion" class="expansion-section">
+<div class="container">
+  <div class="text-center">
+    <span class="section-tag">Potencial de Expansión</span>
+    <h2 class="section-title">Hacia dónde <span class="hl">crece</span> PlayOFans</h2>
+    <p class="section-subtitle mx-auto">La ruleta es solo el primer juego. La plataforma está diseñada para escalar a múltiples juegos, mercados y tipos de cliente.</p>
+  </div>
+  <div class="expansion-grid">
+
+    <div class="expansion-card reveal">
+      <h3>🎮 Más juegos</h3>
+      <p style="font-size:.88rem;color:var(--text-soft);">La arquitectura multi-juego ya está preparada en el schema (tabla <code style="color:var(--accent);font-size:.8rem;">game_catalog</code>). Cada modelo podrá tener múltiples juegos activos según su plan.</p>
+      <div class="tag-list">
+        <span class="tag">🎰 Ruleta (activo)</span>
+        <span class="tag">🃏 Rasca y Gana</span>
+        <span class="tag">❓ Verdad o Reto</span>
+        <span class="tag">🎲 Dado</span>
+        <span class="tag">💎 Subasta</span>
+        <span class="tag">🎯 Tiro al Blanco</span>
+      </div>
+    </div>
+
+    <div class="expansion-card reveal reveal-delay-1">
+      <h3>🌍 Nuevos mercados</h3>
+      <p style="font-size:.88rem;color:var(--text-soft);">Fase 1 solo en español. La estructura UI tiene un objeto TEXTS centralizado, preparado para i18n. Mercados objetivo por TAM y adopción de OnlyFans.</p>
+      <div class="tag-list">
+        <span class="tag">🇪🇸 España (fase 1)</span>
+        <span class="tag">🇲🇽 LATAM</span>
+        <span class="tag">🇧🇷 Brasil</span>
+        <span class="tag">🇺🇸 Anglosajón</span>
+        <span class="tag">🇫🇷 Francia</span>
+      </div>
+    </div>
+
+    <div class="expansion-card reveal">
+      <h3>🚀 Features futuras</h3>
+      <p style="font-size:.88rem;color:var(--text-soft);">Funcionalidades planeadas para escalar el producto más allá del MVP. Cada una abre un nuevo vector de monetización o retención.</p>
+      <div class="tag-list">
+        <span class="tag">💳 Stripe (pagos automáticos)</span>
+        <span class="tag">🏷️ White label (marca propia)</span>
+        <span class="tag">🔌 API pública</span>
+        <span class="tag">📊 Analytics avanzados</span>
+        <span class="tag">🤖 Chatbot integrado</span>
+        <span class="tag">📱 PWA / App nativa</span>
+      </div>
+    </div>
+
+    <div class="expansion-card reveal reveal-delay-1">
+      <h3>👥 Otros clientes potenciales</h3>
+      <p style="font-size:.88rem;color:var(--text-soft);">PlayOFans no se limita a modelos individuales. La herramienta es útil para cualquier persona que gestione o interactúe con fans en plataformas de contenido.</p>
+      <div class="tag-list">
+        <span class="tag">💬 Chatters</span>
+        <span class="tag">📋 Managers</span>
+        <span class="tag">🏢 Agencias OFM</span>
+        <span class="tag">🌟 Fansly</span>
+        <span class="tag">🎨 Patreon</span>
+        <span class="tag">📸 MYM / Fanvue</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════════════════════════ -->
+<footer class="footer">
+<div class="container">
+  <div class="brand">🎰 PlayOFans</div>
+  <p>Plataforma SaaS de juegos interactivos para modelos de OnlyFans</p>
+  <p style="font-size:.78rem;">Documento de presentación técnica — Confidencial</p>
+  <div class="contact-row">
+    <span class="contact-item">🌐 playofans.com</span>
+    <span class="contact-item">📧 hola@playofans.com</span>
+    <span class="contact-item">🛠️ Stack: HTML/JS + Netlify + Supabase</span>
+  </div>
+  <p class="copy">&copy; 2026 PlayOFans. Todos los derechos reservados.</p>
+</div>
+</footer>
+
+<!-- ===== SCRIPTS ===== -->
+<script>
+// Navbar scroll effect
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 40);
+}, {passive: true});
+
+// Mobile menu toggle
+const navToggle = document.getElementById('nav-toggle');
+const navLinks = document.getElementById('nav-links');
+navToggle.addEventListener('click', () => {
+  navLinks.classList.toggle('open');
+  navToggle.textContent = navLinks.classList.contains('open') ? '✕' : '☰';
+});
+navLinks.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    navToggle.textContent = '☰';
+  });
+});
+
+// Scroll reveal
+const revealEls = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revealObserver.unobserve(e.target);
+    }
+  });
+}, {threshold: 0.12, rootMargin: '0px 0px -40px 0px'});
+revealEls.forEach(el => revealObserver.observe(el));
+</script>
+</body>
+</html>
